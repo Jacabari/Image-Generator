@@ -303,8 +303,9 @@
         max-width: 960px;
         max-height: 540px;
         background-color: var(--bg-primary);
+        border: 1px solid rgba(0, 140, 232, 0.4);
         border-radius: 4px;
-        box-shadow: 0 25px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(0, 140, 232, 0.35);
+        box-shadow: 0 25px 60px rgba(0,0,0,0.6);
         position: relative;
         overflow: hidden;
         padding: 36px 44px;
@@ -708,7 +709,8 @@
         background-color: var(--bg-card);
         border: 1px solid var(--border-accent);
         border-radius: 10px;
-        padding: 16px 20px;
+        padding: 14px 16px;
+        box-sizing: border-box;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -765,7 +767,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-top: 10px;
+        margin-top: auto;
         padding-top: 8px;
         border-top: 1px solid rgba(0, 140, 232, 0.25);
       }
@@ -1890,30 +1892,37 @@
           const originalTransform = canvasScaler.style.transform;
           canvasScaler.style.transform = 'scale(1)';
 
-          html2canvas(slideCanvas, {
-            scale: 2, // 2x high resolution output (1920x1080)
-            useCORS: true,
-            backgroundColor: '#002844',
-            logging: false
-          }).then(canvas => {
-            // Restore scale
-            canvasScaler.style.transform = originalTransform;
+          document.fonts.ready.then(() => {
+            html2canvas(slideCanvas, {
+              scale: 2, // 2x high resolution output (1920x1080)
+              useCORS: true,
+              backgroundColor: '#002844',
+              logging: false
+            }).then(canvas => {
+              // Restore scale
+              canvasScaler.style.transform = originalTransform;
 
-            const link = document.createElement('a');
-            const cleanTitle = (slideTitleInput.value || 'slide')
-              .toLowerCase()
-              .replace(/[^a-z0-9]/g, '-')
-              .replace(/-+/g, '-');
-            link.download = `mktg-ops-${templateSelect.value}-${cleanTitle}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
+              const link = document.createElement('a');
+              const cleanTitle = (slideTitleInput.value || 'slide')
+                .toLowerCase()
+                .replace(/[^a-z0-9]/g, '-')
+                .replace(/-+/g, '-');
+              link.download = `mktg-ops-${templateSelect.value}-${cleanTitle}.png`;
+              link.href = canvas.toDataURL('image/png');
+              link.click();
 
-            btnDownloadPng.textContent = '📸 Download High-Res PNG (Scale 2x)';
-            showToast('High-resolution PNG downloaded!');
+              btnDownloadPng.textContent = '📸 Download High-Res PNG (Scale 2x)';
+              showToast('High-resolution PNG downloaded!');
+            }).catch(err => {
+              canvasScaler.style.transform = originalTransform;
+              btnDownloadPng.textContent = '📸 Download High-Res PNG (Scale 2x)';
+              showToast('Failed to generate PNG screenshot', true);
+              console.error(err);
+            });
           }).catch(err => {
             canvasScaler.style.transform = originalTransform;
             btnDownloadPng.textContent = '📸 Download High-Res PNG (Scale 2x)';
-            showToast('Failed to generate PNG screenshot', true);
+            showToast('Failed to load fonts for PNG rendering', true);
             console.error(err);
           });
         }
