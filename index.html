@@ -851,15 +851,6 @@
             <span>Database Integration</span>
             <span class="status-pill" id="db-status">Online</span>
           </div>
-          <div class="form-group">
-            <label class="form-label" for="apps-script-url">Apps Script Endpoint URL</label>
-            <input 
-              type="text" 
-              id="apps-script-url" 
-              class="form-control" 
-              value="https://script.google.com/macros/s/AKfycbzTyUi6Lgoyg1qfBFUAO187TUe0aOHFG2ITBQ6ld18QbfIAIHjRRsdkKZEWMXczPVYkrg/exec"
-            />
-          </div>
           <div class="btn-row">
             <button id="btn-load-presets" class="btn btn-secondary btn-full">
               ⚡ Load Presets
@@ -868,7 +859,7 @@
               💾 Save Preset
             </button>
           </div>
-          <div class="form-group">
+          <div class="form-group" style="margin-top: 10px;">
             <label class="form-label" for="preset-select">Fetched Presets</label>
             <select id="preset-select" class="form-control">
               <option value="">-- Select a Preset to Apply --</option>
@@ -1242,7 +1233,7 @@
         let fetchedPresetsStore = [...DEFAULT_PRESETS];
 
         // --- DOM ELEMENTS ---
-        const appsScriptUrlInput = document.getElementById('apps-script-url');
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzTyUi6Lgoyg1qfBFUAO187TUe0aOHFG2ITBQ6ld18QbfIAIHjRRsdkKZEWMXczPVYkrg/exec';
         const btnLoadPresets = document.getElementById('btn-load-presets');
         const btnSavePreset = document.getElementById('btn-save-preset');
         const presetSelect = document.getElementById('preset-select');
@@ -1784,26 +1775,20 @@
             const opt = document.createElement('option');
             opt.value = index;
             const tType = (preset.Template_Type || 'kpi').toUpperCase();
-            const tTitle = preset.Slide_Title || 'Untitled Slide';
-            opt.textContent = `[${tType}] ${tTitle}`;
+            const pName = preset.Preset_Name || preset.Slide_Title || 'Untitled Preset';
+            opt.textContent = `[${tType}] ${pName}`;
             presetSelect.appendChild(opt);
           });
         }
 
         // --- GOOGLE APPS SCRIPT INTEGRATION ---
         async function fetchPresets() {
-          const url = appsScriptUrlInput.value.trim();
-          if (!url) {
-            showToast('Please enter a valid Apps Script URL', true);
-            return;
-          }
-
           dbStatus.textContent = 'Syncing...';
           dbStatus.style.color = 'var(--highlight-amber)';
           btnLoadPresets.textContent = '⏳ Loading...';
 
           try {
-            const res = await fetch(url, { method: 'GET' });
+            const res = await fetch(APPS_SCRIPT_URL, { method: 'GET' });
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json();
 
@@ -1830,17 +1815,20 @@
         }
 
         async function savePreset() {
-          const url = appsScriptUrlInput.value.trim();
-          if (!url) {
-            showToast('Please enter a valid Apps Script URL', true);
+          const currentSlideTitle = (slideTitleInput.value || '').trim();
+          const presetNameInput = prompt("Enter a name for this preset:", currentSlideTitle);
+
+          if (presetNameInput === null || presetNameInput.trim() === '') {
             return;
           }
 
+          const presetName = presetNameInput.trim();
           const currentTemplate = templateSelect.value;
           const templateData = getTemplateData(currentTemplate);
 
           const payload = {
             Template_Type: currentTemplate,
+            Preset_Name: presetName,
             Slide_Title: slideTitleInput.value,
             Subtitle: slideSubtitleInput.value,
             Category_Tag: categoryTagInput.value,
@@ -1852,7 +1840,7 @@
 
           try {
             // Apps Script POST can require no-cors or standard text/plain
-            const res = await fetch(url, {
+            const res = await fetch(APPS_SCRIPT_URL, {
               method: 'POST',
               headers: { 'Content-Type': 'text/plain;charset=utf-8' },
               body: JSON.stringify(payload)
