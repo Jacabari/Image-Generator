@@ -1,0 +1,1978 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Marketing Operations Visualizer</title>
+    <!-- Google Fonts: Montserrat -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- html2canvas CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+      :root {
+        --bg-primary: #002844;
+        --bg-card: #003C68;
+        --border-accent: #008CE8;
+        --highlight-orange: #FF9800;
+        --highlight-amber: #FFC107;
+        --text-light: #EEEEEE;
+        --text-muted: #A1A1AA;
+
+        /* Dark UI chrome colors */
+        --sidebar-bg: #00192e;
+        --sidebar-card: #002b4d;
+        --sidebar-border: #004b7f;
+        --input-bg: #001f38;
+        --status-green: #10B981;
+        --status-red: #EF4444;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body, html {
+        width: 100%;
+        height: 100%;
+        font-family: 'Montserrat', Arial, sans-serif;
+        background-color: #001221;
+        color: var(--text-light);
+        overflow: hidden;
+      }
+
+      /* App Shell Layout */
+      .app-shell {
+        display: flex;
+        width: 100vw;
+        height: 100vh;
+      }
+
+      /* Left Sidebar */
+      .sidebar {
+        width: 380px;
+        min-width: 380px;
+        height: 100vh;
+        background-color: var(--sidebar-bg);
+        border-right: 1px solid var(--sidebar-border);
+        overflow-y: auto;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        box-shadow: 4px 0 20px rgba(0,0,0,0.4);
+        z-index: 10;
+      }
+
+      .sidebar::-webkit-scrollbar {
+        width: 6px;
+      }
+      .sidebar::-webkit-scrollbar-track {
+        background: var(--sidebar-bg);
+      }
+      .sidebar::-webkit-scrollbar-thumb {
+        background: var(--sidebar-border);
+        border-radius: 3px;
+      }
+
+      .brand-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--sidebar-border);
+      }
+
+      .brand-icon {
+        width: 36px;
+        height: 36px;
+        background: linear-gradient(135deg, var(--border-accent), var(--highlight-orange));
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        color: #fff;
+        font-size: 18px;
+        box-shadow: 0 0 12px rgba(0, 140, 232, 0.4);
+      }
+
+      .brand-title {
+        font-size: 15px;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        color: var(--text-light);
+        line-height: 1.2;
+      }
+
+      .brand-subtitle {
+        font-size: 11px;
+        color: var(--highlight-amber);
+        font-weight: 600;
+      }
+
+      /* Section Cards inside Sidebar */
+      .sidebar-section {
+        background-color: var(--sidebar-card);
+        border: 1px solid var(--sidebar-border);
+        border-radius: 10px;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .section-heading {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--border-accent);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .form-label {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .form-control {
+        width: 100%;
+        background-color: var(--input-bg);
+        border: 1px solid var(--sidebar-border);
+        border-radius: 6px;
+        padding: 8px 12px;
+        color: var(--text-light);
+        font-family: inherit;
+        font-size: 12px;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+
+      .form-control:focus {
+        border-color: var(--border-accent);
+        box-shadow: 0 0 0 2px rgba(0, 140, 232, 0.25);
+      }
+
+      textarea.form-control {
+        resize: vertical;
+        min-height: 52px;
+      }
+
+      select.form-control {
+        cursor: pointer;
+      }
+
+      .btn-row {
+        display: flex;
+        gap: 8px;
+      }
+
+      .btn {
+        padding: 9px 14px;
+        border-radius: 6px;
+        font-family: inherit;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        transition: all 0.2s ease;
+      }
+
+      .btn-primary {
+        background-color: var(--border-accent);
+        color: #ffffff;
+      }
+
+      .btn-primary:hover {
+        background-color: #0076c4;
+        box-shadow: 0 0 10px rgba(0, 140, 232, 0.4);
+      }
+
+      .btn-amber {
+        background-color: var(--highlight-amber);
+        color: #00182b;
+      }
+
+      .btn-amber:hover {
+        background-color: #e0a800;
+        box-shadow: 0 0 10px rgba(255, 193, 7, 0.4);
+      }
+
+      .btn-secondary {
+        background-color: rgba(255, 255, 255, 0.08);
+        color: var(--text-light);
+        border: 1px solid var(--sidebar-border);
+      }
+
+      .btn-secondary:hover {
+        background-color: rgba(255, 255, 255, 0.15);
+      }
+
+      .btn-full {
+        width: 100%;
+      }
+
+      .status-pill {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 10px;
+        font-weight: 700;
+        background: rgba(0, 140, 232, 0.15);
+        color: var(--border-accent);
+        border: 1px solid var(--sidebar-border);
+      }
+
+      /* Right Stage Area */
+      .stage {
+        flex: 1;
+        height: 100vh;
+        background: radial-gradient(circle at center, #00223d 0%, #000f1c 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: auto;
+        padding: 30px;
+      }
+
+      .stage-toolbar {
+        position: absolute;
+        top: 16px;
+        right: 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(0, 28, 51, 0.85);
+        backdrop-filter: blur(8px);
+        padding: 6px 14px;
+        border-radius: 20px;
+        border: 1px solid var(--sidebar-border);
+        z-index: 5;
+      }
+
+      .stage-badge {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 0.5px;
+      }
+
+      /* Canvas Scaling Wrapper */
+      .canvas-outer-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+      }
+
+      .canvas-scaler {
+        transform-origin: center center;
+        transition: transform 0.2s ease-out;
+      }
+
+      /* STRICT 960x540 CANVAS REQUIREMENTS */
+      .slide-canvas {
+        width: 960px;
+        height: 540px;
+        min-width: 960px;
+        min-height: 540px;
+        max-width: 960px;
+        max-height: 540px;
+        background-color: var(--bg-primary);
+        border-radius: 4px;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(0, 140, 232, 0.35);
+        position: relative;
+        overflow: hidden;
+        padding: 36px 44px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        color: var(--text-light);
+      }
+
+      /* Canvas Header Elements */
+      .slide-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 20px;
+      }
+
+      .header-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        max-width: 700px;
+      }
+
+      .category-tag {
+        display: inline-block;
+        padding: 4px 12px;
+        background-color: var(--border-accent);
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        border-radius: 4px;
+        align-self: flex-start;
+      }
+
+      .slide-title {
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--text-light);
+        letter-spacing: -0.5px;
+        line-height: 1.15;
+      }
+
+      .slide-subtitle {
+        font-size: 14px;
+        font-weight: 400;
+        color: var(--text-muted);
+        line-height: 1.3;
+      }
+
+      .brand-watermark {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(0, 60, 104, 0.5);
+        border: 1px solid var(--border-accent);
+        padding: 6px 12px;
+        border-radius: 6px;
+      }
+
+      .brand-watermark-dot {
+        width: 8px;
+        height: 8px;
+        background-color: var(--highlight-orange);
+        border-radius: 50%;
+        box-shadow: 0 0 8px var(--highlight-orange);
+      }
+
+      .brand-watermark-text {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        color: var(--text-light);
+        text-transform: uppercase;
+      }
+
+      /* Main Canvas Dynamic Area */
+      .slide-content-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-bottom: 12px;
+      }
+
+      /* Template 1: KPI Metrics Layout */
+      .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        height: 270px;
+        align-items: stretch;
+      }
+
+      .kpi-card {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-accent);
+        border-radius: 12px;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+        overflow: hidden;
+        box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+      }
+
+      .kpi-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, var(--border-accent), var(--highlight-amber));
+      }
+
+      .kpi-label {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-muted);
+      }
+
+      .kpi-value {
+        font-size: 38px;
+        font-weight: 800;
+        color: var(--highlight-amber);
+        letter-spacing: -1px;
+        margin: 8px 0;
+        line-height: 1;
+      }
+
+      .kpi-subtext {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-light);
+        background: rgba(0, 40, 68, 0.7);
+        padding: 6px 10px;
+        border-radius: 6px;
+        border-left: 3px solid var(--highlight-orange);
+      }
+
+      /* Template 2: Timelines Layout */
+      .timeline-container {
+        position: relative;
+        height: 270px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .timeline-track {
+        position: absolute;
+        top: 48px;
+        left: 20px;
+        right: 20px;
+        height: 4px;
+        background: linear-gradient(90deg, var(--border-accent), var(--highlight-amber));
+        border-radius: 2px;
+        z-index: 1;
+      }
+
+      .timeline-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        position: relative;
+        z-index: 2;
+      }
+
+      .timeline-node {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .node-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .node-circle {
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        background-color: var(--bg-card);
+        border: 3px solid var(--border-accent);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 800;
+        color: var(--highlight-amber);
+        box-shadow: 0 0 10px rgba(0, 140, 232, 0.5);
+      }
+
+      .node-date {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--highlight-orange);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .node-card {
+        background-color: var(--bg-card);
+        border: 1px solid rgba(0, 140, 232, 0.4);
+        border-radius: 10px;
+        padding: 16px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        min-height: 180px;
+      }
+
+      .node-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text-light);
+        line-height: 1.25;
+      }
+
+      .node-desc {
+        font-size: 11px;
+        font-weight: 400;
+        color: var(--text-muted);
+        line-height: 1.4;
+      }
+
+      /* Template 3: Status Tracker Layout */
+      .status-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        height: 270px;
+        justify-content: center;
+      }
+
+      .status-row {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-accent);
+        border-radius: 10px;
+        padding: 14px 20px;
+        display: grid;
+        grid-template-columns: 2.2fr 1.3fr 3.5fr;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .initiative-name {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text-light);
+      }
+
+      .status-badge-container {
+        display: flex;
+        align-items: center;
+      }
+
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .status-badge.on-track {
+        background: rgba(16, 185, 129, 0.18);
+        color: #10B981;
+        border: 1px solid #10B981;
+      }
+
+      .status-badge.attention {
+        background: rgba(255, 152, 0, 0.18);
+        color: var(--highlight-orange);
+        border: 1px solid var(--highlight-orange);
+      }
+
+      .status-badge.blocked {
+        background: rgba(239, 68, 68, 0.18);
+        color: #EF4444;
+        border: 1px solid #EF4444;
+      }
+
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+
+      .status-badge.on-track .status-dot { background: #10B981; }
+      .status-badge.attention .status-dot { background: var(--highlight-orange); }
+      .status-badge.blocked .status-dot { background: #EF4444; }
+
+      .next-step-text {
+        font-size: 12px;
+        font-weight: 400;
+        color: var(--text-muted);
+        line-height: 1.3;
+      }
+
+      .next-step-prefix {
+        color: var(--highlight-amber);
+        font-weight: 600;
+      }
+
+      /* Template 4: Channel Performance Layout */
+      .channel-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        height: 270px;
+      }
+
+      .channel-card {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-accent);
+        border-radius: 12px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .channel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(0, 140, 232, 0.3);
+      }
+
+      .channel-name {
+        font-size: 18px;
+        font-weight: 800;
+        color: var(--text-light);
+      }
+
+      .channel-pill {
+        font-size: 10px;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 4px;
+        background: var(--bg-primary);
+        color: var(--highlight-amber);
+        border: 1px solid var(--border-accent);
+      }
+
+      .channel-metrics-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 12px;
+      }
+
+      .channel-metric-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(0, 40, 68, 0.5);
+        padding: 10px 14px;
+        border-radius: 8px;
+      }
+
+      .metric-name {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-muted);
+      }
+
+      .metric-val {
+        font-size: 18px;
+        font-weight: 800;
+        color: var(--highlight-amber);
+      }
+
+      /* Template 5: Period Comparison Layout */
+      .comparison-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 16px;
+        max-height: 270px;
+        align-items: stretch;
+      }
+
+      .comparison-card {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-accent);
+        border-radius: 10px;
+        padding: 16px 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+        overflow: hidden;
+        box-shadow: inset 0 0 15px rgba(0,0,0,0.2);
+      }
+
+      .comparison-card-title {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: var(--text-muted);
+        margin-bottom: 6px;
+      }
+
+      .comparison-values-row {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 10px;
+        margin-top: 4px;
+      }
+
+      .comparison-current {
+        font-size: 26px;
+        font-weight: 800;
+        color: var(--text-light);
+        letter-spacing: -0.5px;
+        line-height: 1;
+      }
+
+      .comparison-prior-box {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+      }
+
+      .comparison-prior-lbl {
+        font-size: 9px;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+      }
+
+      .comparison-prior-val {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-muted);
+      }
+
+      .comparison-footer-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 10px;
+        padding-top: 8px;
+        border-top: 1px solid rgba(0, 140, 232, 0.25);
+      }
+
+      .variance-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+      }
+
+      .variance-badge.positive {
+        background-color: rgba(255, 193, 7, 0.18);
+        color: var(--highlight-amber);
+        border: 1px solid var(--highlight-amber);
+      }
+
+      .variance-badge.negative {
+        background-color: rgba(238, 238, 238, 0.08);
+        color: var(--text-light);
+        border: 1px solid rgba(161, 161, 170, 0.4);
+      }
+
+      /* Canvas Footer */
+      .slide-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 12px;
+        border-top: 1px solid rgba(0, 140, 232, 0.3);
+        font-size: 10px;
+        font-weight: 600;
+        color: var(--text-muted);
+        letter-spacing: 0.5px;
+      }
+
+      /* Notification Toast */
+      .toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: var(--sidebar-card);
+        border: 1px solid var(--border-accent);
+        color: var(--text-light);
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        z-index: 100;
+        transform: translateY(100px);
+        opacity: 0;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+
+      .toast.show {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-shell">
+      <!-- Left Sidebar Controls -->
+      <aside class="sidebar">
+        <div class="brand-header">
+          <div class="brand-icon">M</div>
+          <div>
+            <div class="brand-title">MKTG OPS VISUALIZER</div>
+            <div class="brand-subtitle">Executive Slide Studio</div>
+          </div>
+        </div>
+
+        <!-- Section: Database & Presets -->
+        <div class="sidebar-section">
+          <div class="section-heading">
+            <span>Database Integration</span>
+            <span class="status-pill" id="db-status">Online</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="apps-script-url">Apps Script Endpoint URL</label>
+            <input 
+              type="text" 
+              id="apps-script-url" 
+              class="form-control" 
+              value="https://script.google.com/macros/s/AKfycbzTyUi6Lgoyg1qfBFUAO187TUe0aOHFG2ITBQ6ld18QbfIAIHjRRsdkKZEWMXczPVYkrg/exec"
+            />
+          </div>
+          <div class="btn-row">
+            <button id="btn-load-presets" class="btn btn-secondary btn-full">
+              ⚡ Load Presets
+            </button>
+            <button id="btn-save-preset" class="btn btn-amber btn-full">
+              💾 Save Preset
+            </button>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="preset-select">Fetched Presets</label>
+            <select id="preset-select" class="form-control">
+              <option value="">-- Select a Preset to Apply --</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Section: Slide Meta & Template Selector -->
+        <div class="sidebar-section">
+          <div class="section-heading">Slide Configuration</div>
+          
+          <div class="form-group">
+            <label class="form-label" for="template-select">Visual Template Layout</label>
+            <select id="template-select" class="form-control">
+              <option value="kpi">1. KPI Metrics (3 Cards Grid)</option>
+              <option value="timeline">2. Timelines (4 Node Track)</option>
+              <option value="status">3. Status Tracker (Initiatives)</option>
+              <option value="channel">4. Channel Performance (Side-by-Side)</option>
+              <option value="comparison">5. Period Comparison (MoM/QoQ/YoY)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="category-tag-input">Category Tag</label>
+            <input type="text" id="category-tag-input" class="form-control" value="Q3 PERFORMANCE REPORT" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="slide-title-input">Slide Main Title</label>
+            <input type="text" id="slide-title-input" class="form-control" value="Executive Marketing Operations Summary" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="slide-subtitle-input">Slide Subtitle</label>
+            <input type="text" id="slide-subtitle-input" class="form-control" value="Core growth metrics, milestone progress, and active channel performance" />
+          </div>
+        </div>
+
+        <!-- Section: Dynamic Template Specific Inputs -->
+        
+        <!-- TEMPLATE 1: KPI INPUTS -->
+        <div id="inputs-kpi" class="sidebar-section template-input-group">
+          <div class="section-heading">KPI Cards Content</div>
+          
+          <!-- Card 1 -->
+          <div class="form-group">
+            <label class="form-label">Card 1 Label & Value</label>
+            <input type="text" id="kpi1-label" class="form-control" value="Customer Acquisition Cost" />
+            <input type="text" id="kpi1-value" class="form-control" value="$142.50" />
+            <input type="text" id="kpi1-subtext" class="form-control" value="🟢 -12% MoM (Target: $150)" />
+          </div>
+
+          <!-- Card 2 -->
+          <div class="form-group">
+            <label class="form-label">Card 2 Label & Value</label>
+            <input type="text" id="kpi2-label" class="form-control" value="Return on Ad Spend" />
+            <input type="text" id="kpi2-value" class="form-control" value="4.85x" />
+            <input type="text" id="kpi2-subtext" class="form-control" value="🟢 +0.6x vs Q2 Benchmark" />
+          </div>
+
+          <!-- Card 3 -->
+          <div class="form-group">
+            <label class="form-label">Card 3 Label & Value</label>
+            <input type="text" id="kpi3-label" class="form-control" value="Marketing Qualified Leads" />
+            <input type="text" id="kpi3-value" class="form-control" value="14,280" />
+            <input type="text" id="kpi3-subtext" class="form-control" value="🟢 104% of Monthly Target" />
+          </div>
+        </div>
+
+        <!-- TEMPLATE 2: TIMELINE INPUTS -->
+        <div id="inputs-timeline" class="sidebar-section template-input-group" style="display:none;">
+          <div class="section-heading">Timeline Nodes</div>
+          
+          <!-- Node 1 -->
+          <div class="form-group">
+            <label class="form-label">Node 1 (Date, Title, Desc)</label>
+            <input type="text" id="time1-date" class="form-control" value="JUL 15" />
+            <input type="text" id="time1-title" class="form-control" value="Audience Segmentation" />
+            <textarea id="time1-desc" class="form-control">Refined ICP criteria across LinkedIn & Meta paid channels.</textarea>
+          </div>
+
+          <!-- Node 2 -->
+          <div class="form-group">
+            <label class="form-label">Node 2 (Date, Title, Desc)</label>
+            <input type="text" id="time2-date" class="form-control" value="AUG 01" />
+            <input type="text" id="time2-title" class="form-control" value="Creative Production" />
+            <textarea id="time2-desc" class="form-control">Finalized 12 video variations and responsive HTML landing pages.</textarea>
+          </div>
+
+          <!-- Node 3 -->
+          <div class="form-group">
+            <label class="form-label">Node 3 (Date, Title, Desc)</label>
+            <input type="text" id="time3-date" class="form-control" value="AUG 15" />
+            <input type="text" id="time3-title" class="form-control" value="Omnichannel Launch" />
+            <textarea id="time3-desc" class="form-control">Initiated synchronized ad pushes across Google Search and YouTube.</textarea>
+          </div>
+
+          <!-- Node 4 -->
+          <div class="form-group">
+            <label class="form-label">Node 4 (Date, Title, Desc)</label>
+            <input type="text" id="time4-date" class="form-control" value="SEP 01" />
+            <input type="text" id="time4-title" class="form-control" value="Mid-Flight Optimization" />
+            <textarea id="time4-desc" class="form-control">Reallocated budget toward top 2 performing video creatives.</textarea>
+          </div>
+        </div>
+
+        <!-- TEMPLATE 3: STATUS TRACKER INPUTS -->
+        <div id="inputs-status" class="sidebar-section template-input-group" style="display:none;">
+          <div class="section-heading">Initiatives Status</div>
+
+          <!-- Initiative 1 -->
+          <div class="form-group">
+            <label class="form-label">Initiative 1</label>
+            <input type="text" id="status1-name" class="form-control" value="Q3 Global Brand Refresh" />
+            <select id="status1-state" class="form-control">
+              <option value="On Track">On Track 🟢</option>
+              <option value="Attention Needed">Attention Needed 🟡</option>
+              <option value="Blocked">Blocked 🔴</option>
+            </select>
+            <input type="text" id="status1-next" class="form-control" value="Finalizing video asset localization for EMEA." />
+          </div>
+
+          <!-- Initiative 2 -->
+          <div class="form-group">
+            <label class="form-label">Initiative 2</label>
+            <input type="text" id="status2-name" class="form-control" value="HubSpot CRM Migration" />
+            <select id="status2-state" class="form-control">
+              <option value="On Track">On Track 🟢</option>
+              <option value="Attention Needed" selected>Attention Needed 🟡</option>
+              <option value="Blocked">Blocked 🔴</option>
+            </select>
+            <input type="text" id="status2-next" class="form-control" value="Resolving custom lead scoring API field mappings." />
+          </div>
+
+          <!-- Initiative 3 -->
+          <div class="form-group">
+            <label class="form-label">Initiative 3</label>
+            <input type="text" id="status3-name" class="form-control" value="Partner Referral Portal" />
+            <select id="status3-state" class="form-control">
+              <option value="On Track" selected>On Track 🟢</option>
+              <option value="Attention Needed">Attention Needed 🟡</option>
+              <option value="Blocked">Blocked 🔴</option>
+            </select>
+            <input type="text" id="status3-next" class="form-control" value="Beta testing payout automation engine." />
+          </div>
+
+          <!-- Initiative 4 -->
+          <div class="form-group">
+            <label class="form-label">Initiative 4</label>
+            <input type="text" id="status4-name" class="form-control" value="Paid Search Account Restructure" />
+            <select id="status4-state" class="form-control">
+              <option value="On Track">On Track 🟢</option>
+              <option value="Attention Needed">Attention Needed 🟡</option>
+              <option value="Blocked" selected>Blocked 🔴</option>
+            </select>
+            <input type="text" id="status4-next" class="form-control" value="Awaiting legal clearance for revised trademark ad copy." />
+          </div>
+        </div>
+
+        <!-- TEMPLATE 4: CHANNEL PERFORMANCE INPUTS -->
+        <div id="inputs-channel" class="sidebar-section template-input-group" style="display:none;">
+          <div class="section-heading">Channel Comparison</div>
+
+          <!-- Channel A -->
+          <div class="form-group">
+            <label class="form-label">Channel A (Name & 3 Metrics)</label>
+            <input type="text" id="chanA-name" class="form-control" value="Paid Search (Google Ads)" />
+            <div style="display:grid; grid-template-columns: 2fr 1fr; gap:6px;">
+              <input type="text" id="chanA-m1-lbl" class="form-control" value="Monthly Spend" />
+              <input type="text" id="chanA-m1-val" class="form-control" value="$48,500" />
+            </div>
+            <div style="display:grid; grid-template-columns: 2fr 1fr; gap:6px;">
+              <input type="text" id="chanA-m2-lbl" class="form-control" value="Conversion Rate" />
+              <input type="text" id="chanA-m2-val" class="form-control" value="5.2%" />
+            </div>
+            <div style="display:grid; grid-template-columns: 2fr 1fr; gap:6px;">
+              <input type="text" id="chanA-m3-lbl" class="form-control" value="Cost Per Lead" />
+              <input type="text" id="chanA-m3-val" class="form-control" value="$64.20" />
+            </div>
+          </div>
+
+          <!-- Channel B -->
+          <div class="form-group">
+            <label class="form-label">Channel B (Name & 3 Metrics)</label>
+            <input type="text" id="chanB-name" class="form-control" value="Paid Social (LinkedIn & Meta)" />
+            <div style="display:grid; grid-template-columns: 2fr 1fr; gap:6px;">
+              <input type="text" id="chanB-m1-lbl" class="form-control" value="Monthly Spend" />
+              <input type="text" id="chanB-m1-val" class="form-control" value="$36,200" />
+            </div>
+            <div style="display:grid; grid-template-columns: 2fr 1fr; gap:6px;">
+              <input type="text" id="chanB-m2-lbl" class="form-control" value="Conversion Rate" />
+              <input type="text" id="chanB-m2-val" class="form-control" value="3.8%" />
+            </div>
+            <div style="display:grid; grid-template-columns: 2fr 1fr; gap:6px;">
+              <input type="text" id="chanB-m3-lbl" class="form-control" value="Cost Per Lead" />
+              <input type="text" id="chanB-m3-val" class="form-control" value="$88.50" />
+            </div>
+          </div>
+        </div>
+
+        <!-- TEMPLATE 5: PERIOD COMPARISON INPUTS -->
+        <div id="inputs-comparison" class="sidebar-section template-input-group" style="display:none;">
+          <div class="section-heading">
+            <span>Period Comparison</span>
+            <button type="button" id="btn-add-metric" class="btn btn-secondary" style="padding: 3px 8px; font-size: 10px;">+ Add Metric</button>
+          </div>
+          <div id="comparison-metrics-list" style="display: flex; flex-direction: column; gap: 10px;">
+            <!-- Dynamic metric inputs injected here -->
+          </div>
+        </div>
+
+        <!-- Section: Actions & Export -->
+        <div class="sidebar-section">
+          <div class="section-heading">Export & Output</div>
+          <button id="btn-download-png" class="btn btn-primary btn-full">
+            📸 Download High-Res PNG (Scale 2x)
+          </button>
+          <button id="btn-reset-data" class="btn btn-secondary btn-full" style="margin-top:4px;">
+            🔄 Reset To Default Sample Data
+          </button>
+        </div>
+      </aside>
+
+      <!-- Right Stage (Preview Workspace) -->
+      <main class="stage" id="stage-area">
+        <div class="stage-toolbar">
+          <span class="stage-badge">Canvas Scale: <span id="scale-indicator">100%</span></span>
+          <span class="stage-badge" style="color:var(--highlight-amber);">Ratio: 16:9 (960×540px)</span>
+        </div>
+
+        <div class="canvas-outer-wrapper">
+          <div class="canvas-scaler" id="canvas-scaler">
+            
+            <!-- STRICT 960x540 CANVAS -->
+            <div class="slide-canvas" id="slide-canvas">
+              
+              <!-- Shared Slide Header -->
+              <div class="slide-header">
+                <div class="header-meta">
+                  <span class="category-tag" id="canvas-category">Q3 PERFORMANCE REPORT</span>
+                  <h1 class="slide-title" id="canvas-title">Executive Marketing Operations Summary</h1>
+                  <p class="slide-subtitle" id="canvas-subtitle">Core growth metrics, milestone progress, and active channel performance</p>
+                </div>
+                <div class="brand-watermark">
+                  <div class="brand-watermark-dot"></div>
+                  <span class="brand-watermark-text">MKTG OPS</span>
+                </div>
+              </div>
+
+              <!-- Slide Main Content Container -->
+              <div class="slide-content-area" id="slide-content">
+                <!-- Content will be injected dynamically via JavaScript -->
+              </div>
+
+              <!-- Shared Slide Footer -->
+              <div class="slide-footer">
+                <span>CONFIDENTIAL • INTERNAL MARKETING OPERATIONS DIRECTIVE</span>
+                <span id="canvas-footer-page">SLIDE 01 • MKTG-OPS-VISUALIZER</span>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast">Action completed successfully</div>
+
+    <!-- JavaScript Logic -->
+    <script>
+      (function() {
+        // --- DEFAULT PRESET DATA FALLBACKS ---
+        const DEFAULT_PRESETS = [
+          {
+            Template_Type: 'kpi',
+            Slide_Title: 'Executive Marketing Operations Summary',
+            Subtitle: 'Core growth metrics, milestone progress, and active channel performance',
+            Category_Tag: 'Q3 PERFORMANCE REPORT',
+            Content_Data: JSON.stringify({
+              kpi1_label: 'Customer Acquisition Cost',
+              kpi1_value: '$142.50',
+              kpi1_subtext: '🟢 -12% MoM (Target: $150)',
+              kpi2_label: 'Return on Ad Spend',
+              kpi2_value: '4.85x',
+              kpi2_subtext: '🟢 +0.6x vs Q2 Benchmark',
+              kpi3_label: 'Marketing Qualified Leads',
+              kpi3_value: '14,280',
+              kpi3_subtext: '🟢 104% of Monthly Target'
+            })
+          },
+          {
+            Template_Type: 'timeline',
+            Slide_Title: 'Q3 Campaign Execution Roadmap',
+            Subtitle: 'Strategic milestones across audience segmentation, creative, and launch phases',
+            Category_Tag: 'CAMPAIGN ROADMAP',
+            Content_Data: JSON.stringify({
+              time1_date: 'JUL 15',
+              time1_title: 'Audience Segmentation',
+              time1_desc: 'Refined ICP criteria across LinkedIn & Meta paid channels.',
+              time2_date: 'AUG 01',
+              time2_title: 'Creative Production',
+              time2_desc: 'Finalized 12 video variations and responsive landing pages.',
+              time3_date: 'AUG 15',
+              time3_title: 'Omnichannel Launch',
+              time3_desc: 'Initiated synchronized ad pushes across Google Search and YouTube.',
+              time4_date: 'SEP 01',
+              time4_title: 'Mid-Flight Optimization',
+              time4_desc: 'Reallocated budget toward top 2 performing video creatives.'
+            })
+          },
+          {
+            Template_Type: 'status',
+            Slide_Title: 'Key Strategic Initiatives Tracker',
+            Subtitle: 'Current progress, risk profiles, and immediate next steps for active projects',
+            Category_Tag: 'OPERATIONS DASHBOARD',
+            Content_Data: JSON.stringify({
+              status1_name: 'Q3 Global Brand Refresh',
+              status1_state: 'On Track',
+              status1_next: 'Finalizing video asset localization for EMEA markets.',
+              status2_name: 'HubSpot CRM Migration',
+              status2_state: 'Attention Needed',
+              status2_next: 'Resolving custom lead scoring API field mappings with IT.',
+              status3_name: 'Partner Referral Portal',
+              status3_state: 'On Track',
+              status3_next: 'Beta testing payout automation engine with top 5 partners.',
+              status4_name: 'Paid Search Restructure',
+              status4_state: 'Blocked',
+              status4_next: 'Awaiting legal clearance for revised trademark ad copy.'
+            })
+          },
+          {
+            Template_Type: 'channel',
+            Slide_Title: 'Paid Acquisition Channel Breakdown',
+            Subtitle: 'Efficiency comparison between Google Paid Search and Paid Social channels',
+            Category_Tag: 'CHANNEL METRICS',
+            Content_Data: JSON.stringify({
+              chanA_name: 'Paid Search (Google Ads)',
+              chanA_m1_lbl: 'Monthly Spend',
+              chanA_m1_val: '$48,500',
+              chanA_m2_lbl: 'Conversion Rate',
+              chanA_m2_val: '5.2%',
+              chanA_m3_lbl: 'Cost Per Lead',
+              chanA_m3_val: '$64.20',
+              chanB_name: 'Paid Social (LinkedIn & Meta)',
+              chanB_m1_lbl: 'Monthly Spend',
+              chanB_m1_val: '$36,200',
+              chanB_m2_lbl: 'Conversion Rate',
+              chanB_m2_val: '3.8%',
+              chanB_m3_lbl: 'Cost Per Lead',
+              chanB_m3_val: '$88.50'
+            })
+          },
+          {
+            Template_Type: 'comparison',
+            Slide_Title: 'Period-over-Period Performance Metrics',
+            Subtitle: 'Quarterly growth comparison and variance analysis across key marketing indicators',
+            Category_Tag: 'PERIOD COMPARISON',
+            Content_Data: JSON.stringify({
+              metrics: [
+                { name: 'Organic Traffic', prior: '125,000', current: '148,200' },
+                { name: 'Paid Search CAC', prior: '$165.00', current: '$142.50' },
+                { name: 'Trial Conversion Rate', prior: '4.2%', current: '5.6%' },
+                { name: 'Net Revenue Retention', prior: '108%', current: '115%' }
+              ]
+            })
+          }
+        ];
+
+        let fetchedPresetsStore = [...DEFAULT_PRESETS];
+
+        // --- DOM ELEMENTS ---
+        const appsScriptUrlInput = document.getElementById('apps-script-url');
+        const btnLoadPresets = document.getElementById('btn-load-presets');
+        const btnSavePreset = document.getElementById('btn-save-preset');
+        const presetSelect = document.getElementById('preset-select');
+        const dbStatus = document.getElementById('db-status');
+
+        const templateSelect = document.getElementById('template-select');
+        const categoryTagInput = document.getElementById('category-tag-input');
+        const slideTitleInput = document.getElementById('slide-title-input');
+        const slideSubtitleInput = document.getElementById('slide-subtitle-input');
+
+        const canvasCategory = document.getElementById('canvas-category');
+        const canvasTitle = document.getElementById('canvas-title');
+        const canvasSubtitle = document.getElementById('canvas-subtitle');
+        const slideContent = document.getElementById('slide-content');
+        const slideCanvas = document.getElementById('slide-canvas');
+
+        const btnDownloadPng = document.getElementById('btn-download-png');
+        const btnResetData = document.getElementById('btn-reset-data');
+        const toastEl = document.getElementById('toast');
+
+        const canvasScaler = document.getElementById('canvas-scaler');
+        const scaleIndicator = document.getElementById('scale-indicator');
+        const stageArea = document.getElementById('stage-area');
+
+        // --- CANVAS RESPONSIVE AUTO-RESIZER ---
+        function resizeCanvasToFitStage() {
+          if (!stageArea || !canvasScaler) return;
+          const padding = 60;
+          const stageW = stageArea.clientWidth - padding;
+          const stageH = stageArea.clientHeight - padding;
+          
+          const scaleX = stageW / 960;
+          const scaleY = stageH / 540;
+          const scale = Math.min(1, Math.min(scaleX, scaleY));
+          
+          canvasScaler.style.transform = `scale(${scale})`;
+          scaleIndicator.textContent = `${Math.round(scale * 100)}%`;
+        }
+
+        window.addEventListener('resize', resizeCanvasToFitStage);
+
+        // --- TOAST NOTIFICATION ---
+        function showToast(msg, isError = false) {
+          toastEl.textContent = msg;
+          toastEl.style.borderColor = isError ? 'var(--status-red)' : 'var(--border-accent)';
+          toastEl.classList.add('show');
+          setTimeout(() => {
+            toastEl.classList.remove('show');
+          }, 3500);
+        }
+
+        // --- RENDER SLIDE CANVAS TEMPLATES ---
+        function renderCanvas() {
+          const template = templateSelect.value;
+
+          // Update header
+          canvasCategory.textContent = categoryTagInput.value || 'MARKETING OPS';
+          canvasTitle.textContent = slideTitleInput.value || 'Untitled Slide';
+          canvasSubtitle.textContent = slideSubtitleInput.value || '';
+
+          // Toggle template input panels in sidebar
+          document.querySelectorAll('.template-input-group').forEach(el => el.style.display = 'none');
+          const targetInputs = document.getElementById(`inputs-${template}`);
+          if (targetInputs) targetInputs.style.display = 'flex';
+
+          // Render canvas body
+          if (template === 'kpi') {
+            const k1Lbl = document.getElementById('kpi1-label').value;
+            const k1Val = document.getElementById('kpi1-value').value;
+            const k1Sub = document.getElementById('kpi1-subtext').value;
+
+            const k2Lbl = document.getElementById('kpi2-label').value;
+            const k2Val = document.getElementById('kpi2-value').value;
+            const k2Sub = document.getElementById('kpi2-subtext').value;
+
+            const k3Lbl = document.getElementById('kpi3-label').value;
+            const k3Val = document.getElementById('kpi3-value').value;
+            const k3Sub = document.getElementById('kpi3-subtext').value;
+
+            slideContent.innerHTML = `
+              <div class="kpi-grid">
+                <div class="kpi-card">
+                  <div class="kpi-label">${escapeHtml(k1Lbl)}</div>
+                  <div class="kpi-value">${escapeHtml(k1Val)}</div>
+                  <div class="kpi-subtext">${escapeHtml(k1Sub)}</div>
+                </div>
+                <div class="kpi-card">
+                  <div class="kpi-label">${escapeHtml(k2Lbl)}</div>
+                  <div class="kpi-value">${escapeHtml(k2Val)}</div>
+                  <div class="kpi-subtext">${escapeHtml(k2Sub)}</div>
+                </div>
+                <div class="kpi-card">
+                  <div class="kpi-label">${escapeHtml(k3Lbl)}</div>
+                  <div class="kpi-value">${escapeHtml(k3Val)}</div>
+                  <div class="kpi-subtext">${escapeHtml(k3Sub)}</div>
+                </div>
+              </div>
+            `;
+          } else if (template === 'timeline') {
+            const t1Date = document.getElementById('time1-date').value;
+            const t1Title = document.getElementById('time1-title').value;
+            const t1Desc = document.getElementById('time1-desc').value;
+
+            const t2Date = document.getElementById('time2-date').value;
+            const t2Title = document.getElementById('time2-title').value;
+            const t2Desc = document.getElementById('time2-desc').value;
+
+            const t3Date = document.getElementById('time3-date').value;
+            const t3Title = document.getElementById('time3-title').value;
+            const t3Desc = document.getElementById('time3-desc').value;
+
+            const t4Date = document.getElementById('time4-date').value;
+            const t4Title = document.getElementById('time4-title').value;
+            const t4Desc = document.getElementById('time4-desc').value;
+
+            slideContent.innerHTML = `
+              <div class="timeline-container">
+                <div class="timeline-track"></div>
+                <div class="timeline-grid">
+                  <div class="timeline-node">
+                    <div class="node-header">
+                      <div class="node-circle">1</div>
+                      <div class="node-date">${escapeHtml(t1Date)}</div>
+                    </div>
+                    <div class="node-card">
+                      <div class="node-title">${escapeHtml(t1Title)}</div>
+                      <div class="node-desc">${escapeHtml(t1Desc)}</div>
+                    </div>
+                  </div>
+
+                  <div class="timeline-node">
+                    <div class="node-header">
+                      <div class="node-circle">2</div>
+                      <div class="node-date">${escapeHtml(t2Date)}</div>
+                    </div>
+                    <div class="node-card">
+                      <div class="node-title">${escapeHtml(t2Title)}</div>
+                      <div class="node-desc">${escapeHtml(t2Desc)}</div>
+                    </div>
+                  </div>
+
+                  <div class="timeline-node">
+                    <div class="node-header">
+                      <div class="node-circle">3</div>
+                      <div class="node-date">${escapeHtml(t3Date)}</div>
+                    </div>
+                    <div class="node-card">
+                      <div class="node-title">${escapeHtml(t3Title)}</div>
+                      <div class="node-desc">${escapeHtml(t3Desc)}</div>
+                    </div>
+                  </div>
+
+                  <div class="timeline-node">
+                    <div class="node-header">
+                      <div class="node-circle">4</div>
+                      <div class="node-date">${escapeHtml(t4Date)}</div>
+                    </div>
+                    <div class="node-card">
+                      <div class="node-title">${escapeHtml(t4Title)}</div>
+                      <div class="node-desc">${escapeHtml(t4Desc)}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+          } else if (template === 'status') {
+            const s1Name = document.getElementById('status1-name').value;
+            const s1State = document.getElementById('status1-state').value;
+            const s1Next = document.getElementById('status1-next').value;
+
+            const s2Name = document.getElementById('status2-name').value;
+            const s2State = document.getElementById('status2-state').value;
+            const s2Next = document.getElementById('status2-next').value;
+
+            const s3Name = document.getElementById('status3-name').value;
+            const s3State = document.getElementById('status3-state').value;
+            const s3Next = document.getElementById('status3-next').value;
+
+            const s4Name = document.getElementById('status4-name').value;
+            const s4State = document.getElementById('status4-state').value;
+            const s4Next = document.getElementById('status4-next').value;
+
+            const getBadgeHtml = (stateVal) => {
+              if (stateVal === 'On Track') {
+                return `<div class="status-badge on-track"><span class="status-dot"></span>On Track</div>`;
+              } else if (stateVal === 'Attention Needed') {
+                return `<div class="status-badge attention"><span class="status-dot"></span>Attention Needed</div>`;
+              } else {
+                return `<div class="status-badge blocked"><span class="status-dot"></span>Blocked</div>`;
+              }
+            };
+
+            slideContent.innerHTML = `
+              <div class="status-container">
+                <div class="status-row">
+                  <div class="initiative-name">${escapeHtml(s1Name)}</div>
+                  <div class="status-badge-container">${getBadgeHtml(s1State)}</div>
+                  <div class="next-step-text"><span class="next-step-prefix">Next Step: </span>${escapeHtml(s1Next)}</div>
+                </div>
+
+                <div class="status-row">
+                  <div class="initiative-name">${escapeHtml(s2Name)}</div>
+                  <div class="status-badge-container">${getBadgeHtml(s2State)}</div>
+                  <div class="next-step-text"><span class="next-step-prefix">Next Step: </span>${escapeHtml(s2Next)}</div>
+                </div>
+
+                <div class="status-row">
+                  <div class="initiative-name">${escapeHtml(s3Name)}</div>
+                  <div class="status-badge-container">${getBadgeHtml(s3State)}</div>
+                  <div class="next-step-text"><span class="next-step-prefix">Next Step: </span>${escapeHtml(s3Next)}</div>
+                </div>
+
+                <div class="status-row">
+                  <div class="initiative-name">${escapeHtml(s4Name)}</div>
+                  <div class="status-badge-container">${getBadgeHtml(s4State)}</div>
+                  <div class="next-step-text"><span class="next-step-prefix">Next Step: </span>${escapeHtml(s4Next)}</div>
+                </div>
+              </div>
+            `;
+          } else if (template === 'channel') {
+            const cAName = document.getElementById('chanA-name').value;
+            const cAM1Lbl = document.getElementById('chanA-m1-lbl').value;
+            const cAM1Val = document.getElementById('chanA-m1-val').value;
+            const cAM2Lbl = document.getElementById('chanA-m2-lbl').value;
+            const cAM2Val = document.getElementById('chanA-m2-val').value;
+            const cAM3Lbl = document.getElementById('chanA-m3-lbl').value;
+            const cAM3Val = document.getElementById('chanA-m3-val').value;
+
+            const cBName = document.getElementById('chanB-name').value;
+            const cBM1Lbl = document.getElementById('chanB-m1-lbl').value;
+            const cBM1Val = document.getElementById('chanB-m1-val').value;
+            const cBM2Lbl = document.getElementById('chanB-m2-lbl').value;
+            const cBM2Val = document.getElementById('chanB-m2-val').value;
+            const cBM3Lbl = document.getElementById('chanB-m3-lbl').value;
+            const cBM3Val = document.getElementById('chanB-m3-val').value;
+
+            slideContent.innerHTML = `
+              <div class="channel-grid">
+                <div class="channel-card">
+                  <div class="channel-header">
+                    <div class="channel-name">${escapeHtml(cAName)}</div>
+                    <span class="channel-pill">CHANNEL A</span>
+                  </div>
+                  <div class="channel-metrics-list">
+                    <div class="channel-metric-row">
+                      <span class="metric-name">${escapeHtml(cAM1Lbl)}</span>
+                      <span class="metric-val">${escapeHtml(cAM1Val)}</span>
+                    </div>
+                    <div class="channel-metric-row">
+                      <span class="metric-name">${escapeHtml(cAM2Lbl)}</span>
+                      <span class="metric-val">${escapeHtml(cAM2Val)}</span>
+                    </div>
+                    <div class="channel-metric-row">
+                      <span class="metric-name">${escapeHtml(cAM3Lbl)}</span>
+                      <span class="metric-val">${escapeHtml(cAM3Val)}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="channel-card">
+                  <div class="channel-header">
+                    <div class="channel-name">${escapeHtml(cBName)}</div>
+                    <span class="channel-pill">CHANNEL B</span>
+                  </div>
+                  <div class="channel-metrics-list">
+                    <div class="channel-metric-row">
+                      <span class="metric-name">${escapeHtml(cBM1Lbl)}</span>
+                      <span class="metric-val">${escapeHtml(cBM1Val)}</span>
+                    </div>
+                    <div class="channel-metric-row">
+                      <span class="metric-name">${escapeHtml(cBM2Lbl)}</span>
+                      <span class="metric-val">${escapeHtml(cBM2Val)}</span>
+                    </div>
+                    <div class="channel-metric-row">
+                      <span class="metric-name">${escapeHtml(cBM3Lbl)}</span>
+                      <span class="metric-val">${escapeHtml(cBM3Val)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+          } else if (template === 'comparison') {
+            const metrics = getComparisonMetricsFromSidebar();
+            const cardsHtml = metrics.map(m => {
+              const varInfo = calculateVariance(m.prior, m.current);
+              const badgeClass = varInfo.isPositive ? 'positive' : 'negative';
+              const arrow = varInfo.isPositive ? '▲' : (varInfo.isNegative ? '▼' : '•');
+              return `
+                <div class="comparison-card">
+                  <div class="comparison-card-title">${escapeHtml(m.name || 'Metric')}</div>
+                  <div class="comparison-values-row">
+                    <div class="comparison-current">${escapeHtml(m.current || '-')}</div>
+                    <div class="comparison-prior-box">
+                      <span class="comparison-prior-lbl">PRIOR</span>
+                      <span class="comparison-prior-val">${escapeHtml(m.prior || '-')}</span>
+                    </div>
+                  </div>
+                  <div class="comparison-footer-row">
+                    <span style="font-size:10px; color:var(--text-muted); font-weight:600;">VARIANCE</span>
+                    <div class="variance-badge ${badgeClass}">
+                      <span>${arrow}</span>
+                      <span>${escapeHtml(varInfo.text)}</span>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('');
+
+            slideContent.innerHTML = `
+              <div class="comparison-grid">
+                ${cardsHtml || '<div style="color:var(--text-muted); font-size:12px;">No comparison metrics added. Click "+ Add Metric" in the sidebar.</div>'}
+              </div>
+            `;
+          }
+        }
+
+        function escapeHtml(str) {
+          if (!str) return '';
+          return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+        }
+
+        // --- VARIANCE CALCULATION HELPER ---
+        function calculateVariance(priorStr, currentStr) {
+          if (!priorStr || !currentStr) return { text: 'N/A', isPositive: false, isNegative: false };
+          
+          const parseVal = (s) => {
+            const cleaned = String(s).replace(/[^0-9.-]/g, '');
+            const val = parseFloat(cleaned);
+            return isNaN(val) ? null : val;
+          };
+
+          const pVal = parseVal(priorStr);
+          const cVal = parseVal(currentStr);
+
+          if (pVal === null || cVal === null || pVal === 0) {
+            return { text: 'N/A', isPositive: false, isNegative: false };
+          }
+
+          const diff = cVal - pVal;
+          const pct = (diff / Math.abs(pVal)) * 100;
+          const formatted = (pct > 0 ? '+' : '') + pct.toFixed(1) + '%';
+
+          return {
+            text: formatted,
+            isPositive: pct > 0,
+            isNegative: pct < 0
+          };
+        }
+
+        // --- SIDEBAR METRIC CONTROLS FOR COMPARISON ---
+        function getComparisonMetricsFromSidebar() {
+          const container = document.getElementById('comparison-metrics-list');
+          if (!container) return [];
+          const rows = container.querySelectorAll('.comparison-metric-item');
+          const list = [];
+          rows.forEach(row => {
+            const name = row.querySelector('.metric-name')?.value || '';
+            const prior = row.querySelector('.metric-prior')?.value || '';
+            const current = row.querySelector('.metric-current')?.value || '';
+            list.push({ name, prior, current });
+          });
+          return list;
+        }
+
+        function createMetricRowElement(name = '', prior = '', current = '', index = 1) {
+          const div = document.createElement('div');
+          div.className = 'comparison-metric-item';
+          div.style.cssText = 'background: var(--input-bg); padding: 8px 10px; border-radius: 6px; border: 1px solid var(--sidebar-border); display: flex; flex-direction: column; gap: 6px;';
+          div.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="form-label" style="font-size: 10px;">Metric #${index}</span>
+              <button type="button" class="btn-remove-metric" style="background:none; border:none; color:var(--status-red); cursor:pointer; font-weight:bold; font-size:12px;" title="Remove Metric">✕</button>
+            </div>
+            <input type="text" class="form-control metric-name" value="${escapeHtml(name)}" placeholder="Metric Name" />
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+              <div>
+                <span style="font-size: 9px; color: var(--text-muted); text-transform: uppercase;">Prior</span>
+                <input type="text" class="form-control metric-prior" value="${escapeHtml(prior)}" placeholder="Prior Value" />
+              </div>
+              <div>
+                <span style="font-size: 9px; color: var(--text-muted); text-transform: uppercase;">Current</span>
+                <input type="text" class="form-control metric-current" value="${escapeHtml(current)}" placeholder="Current Value" />
+              </div>
+            </div>
+          `;
+
+          div.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', renderCanvas);
+            input.addEventListener('change', renderCanvas);
+          });
+
+          div.querySelector('.btn-remove-metric').addEventListener('click', () => {
+            div.remove();
+            renumberMetricRows();
+            renderCanvas();
+          });
+
+          return div;
+        }
+
+        function renumberMetricRows() {
+          const container = document.getElementById('comparison-metrics-list');
+          if (!container) return;
+          const rows = container.querySelectorAll('.comparison-metric-item');
+          rows.forEach((row, i) => {
+            const lbl = row.querySelector('.form-label');
+            if (lbl) lbl.textContent = `Metric #${i + 1}`;
+          });
+        }
+
+        function setComparisonMetricsInSidebar(metricsList) {
+          const container = document.getElementById('comparison-metrics-list');
+          if (!container) return;
+          container.innerHTML = '';
+          if (!Array.isArray(metricsList) || metricsList.length === 0) {
+            metricsList = [
+              { name: 'Organic Traffic', prior: '125,000', current: '148,200' },
+              { name: 'Paid Search CAC', prior: '$165.00', current: '$142.50' },
+              { name: 'Trial Conversion Rate', prior: '4.2%', current: '5.6%' },
+              { name: 'Net Revenue Retention', prior: '108%', current: '115%' }
+            ];
+          }
+          metricsList.forEach((m, idx) => {
+            const rowEl = createMetricRowElement(m.name, m.prior, m.current, idx + 1);
+            container.appendChild(rowEl);
+          });
+        }
+
+        // --- COLLECT ACTIVE TEMPLATE DATA OBJECT ---
+        function getTemplateData(template) {
+          if (template === 'kpi') {
+            return {
+              kpi1_label: document.getElementById('kpi1-label').value,
+              kpi1_value: document.getElementById('kpi1-value').value,
+              kpi1_subtext: document.getElementById('kpi1-subtext').value,
+              kpi2_label: document.getElementById('kpi2-label').value,
+              kpi2_value: document.getElementById('kpi2-value').value,
+              kpi2_subtext: document.getElementById('kpi2-subtext').value,
+              kpi3_label: document.getElementById('kpi3-label').value,
+              kpi3_value: document.getElementById('kpi3-value').value,
+              kpi3_subtext: document.getElementById('kpi3-subtext').value
+            };
+          } else if (template === 'timeline') {
+            return {
+              time1_date: document.getElementById('time1-date').value,
+              time1_title: document.getElementById('time1-title').value,
+              time1_desc: document.getElementById('time1-desc').value,
+              time2_date: document.getElementById('time2-date').value,
+              time2_title: document.getElementById('time2-title').value,
+              time2_desc: document.getElementById('time2-desc').value,
+              time3_date: document.getElementById('time3-date').value,
+              time3_title: document.getElementById('time3-title').value,
+              time3_desc: document.getElementById('time3-desc').value,
+              time4_date: document.getElementById('time4-date').value,
+              time4_title: document.getElementById('time4-title').value,
+              time4_desc: document.getElementById('time4-desc').value
+            };
+          } else if (template === 'status') {
+            return {
+              status1_name: document.getElementById('status1-name').value,
+              status1_state: document.getElementById('status1-state').value,
+              status1_next: document.getElementById('status1-next').value,
+              status2_name: document.getElementById('status2-name').value,
+              status2_state: document.getElementById('status2-state').value,
+              status2_next: document.getElementById('status2-next').value,
+              status3_name: document.getElementById('status3-name').value,
+              status3_state: document.getElementById('status3-state').value,
+              status3_next: document.getElementById('status3-next').value,
+              status4_name: document.getElementById('status4-name').value,
+              status4_state: document.getElementById('status4-state').value,
+              status4_next: document.getElementById('status4-next').value
+            };
+          } else if (template === 'channel') {
+            return {
+              chanA_name: document.getElementById('chanA-name').value,
+              chanA_m1_lbl: document.getElementById('chanA-m1-lbl').value,
+              chanA_m1_val: document.getElementById('chanA-m1-val').value,
+              chanA_m2_lbl: document.getElementById('chanA-m2-lbl').value,
+              chanA_m2_val: document.getElementById('chanA-m2-val').value,
+              chanA_m3_lbl: document.getElementById('chanA-m3-lbl').value,
+              chanA_m3_val: document.getElementById('chanA-m3-val').value,
+              chanB_name: document.getElementById('chanB-name').value,
+              chanB_m1_lbl: document.getElementById('chanB-m1-lbl').value,
+              chanB_m1_val: document.getElementById('chanB-m1-val').value,
+              chanB_m2_lbl: document.getElementById('chanB-m2-lbl').value,
+              chanB_m2_val: document.getElementById('chanB-m2-val').value,
+              chanB_m3_lbl: document.getElementById('chanB-m3-lbl').value,
+              chanB_m3_val: document.getElementById('chanB-m3-val').value
+            };
+          } else if (template === 'comparison') {
+            return {
+              metrics: getComparisonMetricsFromSidebar()
+            };
+          }
+          return {};
+        }
+
+        // --- APPLY DATA OBJECT TO FORM INPUTS ---
+        function applyDataToForm(item) {
+          if (!item) return;
+          if (item.Template_Type) templateSelect.value = item.Template_Type;
+          if (item.Slide_Title !== undefined) slideTitleInput.value = item.Slide_Title;
+          if (item.Subtitle !== undefined) slideSubtitleInput.value = item.Subtitle;
+          if (item.Category_Tag !== undefined) categoryTagInput.value = item.Category_Tag;
+
+          let content = item.Content_Data;
+          if (typeof content === 'string') {
+            try {
+              content = JSON.parse(content);
+            } catch(e) {
+              console.warn('Failed to parse Content_Data JSON:', e);
+              content = {};
+            }
+          }
+
+          if (content && typeof content === 'object') {
+            if (Array.isArray(content.metrics)) {
+              setComparisonMetricsInSidebar(content.metrics);
+            }
+            Object.keys(content).forEach(key => {
+              const el = document.getElementById(key);
+              if (el) {
+                el.value = content[key];
+              }
+            });
+          }
+
+          renderCanvas();
+        }
+
+        // --- POPULATE PRESET DROPDOWN ---
+        function populatePresetDropdown(presets) {
+          presetSelect.innerHTML = '<option value="">-- Select a Preset to Apply --</option>';
+          presets.forEach((preset, index) => {
+            const opt = document.createElement('option');
+            opt.value = index;
+            const tType = (preset.Template_Type || 'kpi').toUpperCase();
+            const tTitle = preset.Slide_Title || 'Untitled Slide';
+            opt.textContent = `[${tType}] ${tTitle}`;
+            presetSelect.appendChild(opt);
+          });
+        }
+
+        // --- GOOGLE APPS SCRIPT INTEGRATION ---
+        async function fetchPresets() {
+          const url = appsScriptUrlInput.value.trim();
+          if (!url) {
+            showToast('Please enter a valid Apps Script URL', true);
+            return;
+          }
+
+          dbStatus.textContent = 'Syncing...';
+          dbStatus.style.color = 'var(--highlight-amber)';
+          btnLoadPresets.textContent = '⏳ Loading...';
+
+          try {
+            const res = await fetch(url, { method: 'GET' });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const data = await res.json();
+
+            if (Array.isArray(data) && data.length > 0) {
+              fetchedPresetsStore = data;
+              populatePresetDropdown(fetchedPresetsStore);
+              dbStatus.textContent = 'Online';
+              dbStatus.style.color = 'var(--status-green)';
+              showToast(`Successfully loaded ${data.length} presets from Google Sheets!`);
+            } else {
+              showToast('Fetched empty array, keeping local default presets');
+              populatePresetDropdown(fetchedPresetsStore);
+              dbStatus.textContent = 'Online';
+            }
+          } catch (err) {
+            console.warn('GET Presets error (falling back to defaults):', err);
+            populatePresetDropdown(fetchedPresetsStore);
+            dbStatus.textContent = 'Ready (Offline)';
+            dbStatus.style.color = 'var(--text-muted)';
+            showToast('Using loaded default presets (Apps Script direct fetch error or CORS)', false);
+          } finally {
+            btnLoadPresets.textContent = '⚡ Load Presets';
+          }
+        }
+
+        async function savePreset() {
+          const url = appsScriptUrlInput.value.trim();
+          if (!url) {
+            showToast('Please enter a valid Apps Script URL', true);
+            return;
+          }
+
+          const currentTemplate = templateSelect.value;
+          const templateData = getTemplateData(currentTemplate);
+
+          const payload = {
+            Template_Type: currentTemplate,
+            Slide_Title: slideTitleInput.value,
+            Subtitle: slideSubtitleInput.value,
+            Category_Tag: categoryTagInput.value,
+            Content_Data: JSON.stringify(templateData)
+          };
+
+          btnSavePreset.textContent = '⏳ Saving...';
+          dbStatus.textContent = 'Saving...';
+
+          try {
+            // Apps Script POST can require no-cors or standard text/plain
+            const res = await fetch(url, {
+              method: 'POST',
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+              body: JSON.stringify(payload)
+            });
+
+            showToast('Preset saved to Google Sheets successfully!');
+            dbStatus.textContent = 'Saved';
+            dbStatus.style.color = 'var(--status-green)';
+
+            // Add locally to dropdown
+            fetchedPresetsStore.unshift(payload);
+            populatePresetDropdown(fetchedPresetsStore);
+            presetSelect.value = '0';
+          } catch (err) {
+            console.error('POST Save Preset error:', err);
+            // Even if browser CORS blocks response, save locally to preset store
+            fetchedPresetsStore.unshift(payload);
+            populatePresetDropdown(fetchedPresetsStore);
+            presetSelect.value = '0';
+            showToast('Saved locally & submitted POST request to Google Apps Script');
+            dbStatus.textContent = 'Online';
+          } finally {
+            btnSavePreset.textContent = '💾 Save Preset';
+          }
+        }
+
+        // --- DOWNLOAD PNG WITH HTML2CANVAS ---
+        function downloadPng() {
+          if (typeof html2canvas === 'undefined') {
+            showToast('html2canvas library is loading, please try again', true);
+            return;
+          }
+
+          btnDownloadPng.textContent = '⏳ Rendering PNG...';
+
+          // Momentarily clear scale transform to render cleanly at 960x540
+          const originalTransform = canvasScaler.style.transform;
+          canvasScaler.style.transform = 'scale(1)';
+
+          html2canvas(slideCanvas, {
+            scale: 2, // 2x high resolution output (1920x1080)
+            useCORS: true,
+            backgroundColor: '#002844',
+            logging: false
+          }).then(canvas => {
+            // Restore scale
+            canvasScaler.style.transform = originalTransform;
+
+            const link = document.createElement('a');
+            const cleanTitle = (slideTitleInput.value || 'slide')
+              .toLowerCase()
+              .replace(/[^a-z0-9]/g, '-')
+              .replace(/-+/g, '-');
+            link.download = `mktg-ops-${templateSelect.value}-${cleanTitle}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+
+            btnDownloadPng.textContent = '📸 Download High-Res PNG (Scale 2x)';
+            showToast('High-resolution PNG downloaded!');
+          }).catch(err => {
+            canvasScaler.style.transform = originalTransform;
+            btnDownloadPng.textContent = '📸 Download High-Res PNG (Scale 2x)';
+            showToast('Failed to generate PNG screenshot', true);
+            console.error(err);
+          });
+        }
+
+        // --- EVENT LISTENERS ---
+        // Live data binding on all input controls
+        document.querySelectorAll('.sidebar input, .sidebar textarea, .sidebar select').forEach(input => {
+          if (input.id === 'template-select' || input.id === 'preset-select' || input.id === 'apps-script-url') return;
+          input.addEventListener('input', renderCanvas);
+          input.addEventListener('change', renderCanvas);
+        });
+
+        // Template switcher
+        templateSelect.addEventListener('change', () => {
+          renderCanvas();
+        });
+
+        // Preset dropdown selection
+        presetSelect.addEventListener('change', (e) => {
+          const idx = e.target.value;
+          if (idx !== '' && fetchedPresetsStore[idx]) {
+            applyDataToForm(fetchedPresetsStore[idx]);
+            showToast('Applied selected preset!');
+          }
+        });
+
+        // Database buttons
+        btnLoadPresets.addEventListener('click', fetchPresets);
+        btnSavePreset.addEventListener('click', savePreset);
+
+        // Export button
+        btnDownloadPng.addEventListener('click', downloadPng);
+
+        // Reset default data button
+        btnResetData.addEventListener('click', () => {
+          applyDataToForm(DEFAULT_PRESETS[0]);
+          populatePresetDropdown(DEFAULT_PRESETS);
+          showToast('Reset to default sample slide data');
+        });
+
+        // --- INITIALIZATION ---
+        setComparisonMetricsInSidebar();
+        document.getElementById('btn-add-metric').addEventListener('click', () => {
+          const container = document.getElementById('comparison-metrics-list');
+          const count = container.querySelectorAll('.comparison-metric-item').length + 1;
+          const newRow = createMetricRowElement('', '', '', count);
+          container.appendChild(newRow);
+          renderCanvas();
+        });
+
+        populatePresetDropdown(DEFAULT_PRESETS);
+        renderCanvas();
+        resizeCanvasToFitStage();
+
+        // Auto-fetch presets on boot
+        setTimeout(fetchPresets, 800);
+      })();
+    </script>
+  </body>
+</html>
+
+
