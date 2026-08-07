@@ -1022,6 +1022,15 @@
             <span>Period Comparison</span>
             <button type="button" id="btn-add-metric" class="btn btn-secondary" style="padding: 3px 8px; font-size: 10px;">+ Add Metric</button>
           </div>
+
+          <div class="form-group" style="border-bottom: 1px solid var(--sidebar-border); padding-bottom: 10px; margin-bottom: 8px;">
+            <label class="form-label" for="comp-prior-lbl">Prior Period Label</label>
+            <input type="text" id="comp-prior-lbl" class="form-control" value="PRIOR" placeholder="Prior Period Label" />
+
+            <label class="form-label" for="comp-current-lbl" style="margin-top: 6px;">Current Period Label</label>
+            <input type="text" id="comp-current-lbl" class="form-control" value="CURRENT" placeholder="Current Period Label" />
+          </div>
+
           <div id="comparison-metrics-list" style="display: flex; flex-direction: column; gap: 10px;">
             <!-- Dynamic metric inputs injected here -->
           </div>
@@ -1177,6 +1186,8 @@
             Footer_Notice: 'CONFIDENTIAL • INTERNAL MARKETING OPERATIONS DIRECTIVE',
             Footer_Slide_ID: 'SLIDE 01 • MKTG-OPS-VISUALIZER',
             Content_Data: JSON.stringify({
+              Prior_Period_Label: 'PRIOR',
+              Current_Period_Label: 'CURRENT',
               metrics: [
                 { name: 'Organic Traffic', prior: '125,000', current: '148,200' },
                 { name: 'Paid Search CAC', prior: '$165.00', current: '$142.50' },
@@ -1418,6 +1429,7 @@
               </div>
             `;
           } else if (template === 'comparison') {
+            const priorLbl = document.getElementById('comp-prior-lbl')?.value || 'PRIOR';
             const metrics = getComparisonMetricsFromSidebar();
             const cardsHtml = metrics.map(m => {
               const varInfo = calculateVariance(m.prior, m.current);
@@ -1429,7 +1441,7 @@
                   <div class="comparison-values-row">
                     <div class="comparison-current">${escapeHtml(m.current || '-')}</div>
                     <div class="comparison-prior-box">
-                      <span class="comparison-prior-lbl">PRIOR</span>
+                      <span class="comparison-prior-lbl">${escapeHtml(priorLbl)}</span>
                       <span class="comparison-prior-val">${escapeHtml(m.prior || '-')}</span>
                     </div>
                   </div>
@@ -1831,6 +1843,8 @@
             };
           } else if (template === 'comparison') {
             data = {
+              Prior_Period_Label: document.getElementById('comp-prior-lbl')?.value || 'PRIOR',
+              Current_Period_Label: document.getElementById('comp-current-lbl')?.value || 'CURRENT',
               metrics: getComparisonMetricsFromSidebar()
             };
           }
@@ -1866,6 +1880,12 @@
               if (content.Watermark_Text !== undefined) watermarkTextInput.value = content.Watermark_Text;
               if (content.Footer_Notice !== undefined) footerNoticeInput.value = content.Footer_Notice;
               if (content.Footer_Slide_ID !== undefined) footerSlideIdInput.value = content.Footer_Slide_ID;
+              if (content.Prior_Period_Label !== undefined && document.getElementById('comp-prior-lbl')) {
+                document.getElementById('comp-prior-lbl').value = content.Prior_Period_Label;
+              }
+              if (content.Current_Period_Label !== undefined && document.getElementById('comp-current-lbl')) {
+                document.getElementById('comp-current-lbl').value = content.Current_Period_Label;
+              }
             }
             if (Array.isArray(content.metrics)) {
               setComparisonMetricsInSidebar(content.metrics);
