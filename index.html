@@ -396,10 +396,10 @@
       /* Template 1: KPI Metrics Layout */
       .kpi-grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
-        height: 270px;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
         align-items: stretch;
+        height: 270px;
       }
 
       .kpi-card {
@@ -905,30 +905,12 @@
         
         <!-- TEMPLATE 1: KPI INPUTS -->
         <div id="inputs-kpi" class="sidebar-section template-input-group">
-          <div class="section-heading">KPI Cards Content</div>
-          
-          <!-- Card 1 -->
-          <div class="form-group">
-            <label class="form-label">Card 1 Label & Value</label>
-            <input type="text" id="kpi1-label" class="form-control" value="Customer Acquisition Cost" />
-            <input type="text" id="kpi1-value" class="form-control" value="$142.50" />
-            <input type="text" id="kpi1-subtext" class="form-control" value="🟢 -12% MoM (Target: $150)" />
+          <div class="section-heading">
+            <span>KPI Cards Content</span>
+            <button type="button" id="btn-add-kpi" class="btn btn-secondary" style="padding: 3px 8px; font-size: 10px;">+ Add KPI Card</button>
           </div>
-
-          <!-- Card 2 -->
-          <div class="form-group">
-            <label class="form-label">Card 2 Label & Value</label>
-            <input type="text" id="kpi2-label" class="form-control" value="Return on Ad Spend" />
-            <input type="text" id="kpi2-value" class="form-control" value="4.85x" />
-            <input type="text" id="kpi2-subtext" class="form-control" value="🟢 +0.6x vs Q2 Benchmark" />
-          </div>
-
-          <!-- Card 3 -->
-          <div class="form-group">
-            <label class="form-label">Card 3 Label & Value</label>
-            <input type="text" id="kpi3-label" class="form-control" value="Marketing Qualified Leads" />
-            <input type="text" id="kpi3-value" class="form-control" value="14,280" />
-            <input type="text" id="kpi3-subtext" class="form-control" value="🟢 104% of Monthly Target" />
+          <div id="kpi-list" style="display: flex; flex-direction: column; gap: 10px;">
+            <!-- Dynamic KPI items injected here -->
           </div>
         </div>
 
@@ -1101,17 +1083,11 @@
             Slide_Title: 'Executive Marketing Operations Summary',
             Subtitle: 'Core growth metrics, milestone progress, and active channel performance',
             Category_Tag: 'Q3 PERFORMANCE REPORT',
-            Content_Data: JSON.stringify({
-              kpi1_label: 'Customer Acquisition Cost',
-              kpi1_value: '$142.50',
-              kpi1_subtext: '🟢 -12% MoM (Target: $150)',
-              kpi2_label: 'Return on Ad Spend',
-              kpi2_value: '4.85x',
-              kpi2_subtext: '🟢 +0.6x vs Q2 Benchmark',
-              kpi3_label: 'Marketing Qualified Leads',
-              kpi3_value: '14,280',
-              kpi3_subtext: '🟢 104% of Monthly Target'
-            })
+            Content_Data: JSON.stringify([
+              { label: 'Customer Acquisition Cost', value: '$142.50', subtext: '🟢 -12% MoM (Target: $150)' },
+              { label: 'Return on Ad Spend', value: '4.85x', subtext: '🟢 +0.6x vs Q2 Benchmark' },
+              { label: 'Marketing Qualified Leads', value: '14,280', subtext: '🟢 104% of Monthly Target' }
+            ])
           },
           {
             Template_Type: 'timeline',
@@ -1254,35 +1230,18 @@
 
           // Render canvas body
           if (template === 'kpi') {
-            const k1Lbl = document.getElementById('kpi1-label').value;
-            const k1Val = document.getElementById('kpi1-value').value;
-            const k1Sub = document.getElementById('kpi1-subtext').value;
-
-            const k2Lbl = document.getElementById('kpi2-label').value;
-            const k2Val = document.getElementById('kpi2-value').value;
-            const k2Sub = document.getElementById('kpi2-subtext').value;
-
-            const k3Lbl = document.getElementById('kpi3-label').value;
-            const k3Val = document.getElementById('kpi3-value').value;
-            const k3Sub = document.getElementById('kpi3-subtext').value;
+            const kpiItems = getKpiItemsFromSidebar();
+            const cardsHtml = kpiItems.map(item => `
+              <div class="kpi-card">
+                <div class="kpi-label">${escapeHtml(item.label)}</div>
+                <div class="kpi-value">${escapeHtml(item.value)}</div>
+                <div class="kpi-subtext">${escapeHtml(item.subtext)}</div>
+              </div>
+            `).join('');
 
             slideContent.innerHTML = `
               <div class="kpi-grid">
-                <div class="kpi-card">
-                  <div class="kpi-label">${escapeHtml(k1Lbl)}</div>
-                  <div class="kpi-value">${escapeHtml(k1Val)}</div>
-                  <div class="kpi-subtext">${escapeHtml(k1Sub)}</div>
-                </div>
-                <div class="kpi-card">
-                  <div class="kpi-label">${escapeHtml(k2Lbl)}</div>
-                  <div class="kpi-value">${escapeHtml(k2Val)}</div>
-                  <div class="kpi-subtext">${escapeHtml(k2Sub)}</div>
-                </div>
-                <div class="kpi-card">
-                  <div class="kpi-label">${escapeHtml(k3Lbl)}</div>
-                  <div class="kpi-value">${escapeHtml(k3Val)}</div>
-                  <div class="kpi-subtext">${escapeHtml(k3Sub)}</div>
-                </div>
+                ${cardsHtml || '<div style="color:var(--text-muted); font-size:12px; text-align:center; grid-column: 1 / -1;">No KPI cards added. Click "+ Add KPI Card" in the sidebar.</div>'}
               </div>
             `;
           } else if (template === 'timeline') {
@@ -1670,20 +1629,80 @@
           });
         }
 
+        // --- SIDEBAR KPI CONTROLS FOR TEMPLATE 1 ---
+        function getKpiItemsFromSidebar() {
+          const container = document.getElementById('kpi-list');
+          if (!container) return [];
+          const rows = container.querySelectorAll('.kpi-item');
+          const list = [];
+          rows.forEach(row => {
+            const label = row.querySelector('.kpi-label-input')?.value || '';
+            const value = row.querySelector('.kpi-value-input')?.value || '';
+            const subtext = row.querySelector('.kpi-subtext-input')?.value || '';
+            list.push({ label, value, subtext });
+          });
+          return list;
+        }
+
+        function createKpiRowElement(label = '', value = '', subtext = '', index = 1) {
+          const div = document.createElement('div');
+          div.className = 'kpi-item';
+          div.style.cssText = 'background: var(--input-bg); padding: 8px 10px; border-radius: 6px; border: 1px solid var(--sidebar-border); display: flex; flex-direction: column; gap: 6px;';
+          div.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="form-label" style="font-size: 10px;">Card #${index}</span>
+              <button type="button" class="btn-remove-kpi" style="background:none; border:none; color:var(--status-red); cursor:pointer; font-weight:bold; font-size:12px;" title="Remove KPI Card">✕</button>
+            </div>
+            <input type="text" class="form-control kpi-label-input" value="${escapeHtml(label)}" placeholder="Card Label" />
+            <input type="text" class="form-control kpi-value-input" value="${escapeHtml(value)}" placeholder="Main Value" />
+            <input type="text" class="form-control kpi-subtext-input" value="${escapeHtml(subtext)}" placeholder="Subtext / Target" />
+          `;
+
+          div.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', renderCanvas);
+            input.addEventListener('change', renderCanvas);
+          });
+
+          div.querySelector('.btn-remove-kpi').addEventListener('click', () => {
+            div.remove();
+            renumberKpiRows();
+            renderCanvas();
+          });
+
+          return div;
+        }
+
+        function renumberKpiRows() {
+          const container = document.getElementById('kpi-list');
+          if (!container) return;
+          const rows = container.querySelectorAll('.kpi-item');
+          rows.forEach((row, i) => {
+            const lbl = row.querySelector('.form-label');
+            if (lbl) lbl.textContent = `Card #${i + 1}`;
+          });
+        }
+
+        function setKpiItemsInSidebar(kpiList) {
+          const container = document.getElementById('kpi-list');
+          if (!container) return;
+          container.innerHTML = '';
+          if (!Array.isArray(kpiList) || kpiList.length === 0) {
+            kpiList = [
+              { label: 'Customer Acquisition Cost', value: '$142.50', subtext: '🟢 -12% MoM (Target: $150)' },
+              { label: 'Return on Ad Spend', value: '4.85x', subtext: '🟢 +0.6x vs Q2 Benchmark' },
+              { label: 'Marketing Qualified Leads', value: '14,280', subtext: '🟢 104% of Monthly Target' }
+            ];
+          }
+          kpiList.forEach((k, idx) => {
+            const rowEl = createKpiRowElement(k.label, k.value, k.subtext, idx + 1);
+            container.appendChild(rowEl);
+          });
+        }
+
         // --- COLLECT ACTIVE TEMPLATE DATA OBJECT ---
         function getTemplateData(template) {
           if (template === 'kpi') {
-            return {
-              kpi1_label: document.getElementById('kpi1-label').value,
-              kpi1_value: document.getElementById('kpi1-value').value,
-              kpi1_subtext: document.getElementById('kpi1-subtext').value,
-              kpi2_label: document.getElementById('kpi2-label').value,
-              kpi2_value: document.getElementById('kpi2-value').value,
-              kpi2_subtext: document.getElementById('kpi2-subtext').value,
-              kpi3_label: document.getElementById('kpi3-label').value,
-              kpi3_value: document.getElementById('kpi3-value').value,
-              kpi3_subtext: document.getElementById('kpi3-subtext').value
-            };
+            return getKpiItemsFromSidebar();
           } else if (template === 'timeline') {
             return {
               time1_date: document.getElementById('time1-date').value,
@@ -1748,8 +1767,15 @@
             if (Array.isArray(content.metrics)) {
               setComparisonMetricsInSidebar(content.metrics);
             }
+            if (Array.isArray(content.kpis)) {
+              setKpiItemsInSidebar(content.kpis);
+            }
             if (Array.isArray(content)) {
-              setStatusItemsInSidebar(content);
+              if (item.Template_Type === 'kpi' || (content[0] && content[0].label !== undefined)) {
+                setKpiItemsInSidebar(content);
+              } else {
+                setStatusItemsInSidebar(content);
+              }
             } else if (Array.isArray(content.status)) {
               setStatusItemsInSidebar(content.status);
             } else if (content.status1_name !== undefined || content.status2_name !== undefined) {
@@ -1764,6 +1790,20 @@
                 }
               }
               if (legacyList.length > 0) setStatusItemsInSidebar(legacyList);
+            }
+
+            if (content.kpi1_label !== undefined || content.kpi2_label !== undefined || content.kpi1_value !== undefined) {
+              const legacyKpiList = [];
+              for (let i = 1; i <= 10; i++) {
+                if (content[`kpi${i}_label`] !== undefined || content[`kpi${i}_value`] !== undefined) {
+                  legacyKpiList.push({
+                    label: content[`kpi${i}_label`] || '',
+                    value: content[`kpi${i}_value`] || '',
+                    subtext: content[`kpi${i}_subtext`] || ''
+                  });
+                }
+              }
+              if (legacyKpiList.length > 0) setKpiItemsInSidebar(legacyKpiList);
             }
 
             if (!Array.isArray(content)) {
@@ -1963,6 +2003,15 @@
         });
 
         // --- INITIALIZATION ---
+        setKpiItemsInSidebar();
+        document.getElementById('btn-add-kpi').addEventListener('click', () => {
+          const container = document.getElementById('kpi-list');
+          const count = container.querySelectorAll('.kpi-item').length + 1;
+          const newRow = createKpiRowElement('', '', '', count);
+          container.appendChild(newRow);
+          renderCanvas();
+        });
+
         setStatusItemsInSidebar();
         document.getElementById('btn-add-status').addEventListener('click', () => {
           const container = document.getElementById('status-list');
