@@ -546,20 +546,23 @@
       .status-container {
         display: flex;
         flex-direction: column;
-        gap: 12px;
-        height: 270px;
+        gap: 10px;
         justify-content: center;
+        height: 270px;
+        max-height: 270px;
       }
 
       .status-row {
         background-color: var(--bg-card);
         border: 1px solid var(--border-accent);
         border-radius: 10px;
-        padding: 14px 20px;
+        padding: 10px 18px;
         display: grid;
         grid-template-columns: 2.2fr 1.3fr 3.5fr;
         align-items: center;
         gap: 16px;
+        flex: 1 1 auto;
+        min-height: 0;
       }
 
       .initiative-name {
@@ -968,54 +971,12 @@
 
         <!-- TEMPLATE 3: STATUS TRACKER INPUTS -->
         <div id="inputs-status" class="sidebar-section template-input-group" style="display:none;">
-          <div class="section-heading">Initiatives Status</div>
-
-          <!-- Initiative 1 -->
-          <div class="form-group">
-            <label class="form-label">Initiative 1</label>
-            <input type="text" id="status1-name" class="form-control" value="Q3 Global Brand Refresh" />
-            <select id="status1-state" class="form-control">
-              <option value="On Track">On Track 🟢</option>
-              <option value="Attention Needed">Attention Needed 🟡</option>
-              <option value="Blocked">Blocked 🔴</option>
-            </select>
-            <input type="text" id="status1-next" class="form-control" value="Finalizing video asset localization for EMEA." />
+          <div class="section-heading">
+            <span>Initiatives Status</span>
+            <button type="button" id="btn-add-status" class="btn btn-secondary" style="padding: 3px 8px; font-size: 10px;">+ Add Initiative</button>
           </div>
-
-          <!-- Initiative 2 -->
-          <div class="form-group">
-            <label class="form-label">Initiative 2</label>
-            <input type="text" id="status2-name" class="form-control" value="HubSpot CRM Migration" />
-            <select id="status2-state" class="form-control">
-              <option value="On Track">On Track 🟢</option>
-              <option value="Attention Needed" selected>Attention Needed 🟡</option>
-              <option value="Blocked">Blocked 🔴</option>
-            </select>
-            <input type="text" id="status2-next" class="form-control" value="Resolving custom lead scoring API field mappings." />
-          </div>
-
-          <!-- Initiative 3 -->
-          <div class="form-group">
-            <label class="form-label">Initiative 3</label>
-            <input type="text" id="status3-name" class="form-control" value="Partner Referral Portal" />
-            <select id="status3-state" class="form-control">
-              <option value="On Track" selected>On Track 🟢</option>
-              <option value="Attention Needed">Attention Needed 🟡</option>
-              <option value="Blocked">Blocked 🔴</option>
-            </select>
-            <input type="text" id="status3-next" class="form-control" value="Beta testing payout automation engine." />
-          </div>
-
-          <!-- Initiative 4 -->
-          <div class="form-group">
-            <label class="form-label">Initiative 4</label>
-            <input type="text" id="status4-name" class="form-control" value="Paid Search Account Restructure" />
-            <select id="status4-state" class="form-control">
-              <option value="On Track">On Track 🟢</option>
-              <option value="Attention Needed">Attention Needed 🟡</option>
-              <option value="Blocked" selected>Blocked 🔴</option>
-            </select>
-            <input type="text" id="status4-next" class="form-control" value="Awaiting legal clearance for revised trademark ad copy." />
+          <div id="status-list" style="display: flex; flex-direction: column; gap: 10px;">
+            <!-- Dynamic status items injected here -->
           </div>
         </div>
 
@@ -1177,20 +1138,12 @@
             Slide_Title: 'Key Strategic Initiatives Tracker',
             Subtitle: 'Current progress, risk profiles, and immediate next steps for active projects',
             Category_Tag: 'OPERATIONS DASHBOARD',
-            Content_Data: JSON.stringify({
-              status1_name: 'Q3 Global Brand Refresh',
-              status1_state: 'On Track',
-              status1_next: 'Finalizing video asset localization for EMEA markets.',
-              status2_name: 'HubSpot CRM Migration',
-              status2_state: 'Attention Needed',
-              status2_next: 'Resolving custom lead scoring API field mappings with IT.',
-              status3_name: 'Partner Referral Portal',
-              status3_state: 'On Track',
-              status3_next: 'Beta testing payout automation engine with top 5 partners.',
-              status4_name: 'Paid Search Restructure',
-              status4_state: 'Blocked',
-              status4_next: 'Awaiting legal clearance for revised trademark ad copy.'
-            })
+            Content_Data: JSON.stringify([
+              { name: 'Q3 Global Brand Refresh', state: 'On Track', next: 'Finalizing video asset localization for EMEA markets.' },
+              { name: 'HubSpot CRM Migration', state: 'Attention Needed', next: 'Resolving custom lead scoring API field mappings with IT.' },
+              { name: 'Partner Referral Portal', state: 'On Track', next: 'Beta testing payout automation engine with top 5 partners.' },
+              { name: 'Paid Search Restructure', state: 'Blocked', next: 'Awaiting legal clearance for revised trademark ad copy.' }
+            ])
           },
           {
             Template_Type: 'channel',
@@ -1400,22 +1353,7 @@
               </div>
             `;
           } else if (template === 'status') {
-            const s1Name = document.getElementById('status1-name').value;
-            const s1State = document.getElementById('status1-state').value;
-            const s1Next = document.getElementById('status1-next').value;
-
-            const s2Name = document.getElementById('status2-name').value;
-            const s2State = document.getElementById('status2-state').value;
-            const s2Next = document.getElementById('status2-next').value;
-
-            const s3Name = document.getElementById('status3-name').value;
-            const s3State = document.getElementById('status3-state').value;
-            const s3Next = document.getElementById('status3-next').value;
-
-            const s4Name = document.getElementById('status4-name').value;
-            const s4State = document.getElementById('status4-state').value;
-            const s4Next = document.getElementById('status4-next').value;
-
+            const statusItems = getStatusItemsFromSidebar();
             const getBadgeHtml = (stateVal) => {
               if (stateVal === 'On Track') {
                 return `<div class="status-badge on-track"><span class="status-dot"></span>On Track</div>`;
@@ -1426,31 +1364,17 @@
               }
             };
 
+            const rowsHtml = statusItems.map(item => `
+              <div class="status-row">
+                <div class="initiative-name">${escapeHtml(item.name)}</div>
+                <div class="status-badge-container">${getBadgeHtml(item.state)}</div>
+                <div class="next-step-text"><span class="next-step-prefix">Next Step: </span>${escapeHtml(item.next)}</div>
+              </div>
+            `).join('');
+
             slideContent.innerHTML = `
               <div class="status-container">
-                <div class="status-row">
-                  <div class="initiative-name">${escapeHtml(s1Name)}</div>
-                  <div class="status-badge-container">${getBadgeHtml(s1State)}</div>
-                  <div class="next-step-text"><span class="next-step-prefix">Next Step: </span>${escapeHtml(s1Next)}</div>
-                </div>
-
-                <div class="status-row">
-                  <div class="initiative-name">${escapeHtml(s2Name)}</div>
-                  <div class="status-badge-container">${getBadgeHtml(s2State)}</div>
-                  <div class="next-step-text"><span class="next-step-prefix">Next Step: </span>${escapeHtml(s2Next)}</div>
-                </div>
-
-                <div class="status-row">
-                  <div class="initiative-name">${escapeHtml(s3Name)}</div>
-                  <div class="status-badge-container">${getBadgeHtml(s3State)}</div>
-                  <div class="next-step-text"><span class="next-step-prefix">Next Step: </span>${escapeHtml(s3Next)}</div>
-                </div>
-
-                <div class="status-row">
-                  <div class="initiative-name">${escapeHtml(s4Name)}</div>
-                  <div class="status-badge-container">${getBadgeHtml(s4State)}</div>
-                  <div class="next-step-text"><span class="next-step-prefix">Next Step: </span>${escapeHtml(s4Next)}</div>
-                </div>
+                ${rowsHtml || '<div style="color:var(--text-muted); font-size:12px; text-align:center;">No status initiatives added. Click "+ Add Initiative" in the sidebar.</div>'}
               </div>
             `;
           } else if (template === 'channel') {
@@ -1666,6 +1590,86 @@
           });
         }
 
+        // --- SIDEBAR STATUS CONTROLS FOR TEMPLATE 3 ---
+        function getStatusItemsFromSidebar() {
+          const container = document.getElementById('status-list');
+          if (!container) return [];
+          const rows = container.querySelectorAll('.status-item');
+          const list = [];
+          rows.forEach(row => {
+            const name = row.querySelector('.status-name')?.value || '';
+            const state = row.querySelector('.status-state')?.value || 'On Track';
+            const next = row.querySelector('.status-next')?.value || '';
+            list.push({ name, state, next });
+          });
+          return list;
+        }
+
+        function createStatusRowElement(name = '', state = 'On Track', next = '', index = 1) {
+          const div = document.createElement('div');
+          div.className = 'status-item';
+          div.style.cssText = 'background: var(--input-bg); padding: 8px 10px; border-radius: 6px; border: 1px solid var(--sidebar-border); display: flex; flex-direction: column; gap: 6px;';
+          
+          const selOnTrack = state === 'On Track' ? 'selected' : '';
+          const selAttention = state === 'Attention Needed' ? 'selected' : '';
+          const selBlocked = state === 'Blocked' ? 'selected' : '';
+
+          div.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="form-label" style="font-size: 10px;">Initiative #${index}</span>
+              <button type="button" class="btn-remove-status" style="background:none; border:none; color:var(--status-red); cursor:pointer; font-weight:bold; font-size:12px;" title="Remove Initiative">✕</button>
+            </div>
+            <input type="text" class="form-control status-name" value="${escapeHtml(name)}" placeholder="Initiative Name" />
+            <select class="form-control status-state">
+              <option value="On Track" ${selOnTrack}>On Track 🟢</option>
+              <option value="Attention Needed" ${selAttention}>Attention Needed 🟡</option>
+              <option value="Blocked" ${selBlocked}>Blocked 🔴</option>
+            </select>
+            <input type="text" class="form-control status-next" value="${escapeHtml(next)}" placeholder="Next Steps" />
+          `;
+
+          div.querySelectorAll('input, select').forEach(input => {
+            input.addEventListener('input', renderCanvas);
+            input.addEventListener('change', renderCanvas);
+          });
+
+          div.querySelector('.btn-remove-status').addEventListener('click', () => {
+            div.remove();
+            renumberStatusRows();
+            renderCanvas();
+          });
+
+          return div;
+        }
+
+        function renumberStatusRows() {
+          const container = document.getElementById('status-list');
+          if (!container) return;
+          const rows = container.querySelectorAll('.status-item');
+          rows.forEach((row, i) => {
+            const lbl = row.querySelector('.form-label');
+            if (lbl) lbl.textContent = `Initiative #${i + 1}`;
+          });
+        }
+
+        function setStatusItemsInSidebar(statusList) {
+          const container = document.getElementById('status-list');
+          if (!container) return;
+          container.innerHTML = '';
+          if (!Array.isArray(statusList) || statusList.length === 0) {
+            statusList = [
+              { name: 'Q3 Global Brand Refresh', state: 'On Track', next: 'Finalizing video asset localization for EMEA markets.' },
+              { name: 'HubSpot CRM Migration', state: 'Attention Needed', next: 'Resolving custom lead scoring API field mappings with IT.' },
+              { name: 'Partner Referral Portal', state: 'On Track', next: 'Beta testing payout automation engine with top 5 partners.' },
+              { name: 'Paid Search Restructure', state: 'Blocked', next: 'Awaiting legal clearance for revised trademark ad copy.' }
+            ];
+          }
+          statusList.forEach((s, idx) => {
+            const rowEl = createStatusRowElement(s.name, s.state, s.next, idx + 1);
+            container.appendChild(rowEl);
+          });
+        }
+
         // --- COLLECT ACTIVE TEMPLATE DATA OBJECT ---
         function getTemplateData(template) {
           if (template === 'kpi') {
@@ -1696,20 +1700,7 @@
               time4_desc: document.getElementById('time4-desc').value
             };
           } else if (template === 'status') {
-            return {
-              status1_name: document.getElementById('status1-name').value,
-              status1_state: document.getElementById('status1-state').value,
-              status1_next: document.getElementById('status1-next').value,
-              status2_name: document.getElementById('status2-name').value,
-              status2_state: document.getElementById('status2-state').value,
-              status2_next: document.getElementById('status2-next').value,
-              status3_name: document.getElementById('status3-name').value,
-              status3_state: document.getElementById('status3-state').value,
-              status3_next: document.getElementById('status3-next').value,
-              status4_name: document.getElementById('status4-name').value,
-              status4_state: document.getElementById('status4-state').value,
-              status4_next: document.getElementById('status4-next').value
-            };
+            return getStatusItemsFromSidebar();
           } else if (template === 'channel') {
             return {
               chanA_name: document.getElementById('chanA-name').value,
@@ -1753,16 +1744,36 @@
             }
           }
 
-          if (content && typeof content === 'object') {
+          if (content && (typeof content === 'object' || Array.isArray(content))) {
             if (Array.isArray(content.metrics)) {
               setComparisonMetricsInSidebar(content.metrics);
             }
-            Object.keys(content).forEach(key => {
-              const el = document.getElementById(key);
-              if (el) {
-                el.value = content[key];
+            if (Array.isArray(content)) {
+              setStatusItemsInSidebar(content);
+            } else if (Array.isArray(content.status)) {
+              setStatusItemsInSidebar(content.status);
+            } else if (content.status1_name !== undefined || content.status2_name !== undefined) {
+              const legacyList = [];
+              for (let i = 1; i <= 10; i++) {
+                if (content[`status${i}_name`] !== undefined) {
+                  legacyList.push({
+                    name: content[`status${i}_name`] || '',
+                    state: content[`status${i}_state`] || 'On Track',
+                    next: content[`status${i}_next`] || ''
+                  });
+                }
               }
-            });
+              if (legacyList.length > 0) setStatusItemsInSidebar(legacyList);
+            }
+
+            if (!Array.isArray(content)) {
+              Object.keys(content).forEach(key => {
+                const el = document.getElementById(key);
+                if (el) {
+                  el.value = content[key];
+                }
+              });
+            }
           }
 
           renderCanvas();
@@ -1952,6 +1963,15 @@
         });
 
         // --- INITIALIZATION ---
+        setStatusItemsInSidebar();
+        document.getElementById('btn-add-status').addEventListener('click', () => {
+          const container = document.getElementById('status-list');
+          const count = container.querySelectorAll('.status-item').length + 1;
+          const newRow = createStatusRowElement('', 'On Track', '', count);
+          container.appendChild(newRow);
+          renderCanvas();
+        });
+
         setComparisonMetricsInSidebar();
         document.getElementById('btn-add-metric').addEventListener('click', () => {
           const container = document.getElementById('comparison-metrics-list');
