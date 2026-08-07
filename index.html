@@ -899,6 +899,21 @@
             <label class="form-label" for="slide-subtitle-input">Slide Subtitle</label>
             <input type="text" id="slide-subtitle-input" class="form-control" value="Core growth metrics, milestone progress, and active channel performance" />
           </div>
+
+          <div class="form-group">
+            <label class="form-label" for="watermark-text-input">Watermark Badge Text</label>
+            <input type="text" id="watermark-text-input" class="form-control" value="MKTG OPS" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="footer-notice-input">Footer Classification Notice</label>
+            <input type="text" id="footer-notice-input" class="form-control" value="CONFIDENTIAL • INTERNAL MARKETING OPERATIONS DIRECTIVE" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="footer-slide-id-input">Footer Slide ID</label>
+            <input type="text" id="footer-slide-id-input" class="form-control" value="SLIDE 01 • MKTG-OPS-VISUALIZER" />
+          </div>
         </div>
 
         <!-- Section: Dynamic Template Specific Inputs -->
@@ -1048,7 +1063,7 @@
                 </div>
                 <div class="brand-watermark">
                   <div class="brand-watermark-dot"></div>
-                  <span class="brand-watermark-text">MKTG OPS</span>
+                  <span class="brand-watermark-text" id="canvas-watermark">MKTG OPS</span>
                 </div>
               </div>
 
@@ -1059,7 +1074,7 @@
 
               <!-- Shared Slide Footer -->
               <div class="slide-footer">
-                <span>CONFIDENTIAL • INTERNAL MARKETING OPERATIONS DIRECTIVE</span>
+                <span id="canvas-footer-notice">CONFIDENTIAL • INTERNAL MARKETING OPERATIONS DIRECTIVE</span>
                 <span id="canvas-footer-page">SLIDE 01 • MKTG-OPS-VISUALIZER</span>
               </div>
 
@@ -1083,6 +1098,9 @@
             Slide_Title: 'Executive Marketing Operations Summary',
             Subtitle: 'Core growth metrics, milestone progress, and active channel performance',
             Category_Tag: 'Q3 PERFORMANCE REPORT',
+            Watermark_Text: 'MKTG OPS',
+            Footer_Notice: 'CONFIDENTIAL • INTERNAL MARKETING OPERATIONS DIRECTIVE',
+            Footer_Slide_ID: 'SLIDE 01 • MKTG-OPS-VISUALIZER',
             Content_Data: JSON.stringify([
               { label: 'Customer Acquisition Cost', value: '$142.50', subtext: '🟢 -12% MoM (Target: $150)' },
               { label: 'Return on Ad Spend', value: '4.85x', subtext: '🟢 +0.6x vs Q2 Benchmark' },
@@ -1094,6 +1112,9 @@
             Slide_Title: 'Q3 Campaign Execution Roadmap',
             Subtitle: 'Strategic milestones across audience segmentation, creative, and launch phases',
             Category_Tag: 'CAMPAIGN ROADMAP',
+            Watermark_Text: 'MKTG OPS',
+            Footer_Notice: 'CONFIDENTIAL • INTERNAL MARKETING OPERATIONS DIRECTIVE',
+            Footer_Slide_ID: 'SLIDE 01 • MKTG-OPS-VISUALIZER',
             Content_Data: JSON.stringify({
               time1_date: 'JUL 15',
               time1_title: 'Audience Segmentation',
@@ -1114,6 +1135,9 @@
             Slide_Title: 'Key Strategic Initiatives Tracker',
             Subtitle: 'Current progress, risk profiles, and immediate next steps for active projects',
             Category_Tag: 'OPERATIONS DASHBOARD',
+            Watermark_Text: 'MKTG OPS',
+            Footer_Notice: 'CONFIDENTIAL • INTERNAL MARKETING OPERATIONS DIRECTIVE',
+            Footer_Slide_ID: 'SLIDE 01 • MKTG-OPS-VISUALIZER',
             Content_Data: JSON.stringify([
               { name: 'Q3 Global Brand Refresh', state: 'On Track', next: 'Finalizing video asset localization for EMEA markets.' },
               { name: 'HubSpot CRM Migration', state: 'Attention Needed', next: 'Resolving custom lead scoring API field mappings with IT.' },
@@ -1126,6 +1150,9 @@
             Slide_Title: 'Paid Acquisition Channel Breakdown',
             Subtitle: 'Efficiency comparison between Google Paid Search and Paid Social channels',
             Category_Tag: 'CHANNEL METRICS',
+            Watermark_Text: 'MKTG OPS',
+            Footer_Notice: 'CONFIDENTIAL • INTERNAL MARKETING OPERATIONS DIRECTIVE',
+            Footer_Slide_ID: 'SLIDE 01 • MKTG-OPS-VISUALIZER',
             Content_Data: JSON.stringify({
               chanA_name: 'Paid Search (Google Ads)',
               chanA_m1_lbl: 'Monthly Spend',
@@ -1148,6 +1175,9 @@
             Slide_Title: 'Period-over-Period Performance Metrics',
             Subtitle: 'Quarterly growth comparison and variance analysis across key marketing indicators',
             Category_Tag: 'PERIOD COMPARISON',
+            Watermark_Text: 'MKTG OPS',
+            Footer_Notice: 'CONFIDENTIAL • INTERNAL MARKETING OPERATIONS DIRECTIVE',
+            Footer_Slide_ID: 'SLIDE 01 • MKTG-OPS-VISUALIZER',
             Content_Data: JSON.stringify({
               metrics: [
                 { name: 'Organic Traffic', prior: '125,000', current: '148,200' },
@@ -1172,10 +1202,16 @@
         const categoryTagInput = document.getElementById('category-tag-input');
         const slideTitleInput = document.getElementById('slide-title-input');
         const slideSubtitleInput = document.getElementById('slide-subtitle-input');
+        const watermarkTextInput = document.getElementById('watermark-text-input');
+        const footerNoticeInput = document.getElementById('footer-notice-input');
+        const footerSlideIdInput = document.getElementById('footer-slide-id-input');
 
         const canvasCategory = document.getElementById('canvas-category');
         const canvasTitle = document.getElementById('canvas-title');
         const canvasSubtitle = document.getElementById('canvas-subtitle');
+        const canvasWatermark = document.getElementById('canvas-watermark');
+        const canvasFooterNotice = document.getElementById('canvas-footer-notice');
+        const canvasFooterPage = document.getElementById('canvas-footer-page');
         const slideContent = document.getElementById('slide-content');
         const slideCanvas = document.getElementById('slide-canvas');
 
@@ -1218,10 +1254,13 @@
         function renderCanvas() {
           const template = templateSelect.value;
 
-          // Update header
+          // Update header & footer
           canvasCategory.textContent = categoryTagInput.value || 'MARKETING OPS';
           canvasTitle.textContent = slideTitleInput.value || 'Untitled Slide';
           canvasSubtitle.textContent = slideSubtitleInput.value || '';
+          if (canvasWatermark) canvasWatermark.textContent = watermarkTextInput.value || 'MKTG OPS';
+          if (canvasFooterNotice) canvasFooterNotice.textContent = footerNoticeInput.value || '';
+          if (canvasFooterPage) canvasFooterPage.textContent = footerSlideIdInput.value || '';
 
           // Toggle template input panels in sidebar
           document.querySelectorAll('.template-input-group').forEach(el => el.style.display = 'none');
@@ -1701,10 +1740,11 @@
 
         // --- COLLECT ACTIVE TEMPLATE DATA OBJECT ---
         function getTemplateData(template) {
+          let data = {};
           if (template === 'kpi') {
-            return getKpiItemsFromSidebar();
+            data = { kpis: getKpiItemsFromSidebar() };
           } else if (template === 'timeline') {
-            return {
+            data = {
               time1_date: document.getElementById('time1-date').value,
               time1_title: document.getElementById('time1-title').value,
               time1_desc: document.getElementById('time1-desc').value,
@@ -1719,9 +1759,9 @@
               time4_desc: document.getElementById('time4-desc').value
             };
           } else if (template === 'status') {
-            return getStatusItemsFromSidebar();
+            data = { status: getStatusItemsFromSidebar() };
           } else if (template === 'channel') {
-            return {
+            data = {
               chanA_name: document.getElementById('chanA-name').value,
               chanA_m1_lbl: document.getElementById('chanA-m1-lbl').value,
               chanA_m1_val: document.getElementById('chanA-m1-val').value,
@@ -1738,11 +1778,14 @@
               chanB_m3_val: document.getElementById('chanB-m3-val').value
             };
           } else if (template === 'comparison') {
-            return {
+            data = {
               metrics: getComparisonMetricsFromSidebar()
             };
           }
-          return {};
+          data.Watermark_Text = watermarkTextInput ? watermarkTextInput.value : 'MKTG OPS';
+          data.Footer_Notice = footerNoticeInput ? footerNoticeInput.value : '';
+          data.Footer_Slide_ID = footerSlideIdInput ? footerSlideIdInput.value : '';
+          return data;
         }
 
         // --- APPLY DATA OBJECT TO FORM INPUTS ---
@@ -1752,6 +1795,9 @@
           if (item.Slide_Title !== undefined) slideTitleInput.value = item.Slide_Title;
           if (item.Subtitle !== undefined) slideSubtitleInput.value = item.Subtitle;
           if (item.Category_Tag !== undefined) categoryTagInput.value = item.Category_Tag;
+          if (item.Watermark_Text !== undefined) watermarkTextInput.value = item.Watermark_Text;
+          if (item.Footer_Notice !== undefined) footerNoticeInput.value = item.Footer_Notice;
+          if (item.Footer_Slide_ID !== undefined) footerSlideIdInput.value = item.Footer_Slide_ID;
 
           let content = item.Content_Data;
           if (typeof content === 'string') {
@@ -1764,6 +1810,11 @@
           }
 
           if (content && (typeof content === 'object' || Array.isArray(content))) {
+            if (typeof content === 'object' && !Array.isArray(content)) {
+              if (content.Watermark_Text !== undefined) watermarkTextInput.value = content.Watermark_Text;
+              if (content.Footer_Notice !== undefined) footerNoticeInput.value = content.Footer_Notice;
+              if (content.Footer_Slide_ID !== undefined) footerSlideIdInput.value = content.Footer_Slide_ID;
+            }
             if (Array.isArray(content.metrics)) {
               setComparisonMetricsInSidebar(content.metrics);
             }
@@ -1883,6 +1934,9 @@
             Slide_Title: slideTitleInput.value,
             Subtitle: slideSubtitleInput.value,
             Category_Tag: categoryTagInput.value,
+            Watermark_Text: watermarkTextInput.value,
+            Footer_Notice: footerNoticeInput.value,
+            Footer_Slide_ID: footerSlideIdInput.value,
             Content_Data: JSON.stringify(templateData)
           };
 
@@ -2040,3 +2094,5 @@
     </script>
   </body>
 </html>
+
+
