@@ -982,38 +982,36 @@
           <div class="section-heading">Channel Comparison</div>
 
           <!-- Channel A -->
-          <div class="form-group">
-            <label class="form-label">Channel A (Name & 3 Metrics)</label>
-            <input type="text" id="chanA-name" class="form-control" value="Paid Search (Google Ads)" />
-            <div style="display:grid; grid-template-columns: 2fr 1fr; gap:6px;">
-              <input type="text" id="chanA-m1-lbl" class="form-control" value="Monthly Spend" />
-              <input type="text" id="chanA-m1-val" class="form-control" value="$48,500" />
+          <div class="form-group" style="border-bottom: 1px solid var(--sidebar-border); padding-bottom: 12px; margin-bottom: 8px;">
+            <label class="form-label">Channel A Setup</label>
+            <input type="text" id="chanA-name" class="form-control" value="Paid Search (Google Ads)" placeholder="Channel A Name" />
+            
+            <label class="form-label" style="margin-top: 6px;">Channel A Badge Label</label>
+            <input type="text" id="chanA-pill" class="form-control" value="CHANNEL A" placeholder="Badge Label" />
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; margin-bottom: 4px;">
+              <span class="form-label" style="font-size: 10px;">Channel A Metrics</span>
+              <button type="button" id="btn-add-chanA-metric" class="btn btn-secondary" style="padding: 3px 8px; font-size: 10px;">+ Add Metric</button>
             </div>
-            <div style="display:grid; grid-template-columns: 2fr 1fr; gap:6px;">
-              <input type="text" id="chanA-m2-lbl" class="form-control" value="Conversion Rate" />
-              <input type="text" id="chanA-m2-val" class="form-control" value="5.2%" />
-            </div>
-            <div style="display:grid; grid-template-columns: 2fr 1fr; gap:6px;">
-              <input type="text" id="chanA-m3-lbl" class="form-control" value="Cost Per Lead" />
-              <input type="text" id="chanA-m3-val" class="form-control" value="$64.20" />
+            <div id="chanA-metrics-list" style="display: flex; flex-direction: column; gap: 8px;">
+              <!-- Dynamic metric items for Channel A -->
             </div>
           </div>
 
           <!-- Channel B -->
           <div class="form-group">
-            <label class="form-label">Channel B (Name & 3 Metrics)</label>
-            <input type="text" id="chanB-name" class="form-control" value="Paid Social (LinkedIn & Meta)" />
-            <div style="display:grid; grid-template-columns: 2fr 1fr; gap:6px;">
-              <input type="text" id="chanB-m1-lbl" class="form-control" value="Monthly Spend" />
-              <input type="text" id="chanB-m1-val" class="form-control" value="$36,200" />
+            <label class="form-label">Channel B Setup</label>
+            <input type="text" id="chanB-name" class="form-control" value="Paid Social (LinkedIn & Meta)" placeholder="Channel B Name" />
+
+            <label class="form-label" style="margin-top: 6px;">Channel B Badge Label</label>
+            <input type="text" id="chanB-pill" class="form-control" value="CHANNEL B" placeholder="Badge Label" />
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; margin-bottom: 4px;">
+              <span class="form-label" style="font-size: 10px;">Channel B Metrics</span>
+              <button type="button" id="btn-add-chanB-metric" class="btn btn-secondary" style="padding: 3px 8px; font-size: 10px;">+ Add Metric</button>
             </div>
-            <div style="display:grid; grid-template-columns: 2fr 1fr; gap:6px;">
-              <input type="text" id="chanB-m2-lbl" class="form-control" value="Conversion Rate" />
-              <input type="text" id="chanB-m2-val" class="form-control" value="3.8%" />
-            </div>
-            <div style="display:grid; grid-template-columns: 2fr 1fr; gap:6px;">
-              <input type="text" id="chanB-m3-lbl" class="form-control" value="Cost Per Lead" />
-              <input type="text" id="chanB-m3-val" class="form-control" value="$88.50" />
+            <div id="chanB-metrics-list" style="display: flex; flex-direction: column; gap: 8px;">
+              <!-- Dynamic metric items for Channel B -->
             </div>
           </div>
         </div>
@@ -1155,19 +1153,19 @@
             Footer_Slide_ID: 'SLIDE 01 • MKTG-OPS-VISUALIZER',
             Content_Data: JSON.stringify({
               chanA_name: 'Paid Search (Google Ads)',
-              chanA_m1_lbl: 'Monthly Spend',
-              chanA_m1_val: '$48,500',
-              chanA_m2_lbl: 'Conversion Rate',
-              chanA_m2_val: '5.2%',
-              chanA_m3_lbl: 'Cost Per Lead',
-              chanA_m3_val: '$64.20',
+              chanA_pill: 'CHANNEL A',
+              chanA_metrics: [
+                { lbl: 'Monthly Spend', val: '$48,500' },
+                { lbl: 'Conversion Rate', val: '5.2%' },
+                { lbl: 'Cost Per Lead', val: '$64.20' }
+              ],
               chanB_name: 'Paid Social (LinkedIn & Meta)',
-              chanB_m1_lbl: 'Monthly Spend',
-              chanB_m1_val: '$36,200',
-              chanB_m2_lbl: 'Conversion Rate',
-              chanB_m2_val: '3.8%',
-              chanB_m3_lbl: 'Cost Per Lead',
-              chanB_m3_val: '$88.50'
+              chanB_pill: 'CHANNEL B',
+              chanB_metrics: [
+                { lbl: 'Monthly Spend', val: '$36,200' },
+                { lbl: 'Conversion Rate', val: '3.8%' },
+                { lbl: 'Cost Per Lead', val: '$88.50' }
+              ]
             })
           },
           {
@@ -1376,63 +1374,45 @@
               </div>
             `;
           } else if (template === 'channel') {
-            const cAName = document.getElementById('chanA-name').value;
-            const cAM1Lbl = document.getElementById('chanA-m1-lbl').value;
-            const cAM1Val = document.getElementById('chanA-m1-val').value;
-            const cAM2Lbl = document.getElementById('chanA-m2-lbl').value;
-            const cAM2Val = document.getElementById('chanA-m2-val').value;
-            const cAM3Lbl = document.getElementById('chanA-m3-lbl').value;
-            const cAM3Val = document.getElementById('chanA-m3-val').value;
+            const cAName = document.getElementById('chanA-name')?.value || 'Channel A';
+            const cAPill = document.getElementById('chanA-pill')?.value || 'CHANNEL A';
+            const cAMetrics = getChanMetricsFromSidebar('A');
 
-            const cBName = document.getElementById('chanB-name').value;
-            const cBM1Lbl = document.getElementById('chanB-m1-lbl').value;
-            const cBM1Val = document.getElementById('chanB-m1-val').value;
-            const cBM2Lbl = document.getElementById('chanB-m2-lbl').value;
-            const cBM2Val = document.getElementById('chanB-m2-val').value;
-            const cBM3Lbl = document.getElementById('chanB-m3-lbl').value;
-            const cBM3Val = document.getElementById('chanB-m3-val').value;
+            const cBName = document.getElementById('chanB-name')?.value || 'Channel B';
+            const cBPill = document.getElementById('chanB-pill')?.value || 'CHANNEL B';
+            const cBMetrics = getChanMetricsFromSidebar('B');
+
+            const renderMetricsRows = (metrics) => {
+              if (!metrics || metrics.length === 0) {
+                return '<div style="color:var(--text-muted); font-size:11px; text-align:center; padding: 12px;">No metrics added. Click "+ Add Metric" in the sidebar.</div>';
+              }
+              return metrics.map(m => `
+                <div class="channel-metric-row">
+                  <span class="metric-name">${escapeHtml(m.lbl)}</span>
+                  <span class="metric-val">${escapeHtml(m.val)}</span>
+                </div>
+              `).join('');
+            };
 
             slideContent.innerHTML = `
               <div class="channel-grid">
                 <div class="channel-card">
                   <div class="channel-header">
                     <div class="channel-name">${escapeHtml(cAName)}</div>
-                    <span class="channel-pill">CHANNEL A</span>
+                    <span class="channel-pill">${escapeHtml(cAPill)}</span>
                   </div>
                   <div class="channel-metrics-list">
-                    <div class="channel-metric-row">
-                      <span class="metric-name">${escapeHtml(cAM1Lbl)}</span>
-                      <span class="metric-val">${escapeHtml(cAM1Val)}</span>
-                    </div>
-                    <div class="channel-metric-row">
-                      <span class="metric-name">${escapeHtml(cAM2Lbl)}</span>
-                      <span class="metric-val">${escapeHtml(cAM2Val)}</span>
-                    </div>
-                    <div class="channel-metric-row">
-                      <span class="metric-name">${escapeHtml(cAM3Lbl)}</span>
-                      <span class="metric-val">${escapeHtml(cAM3Val)}</span>
-                    </div>
+                    ${renderMetricsRows(cAMetrics)}
                   </div>
                 </div>
 
                 <div class="channel-card">
                   <div class="channel-header">
                     <div class="channel-name">${escapeHtml(cBName)}</div>
-                    <span class="channel-pill">CHANNEL B</span>
+                    <span class="channel-pill">${escapeHtml(cBPill)}</span>
                   </div>
                   <div class="channel-metrics-list">
-                    <div class="channel-metric-row">
-                      <span class="metric-name">${escapeHtml(cBM1Lbl)}</span>
-                      <span class="metric-val">${escapeHtml(cBM1Val)}</span>
-                    </div>
-                    <div class="channel-metric-row">
-                      <span class="metric-name">${escapeHtml(cBM2Lbl)}</span>
-                      <span class="metric-val">${escapeHtml(cBM2Val)}</span>
-                    </div>
-                    <div class="channel-metric-row">
-                      <span class="metric-name">${escapeHtml(cBM3Lbl)}</span>
-                      <span class="metric-val">${escapeHtml(cBM3Val)}</span>
-                    </div>
+                    ${renderMetricsRows(cBMetrics)}
                   </div>
                 </div>
               </div>
@@ -1738,6 +1718,86 @@
           });
         }
 
+        // --- SIDEBAR CHANNEL CONTROLS FOR TEMPLATE 4 ---
+        function getChanMetricsFromSidebar(type) {
+          const container = document.getElementById(`chan${type}-metrics-list`);
+          if (!container) return [];
+          const rows = container.querySelectorAll(`.chan${type}-metric-item`);
+          const list = [];
+          rows.forEach(row => {
+            const lbl = row.querySelector('.metric-lbl')?.value || '';
+            const val = row.querySelector('.metric-val')?.value || '';
+            list.push({ lbl, val });
+          });
+          return list;
+        }
+
+        function createChanMetricRowElement(type = 'A', lbl = '', val = '', index = 1) {
+          const div = document.createElement('div');
+          div.className = `chan${type}-metric-item`;
+          div.style.cssText = 'background: var(--input-bg); padding: 8px 10px; border-radius: 6px; border: 1px solid var(--sidebar-border); display: flex; flex-direction: column; gap: 6px;';
+          div.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="form-label" style="font-size: 10px;">Metric #${index}</span>
+              <button type="button" class="btn-remove-chan-metric" style="background:none; border:none; color:var(--status-red); cursor:pointer; font-weight:bold; font-size:12px;" title="Remove Metric">✕</button>
+            </div>
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 6px;">
+              <input type="text" class="form-control metric-lbl" value="${escapeHtml(lbl)}" placeholder="Metric Name" />
+              <input type="text" class="form-control metric-val" value="${escapeHtml(val)}" placeholder="Value" />
+            </div>
+          `;
+
+          div.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', renderCanvas);
+            input.addEventListener('change', renderCanvas);
+          });
+
+          div.querySelector('.btn-remove-chan-metric').addEventListener('click', () => {
+            div.remove();
+            renumberChanMetricRows(type);
+            renderCanvas();
+          });
+
+          return div;
+        }
+
+        function renumberChanMetricRows(type) {
+          const container = document.getElementById(`chan${type}-metrics-list`);
+          if (!container) return;
+          const rows = container.querySelectorAll(`.chan${type}-metric-item`);
+          rows.forEach((row, i) => {
+            const lbl = row.querySelector('.form-label');
+            if (lbl) lbl.textContent = `Metric #${i + 1}`;
+          });
+        }
+
+        function setChanMetricsInSidebar(type, metricsList) {
+          const container = document.getElementById(`chan${type}-metrics-list`);
+          if (!container) return;
+          container.innerHTML = '';
+          if (!Array.isArray(metricsList) || metricsList.length === 0) {
+            if (type === 'A') {
+              metricsList = [
+                { lbl: 'Monthly Spend', val: '$48,500' },
+                { lbl: 'Conversion Rate', val: '5.2%' },
+                { lbl: 'Cost Per Lead', val: '$64.20' }
+              ];
+            } else {
+              metricsList = [
+                { lbl: 'Monthly Spend', val: '$36,200' },
+                { lbl: 'Conversion Rate', val: '3.8%' },
+                { lbl: 'Cost Per Lead', val: '$88.50' }
+              ];
+            }
+          }
+          metricsList.forEach((m, idx) => {
+            const labelVal = m.lbl !== undefined ? m.lbl : (m.label || m.name || '');
+            const valueVal = m.val !== undefined ? m.val : (m.value || '');
+            const rowEl = createChanMetricRowElement(type, labelVal, valueVal, idx + 1);
+            container.appendChild(rowEl);
+          });
+        }
+
         // --- COLLECT ACTIVE TEMPLATE DATA OBJECT ---
         function getTemplateData(template) {
           let data = {};
@@ -1762,20 +1822,12 @@
             data = { status: getStatusItemsFromSidebar() };
           } else if (template === 'channel') {
             data = {
-              chanA_name: document.getElementById('chanA-name').value,
-              chanA_m1_lbl: document.getElementById('chanA-m1-lbl').value,
-              chanA_m1_val: document.getElementById('chanA-m1-val').value,
-              chanA_m2_lbl: document.getElementById('chanA-m2-lbl').value,
-              chanA_m2_val: document.getElementById('chanA-m2-val').value,
-              chanA_m3_lbl: document.getElementById('chanA-m3-lbl').value,
-              chanA_m3_val: document.getElementById('chanA-m3-val').value,
-              chanB_name: document.getElementById('chanB-name').value,
-              chanB_m1_lbl: document.getElementById('chanB-m1-lbl').value,
-              chanB_m1_val: document.getElementById('chanB-m1-val').value,
-              chanB_m2_lbl: document.getElementById('chanB-m2-lbl').value,
-              chanB_m2_val: document.getElementById('chanB-m2-val').value,
-              chanB_m3_lbl: document.getElementById('chanB-m3-lbl').value,
-              chanB_m3_val: document.getElementById('chanB-m3-val').value
+              chanA_name: document.getElementById('chanA-name')?.value || '',
+              chanA_pill: document.getElementById('chanA-pill')?.value || 'CHANNEL A',
+              chanA_metrics: getChanMetricsFromSidebar('A'),
+              chanB_name: document.getElementById('chanB-name')?.value || '',
+              chanB_pill: document.getElementById('chanB-pill')?.value || 'CHANNEL B',
+              chanB_metrics: getChanMetricsFromSidebar('B')
             };
           } else if (template === 'comparison') {
             data = {
@@ -1855,6 +1907,35 @@
                 }
               }
               if (legacyKpiList.length > 0) setKpiItemsInSidebar(legacyKpiList);
+            }
+
+            if (content.chanA_pill !== undefined && document.getElementById('chanA-pill')) {
+              document.getElementById('chanA-pill').value = content.chanA_pill;
+            }
+            if (content.chanB_pill !== undefined && document.getElementById('chanB-pill')) {
+              document.getElementById('chanB-pill').value = content.chanB_pill;
+            }
+
+            if (Array.isArray(content.chanA_metrics)) {
+              setChanMetricsInSidebar('A', content.chanA_metrics);
+            } else if (content.chanA_m1_lbl !== undefined || content.chanA_m1_val !== undefined) {
+              const legacyAMetrics = [
+                { lbl: content.chanA_m1_lbl || '', val: content.chanA_m1_val || '' },
+                { lbl: content.chanA_m2_lbl || '', val: content.chanA_m2_val || '' },
+                { lbl: content.chanA_m3_lbl || '', val: content.chanA_m3_val || '' }
+              ].filter(m => m.lbl || m.val);
+              setChanMetricsInSidebar('A', legacyAMetrics);
+            }
+
+            if (Array.isArray(content.chanB_metrics)) {
+              setChanMetricsInSidebar('B', content.chanB_metrics);
+            } else if (content.chanB_m1_lbl !== undefined || content.chanB_m1_val !== undefined) {
+              const legacyBMetrics = [
+                { lbl: content.chanB_m1_lbl || '', val: content.chanB_m1_val || '' },
+                { lbl: content.chanB_m2_lbl || '', val: content.chanB_m2_val || '' },
+                { lbl: content.chanB_m3_lbl || '', val: content.chanB_m3_val || '' }
+              ].filter(m => m.lbl || m.val);
+              setChanMetricsInSidebar('B', legacyBMetrics);
             }
 
             if (!Array.isArray(content)) {
@@ -2083,6 +2164,30 @@
           container.appendChild(newRow);
           renderCanvas();
         });
+
+        setChanMetricsInSidebar('A');
+        const btnAddChanA = document.getElementById('btn-add-chanA-metric');
+        if (btnAddChanA) {
+          btnAddChanA.addEventListener('click', () => {
+            const container = document.getElementById('chanA-metrics-list');
+            const count = container.querySelectorAll('.chanA-metric-item').length + 1;
+            const newRow = createChanMetricRowElement('A', '', '', count);
+            container.appendChild(newRow);
+            renderCanvas();
+          });
+        }
+
+        setChanMetricsInSidebar('B');
+        const btnAddChanB = document.getElementById('btn-add-chanB-metric');
+        if (btnAddChanB) {
+          btnAddChanB.addEventListener('click', () => {
+            const container = document.getElementById('chanB-metrics-list');
+            const count = container.querySelectorAll('.chanB-metric-item').length + 1;
+            const newRow = createChanMetricRowElement('B', '', '', count);
+            container.appendChild(newRow);
+            renderCanvas();
+          });
+        }
 
         populatePresetDropdown(DEFAULT_PRESETS);
         renderCanvas();
