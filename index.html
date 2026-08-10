@@ -848,6 +848,137 @@
         border: 1px solid rgba(161, 161, 170, 0.4);
       }
 
+      /* Template 7: Quarterly Sales Leaderboard Layout */
+      .leaderboard-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(4, 1fr);
+        gap: 8px;
+        height: 310px;
+        max-height: 310px;
+        box-sizing: border-box;
+      }
+
+      .leaderboard-card {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-accent);
+        border-radius: 8px;
+        padding: 6px 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        position: relative;
+        overflow: hidden;
+        box-sizing: border-box;
+      }
+
+      .leaderboard-card.overachiever {
+        border-color: var(--highlight-amber);
+        box-shadow: 0 0 10px rgba(255, 193, 7, 0.25);
+      }
+
+      .leaderboard-avatar-frame {
+        width: 42px;
+        height: 42px;
+        min-width: 42px;
+        border-radius: 50%;
+        border: 2px solid var(--border-accent);
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--bg-primary);
+        flex-shrink: 0;
+      }
+
+      .leaderboard-card.overachiever .leaderboard-avatar-frame {
+        border-color: var(--highlight-amber);
+        box-shadow: 0 0 8px rgba(255, 193, 7, 0.4);
+      }
+
+      .leaderboard-avatar-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .leaderboard-card-info {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 2px;
+      }
+
+      .leaderboard-rep-name-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .leaderboard-rep-name {
+        font-size: 11px;
+        font-weight: 800;
+        color: var(--text-light);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .leaderboard-rep-title {
+        font-size: 9px;
+        font-weight: 500;
+        color: var(--text-muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .leaderboard-quota-badge {
+        font-size: 10px;
+        font-weight: 800;
+        color: var(--highlight-amber);
+        background: rgba(255, 193, 7, 0.15);
+        border: 1px solid rgba(255, 193, 7, 0.3);
+        padding: 1px 5px;
+        border-radius: 4px;
+        white-space: nowrap;
+      }
+
+      .leaderboard-progress-bg {
+        width: 100%;
+        height: 4px;
+        background-color: var(--bg-primary);
+        border-radius: 2px;
+        overflow: hidden;
+        margin-top: 2px;
+      }
+
+      .leaderboard-progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, var(--border-accent), var(--highlight-amber));
+        border-radius: 2px;
+        transition: width 0.3s ease;
+      }
+
+      .leaderboard-card.overachiever .leaderboard-progress-bar {
+        background: linear-gradient(90deg, var(--highlight-amber), var(--highlight-orange));
+      }
+
+      .leaderboard-overachiever-tag {
+        font-size: 8px;
+        font-weight: 800;
+        color: #10B981;
+        background: rgba(16, 185, 129, 0.15);
+        border: 1px solid rgba(16, 185, 129, 0.4);
+        padding: 1px 4px;
+        border-radius: 3px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
       /* Canvas Footer */
       .slide-footer {
         display: flex;
@@ -951,6 +1082,7 @@
               <option value="channel">4. Channel Performance (Side-by-Side)</option>
               <option value="comparison">5. Period Comparison (MoM/QoQ/YoY)</option>
               <option value="chart">6. Data Visualization (Bar / Line / Pie / Funnel)</option>
+              <option value="leaderboard">7. Quarterly Sales Leaderboard</option>
             </select>
           </div>
 
@@ -1118,6 +1250,23 @@
 
           <div id="chart-data-list" style="display: flex; flex-direction: column; gap: 10px;">
             <!-- Dynamic chart data points injected here -->
+          </div>
+        </div>
+
+        <!-- TEMPLATE 7: QUARTERLY SALES LEADERBOARD INPUTS -->
+        <div id="inputs-leaderboard" class="sidebar-section template-input-group" style="display:none;">
+          <div class="section-heading">
+            <span>Sales Leaderboard</span>
+            <button type="button" id="btn-add-leaderboard-rep" class="btn btn-secondary" style="padding: 3px 8px; font-size: 10px;">+ Add Representative</button>
+          </div>
+          <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px; line-height: 1.3;">
+            Only representatives achieving <strong>100%+ quota attainment</strong> will be displayed on the slide canvas 🎯.
+          </div>
+          <div id="leaderboard-reps-list" style="display: flex; flex-direction: column; gap: 8px;">
+            <!-- Representative items injected here -->
+          </div>
+          <div id="leaderboard-max-note" style="display: none; font-size: 10px; color: var(--highlight-amber); margin-top: 6px;">
+            Maximum 12 representative entries reached.
           </div>
         </div>
 
@@ -1298,6 +1447,32 @@
                 { label: 'Paid Social', value: 29000 },
                 { label: 'Email Marketing', value: 22000 },
                 { label: 'Referrals', value: 14000 }
+              ]
+            })
+          },
+          {
+            Template_Type: 'leaderboard',
+            Preset_Name: 'Quarterly Sales Leaderboard',
+            Slide_Title: 'Q3 Sales Performance Leaderboard',
+            Subtitle: 'Honoring top representatives achieving 100%+ quota attainment',
+            Category_Tag: 'SALES LEADERBOARD',
+            Watermark_Text: 'MKTG OPS',
+            Footer_Notice: 'CONFIDENTIAL • INTERNAL MARKETING OPERATIONS DIRECTIVE',
+            Footer_Slide_ID: 'SLIDE 01 • MKTG-OPS-VISUALIZER',
+            Content_Data: JSON.stringify({
+              reps: [
+                { name: 'Sarah Jenkins', title: 'Enterprise - North America', quota: 145, photo: '' },
+                { name: 'Marcus Vance', title: 'Commercial - EMEA', quota: 132, photo: '' },
+                { name: 'Elena Rostova', title: 'Mid-Market - APAC', quota: 128, photo: '' },
+                { name: 'David Chen', title: 'Enterprise - LATAM', quota: 120, photo: '' },
+                { name: 'Aisha Patel', title: 'SaaS Solutions - Global', quota: 115, photo: '' },
+                { name: 'Carlos Mendez', title: 'Commercial - US West', quota: 112, photo: '' },
+                { name: 'Hannah Abbott', title: 'Enterprise - UK & Ireland', quota: 108, photo: '' },
+                { name: 'Liam O\'Connor', title: 'Mid-Market - DACH', quota: 105, photo: '' },
+                { name: 'Rachel Kim', title: 'Strategic Accounts - US East', quota: 102, photo: '' },
+                { name: 'Jordan Taylor', title: 'Mid-Market - NORAM', quota: 100, photo: '' },
+                { name: 'Victor Hugo', title: 'Inside Sales - EMEA', quota: 92, photo: '' },
+                { name: 'Maya Lin', title: 'SMB - APAC', quota: 88, photo: '' }
               ]
             })
           }
@@ -1752,6 +1927,48 @@
 
               currentChart = new Chart(ctx, config);
             }
+          } else if (template === 'leaderboard') {
+            const allReps = getLeaderboardRepsFromSidebar();
+            // Filter: Only render cards for representatives whose Quota Achieved is 100% or higher
+            const filteredReps = allReps.filter(r => (parseFloat(r.quota) || 0) >= 100);
+
+            const cardsHtml = filteredReps.map(rep => {
+              const qVal = parseFloat(rep.quota) || 0;
+              const isOverAchiever = qVal > 100;
+              const progressPct = Math.min(Math.max((qVal / 150) * 100, 10), 100);
+
+              const avatarHtml = rep.photo ? 
+                `<img src="${rep.photo}" class="leaderboard-avatar-img" alt="${escapeHtml(rep.name)}" />` :
+                `<svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width: 22px; height: 22px;">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>`;
+
+              return `
+                <div class="leaderboard-card ${isOverAchiever ? 'overachiever' : ''}">
+                  <div class="leaderboard-avatar-frame">
+                    ${avatarHtml}
+                  </div>
+                  <div class="leaderboard-card-info">
+                    <div class="leaderboard-rep-name-row">
+                      <span class="leaderboard-rep-name" title="${escapeHtml(rep.name)}">${escapeHtml(rep.name || 'Sales Rep')}</span>
+                      <span class="leaderboard-quota-badge">${qVal}%</span>
+                    </div>
+                    <div class="leaderboard-rep-title" title="${escapeHtml(rep.title)}">${escapeHtml(rep.title || '')}</div>
+                    <div class="leaderboard-progress-bg">
+                      <div class="leaderboard-progress-bar" style="width: ${progressPct}%;"></div>
+                    </div>
+                    ${isOverAchiever ? `<div style="display:flex; justify-content:flex-end; margin-top:2px;"><span class="leaderboard-overachiever-tag">🎯 Over-Achiever</span></div>` : ''}
+                  </div>
+                </div>
+              `;
+            }).join('');
+
+            slideContent.innerHTML = `
+              <div class="leaderboard-grid">
+                ${cardsHtml || '<div style="color:var(--text-muted); font-size:12px; text-align:center; grid-column: 1 / -1; padding: 40px;">No representatives with 100%+ quota achievement. Update rep quotas in the sidebar.</div>'}
+              </div>
+            `;
           }
 
           if (typeof saveActiveDraft === 'function') {
@@ -2179,6 +2396,205 @@
           });
         }
 
+        // --- SIDEBAR LEADERBOARD CONTROLS FOR TEMPLATE 7 ---
+        function getLeaderboardRepsFromSidebar() {
+          const container = document.getElementById('leaderboard-reps-list');
+          if (!container) return [];
+          const rows = container.querySelectorAll('.leaderboard-rep-item');
+          const list = [];
+          rows.forEach(row => {
+            const name = row.querySelector('.rep-name-input')?.value || '';
+            const title = row.querySelector('.rep-title-input')?.value || '';
+            const quota = parseFloat(row.querySelector('.rep-quota-input')?.value) || 0;
+            const photo = row.dataset.photoBase64 || '';
+            list.push({ name, title, quota, photo });
+          });
+          return list;
+        }
+
+        function createLeaderboardRepRowElement(rep = {}, index = 1) {
+          const div = document.createElement('div');
+          div.className = 'leaderboard-rep-item';
+          div.dataset.photoBase64 = rep.photo || '';
+          div.style.cssText = 'background: var(--input-bg); border-radius: 6px; border: 1px solid var(--sidebar-border); overflow: hidden; margin-bottom: 8px;';
+
+          const repName = rep.name || `Sales Rep #${index}`;
+          const repQuota = rep.quota !== undefined ? rep.quota : 100;
+          const photoSrc = rep.photo || '';
+
+          div.innerHTML = `
+            <div class="rep-accordion-header" style="padding: 8px 10px; background: rgba(255, 255, 255, 0.03); display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none;">
+              <div style="display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1;">
+                <span class="rep-preview-avatar" style="width: 22px; height: 22px; border-radius: 50%; background: var(--border-accent); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; overflow: hidden; flex-shrink: 0;">
+                  ${photoSrc ? `<img src="${photoSrc}" style="width:100%; height:100%; object-fit:cover;" />` : `👤`}
+                </span>
+                <span class="rep-header-title form-label" style="font-size: 11px; text-transform: none; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                  ${index}. ${escapeHtml(repName)}
+                </span>
+                <span class="rep-header-quota" style="font-size: 10px; font-weight: 800; color: ${repQuota >= 100 ? 'var(--highlight-amber)' : 'var(--text-muted)'}; background: rgba(0,0,0,0.2); padding: 1px 5px; border-radius: 4px; flex-shrink: 0;">
+                  ${repQuota}%
+                </span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; margin-left: 6px;">
+                <span class="rep-toggle-icon" style="font-size: 10px; color: var(--text-muted);">▼</span>
+                <button type="button" class="btn-remove-leaderboard-rep" style="background:none; border:none; color:var(--status-red); cursor:pointer; font-weight:bold; font-size:12px;" title="Remove Rep">✕</button>
+              </div>
+            </div>
+            <div class="rep-accordion-body" style="padding: 10px; display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--sidebar-border);">
+              <div>
+                <label class="form-label" style="font-size: 10px; margin-bottom: 2px;">Representative Name</label>
+                <input type="text" class="form-control rep-name-input" value="${escapeHtml(rep.name || '')}" placeholder="Full Name (e.g. Sarah Jenkins)" />
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                <div>
+                  <label class="form-label" style="font-size: 10px; margin-bottom: 2px;">Title / Region</label>
+                  <input type="text" class="form-control rep-title-input" value="${escapeHtml(rep.title || '')}" placeholder="Title / Region" />
+                </div>
+                <div>
+                  <label class="form-label" style="font-size: 10px; margin-bottom: 2px;">Quota %</label>
+                  <input type="number" step="1" class="form-control rep-quota-input" value="${escapeHtml(repQuota)}" placeholder="125" />
+                </div>
+              </div>
+              <div>
+                <label class="form-label" style="font-size: 10px; margin-bottom: 2px;">Profile Photo Upload</label>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <input type="file" class="rep-photo-file-input" accept="image/*" style="font-size: 10px; width: 100%; color: var(--text-muted);" />
+                  <button type="button" class="btn-clear-rep-photo btn btn-secondary" style="padding: 2px 6px; font-size: 9px; white-space: nowrap; ${photoSrc ? '' : 'display:none;'}">Clear</button>
+                </div>
+              </div>
+            </div>
+          `;
+
+          const header = div.querySelector('.rep-accordion-header');
+          const body = div.querySelector('.rep-accordion-body');
+          const toggleIcon = div.querySelector('.rep-toggle-icon');
+
+          header.addEventListener('click', (e) => {
+            if (e.target.classList.contains('btn-remove-leaderboard-rep') || e.target.closest('.btn-remove-leaderboard-rep')) return;
+            const isHidden = body.style.display === 'none';
+            body.style.display = isHidden ? 'flex' : 'none';
+            toggleIcon.textContent = isHidden ? '▼' : '►';
+          });
+
+          const fileInput = div.querySelector('.rep-photo-file-input');
+          const clearBtn = div.querySelector('.btn-clear-rep-photo');
+          const avatarPreview = div.querySelector('.rep-preview-avatar');
+
+          fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = function(evt) {
+                const base64Str = evt.target.result;
+                div.dataset.photoBase64 = base64Str;
+                avatarPreview.innerHTML = `<img src="${base64Str}" style="width:100%; height:100%; object-fit:cover;" />`;
+                clearBtn.style.display = 'inline-block';
+                renderCanvas();
+                saveActiveDraft();
+              };
+              reader.readAsDataURL(file);
+            }
+          });
+
+          clearBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            div.dataset.photoBase64 = '';
+            fileInput.value = '';
+            avatarPreview.innerHTML = '👤';
+            clearBtn.style.display = 'none';
+            renderCanvas();
+            saveActiveDraft();
+          });
+
+          const nameInput = div.querySelector('.rep-name-input');
+          const quotaInput = div.querySelector('.rep-quota-input');
+          const headerTitle = div.querySelector('.rep-header-title');
+          const headerQuota = div.querySelector('.rep-header-quota');
+
+          div.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', () => {
+              if (headerTitle) headerTitle.textContent = `${index}. ${nameInput.value || 'Sales Rep'}`;
+              if (headerQuota) {
+                const qVal = parseFloat(quotaInput.value) || 0;
+                headerQuota.textContent = `${qVal}%`;
+                headerQuota.style.color = qVal >= 100 ? 'var(--highlight-amber)' : 'var(--text-muted)';
+              }
+              renderCanvas();
+            });
+            input.addEventListener('change', () => {
+              renderCanvas();
+              saveActiveDraft();
+            });
+          });
+
+          div.querySelector('.btn-remove-leaderboard-rep').addEventListener('click', (e) => {
+            e.stopPropagation();
+            div.remove();
+            renumberLeaderboardRepRows();
+            renderCanvas();
+            saveActiveDraft();
+          });
+
+          return div;
+        }
+
+        function renumberLeaderboardRepRows() {
+          const container = document.getElementById('leaderboard-reps-list');
+          if (!container) return;
+          const rows = container.querySelectorAll('.leaderboard-rep-item');
+          rows.forEach((row, i) => {
+            const headerTitle = row.querySelector('.rep-header-title');
+            const nameInput = row.querySelector('.rep-name-input');
+            if (headerTitle) headerTitle.textContent = `${i + 1}. ${nameInput?.value || 'Sales Rep'}`;
+          });
+
+          const btnAdd = document.getElementById('btn-add-leaderboard-rep');
+          const maxNote = document.getElementById('leaderboard-max-note');
+          if (rows.length >= 12) {
+            if (btnAdd) {
+              btnAdd.disabled = true;
+              btnAdd.style.opacity = '0.5';
+              btnAdd.style.cursor = 'not-allowed';
+            }
+            if (maxNote) maxNote.style.display = 'block';
+          } else {
+            if (btnAdd) {
+              btnAdd.disabled = false;
+              btnAdd.style.opacity = '1';
+              btnAdd.style.cursor = 'pointer';
+            }
+            if (maxNote) maxNote.style.display = 'none';
+          }
+        }
+
+        function setLeaderboardRepsInSidebar(repsList) {
+          const container = document.getElementById('leaderboard-reps-list');
+          if (!container) return;
+          container.innerHTML = '';
+          if (!Array.isArray(repsList) || repsList.length === 0) {
+            repsList = [
+              { name: 'Sarah Jenkins', title: 'Enterprise - North America', quota: 145, photo: '' },
+              { name: 'Marcus Vance', title: 'Commercial - EMEA', quota: 132, photo: '' },
+              { name: 'Elena Rostova', title: 'Mid-Market - APAC', quota: 128, photo: '' },
+              { name: 'David Chen', title: 'Enterprise - LATAM', quota: 120, photo: '' },
+              { name: 'Aisha Patel', title: 'SaaS Solutions - Global', quota: 115, photo: '' },
+              { name: 'Carlos Mendez', title: 'Commercial - US West', quota: 112, photo: '' },
+              { name: 'Hannah Abbott', title: 'Enterprise - UK & Ireland', quota: 108, photo: '' },
+              { name: 'Liam O\'Connor', title: 'Mid-Market - DACH', quota: 105, photo: '' },
+              { name: 'Rachel Kim', title: 'Strategic Accounts - US East', quota: 102, photo: '' },
+              { name: 'Jordan Taylor', title: 'Mid-Market - NORAM', quota: 100, photo: '' },
+              { name: 'Victor Hugo', title: 'Inside Sales - EMEA', quota: 92, photo: '' },
+              { name: 'Maya Lin', title: 'SMB - APAC', quota: 88, photo: '' }
+            ];
+          }
+          const cappedList = repsList.slice(0, 12);
+          cappedList.forEach((rep, idx) => {
+            const rowEl = createLeaderboardRepRowElement(rep, idx + 1);
+            container.appendChild(rowEl);
+          });
+          renumberLeaderboardRepRows();
+        }
+
         // --- SIDEBAR TIMELINE CONTROLS FOR TEMPLATE 2 ---
         function getTimelineNodesFromSidebar() {
           const container = document.getElementById('timeline-list');
@@ -2302,6 +2718,10 @@
               chart_title: document.getElementById('chart-title')?.value || '',
               chart_show_labels: document.getElementById('chart-show-labels')?.checked ?? true,
               chart_data: getChartDataFromSidebar()
+            };
+          } else if (template === 'leaderboard') {
+            data = {
+              reps: getLeaderboardRepsFromSidebar()
             };
           }
           data.Watermark_Text = watermarkTextInput ? watermarkTextInput.value : 'MKTG OPS';
@@ -2476,6 +2896,9 @@
             if (Array.isArray(content.chart_data)) {
               setChartDataInSidebar(content.chart_data);
             }
+            if (Array.isArray(content.reps)) {
+              setLeaderboardRepsInSidebar(content.reps);
+            }
 
             if (!Array.isArray(content)) {
               Object.keys(content).forEach(key => {
@@ -2497,7 +2920,8 @@
           status: '🟢',
           channel: '📊',
           comparison: '📈',
-          chart: '📉'
+          chart: '📉',
+          leaderboard: '🏆'
         };
 
         function getTemplateEmoji(tType) {
@@ -2833,6 +3257,22 @@
             const newRow = createChartDataRowElement('', '', count);
             container.appendChild(newRow);
             renderCanvas();
+          });
+        }
+
+        setLeaderboardRepsInSidebar();
+        const btnAddLeaderboardRep = document.getElementById('btn-add-leaderboard-rep');
+        if (btnAddLeaderboardRep) {
+          btnAddLeaderboardRep.addEventListener('click', () => {
+            const container = document.getElementById('leaderboard-reps-list');
+            const currentCount = container.querySelectorAll('.leaderboard-rep-item').length;
+            if (currentCount < 12) {
+              const newRow = createLeaderboardRepRowElement({ name: '', title: '', quota: 100, photo: '' }, currentCount + 1);
+              container.appendChild(newRow);
+              renumberLeaderboardRepRows();
+              renderCanvas();
+              saveActiveDraft();
+            }
           });
         }
 
