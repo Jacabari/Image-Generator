@@ -2600,6 +2600,14 @@
           if (idx !== '' && fetchedPresetsStore[idx]) {
             applyDataToForm(fetchedPresetsStore[idx]);
             showToast('Applied selected preset!');
+          } else if (idx === '') {
+            const pNameEl = document.getElementById('preset-name-input');
+            if (pNameEl) pNameEl.value = '';
+            try {
+              localStorage.removeItem('mktg_ops_active_draft');
+            } catch (err) {}
+            applyDataToForm(DEFAULT_PRESETS[0]);
+            showToast('Reset to default sample data');
           }
         });
 
