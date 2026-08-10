@@ -2467,23 +2467,22 @@
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json();
 
-            if (Array.isArray(data) && data.length > 0) {
-              fetchedPresetsStore = data;
-              populatePresetDropdown(fetchedPresetsStore);
-              dbStatus.textContent = 'Online';
-              dbStatus.style.color = 'var(--status-green)';
-              showToast(`Successfully loaded ${data.length} presets from Google Sheets!`);
+            fetchedPresetsStore = Array.isArray(data) ? data : [];
+            populatePresetDropdown(fetchedPresetsStore);
+            dbStatus.textContent = 'Online';
+            dbStatus.style.color = 'var(--status-green)';
+            if (fetchedPresetsStore.length > 0) {
+              showToast(`Successfully loaded ${fetchedPresetsStore.length} presets from Google Sheets!`);
             } else {
-              showToast('Fetched empty array, keeping local default presets');
-              populatePresetDropdown(fetchedPresetsStore);
-              dbStatus.textContent = 'Online';
+              showToast(`Loaded 0 saved presets for ${selectedUser}.`);
             }
           } catch (err) {
-            console.warn('GET Presets error (falling back to defaults):', err);
+            console.warn('GET Presets error:', err);
+            fetchedPresetsStore = [];
             populatePresetDropdown(fetchedPresetsStore);
             dbStatus.textContent = 'Ready (Offline)';
             dbStatus.style.color = 'var(--text-muted)';
-            showToast('Using loaded default presets (Apps Script direct fetch error or CORS)', false);
+            showToast('Unable to fetch presets from Google Sheets', false);
           } finally {
             btnLoadPresets.textContent = '⚡ Load Presets';
           }
@@ -2614,6 +2613,13 @@
             try {
               localStorage.setItem('mktg_ops_user', newUser);
             } catch (err) {}
+
+            const presetNameInputEl = document.getElementById('preset-name-input');
+            if (presetNameInputEl) presetNameInputEl.value = '';
+            try {
+              localStorage.removeItem('mktg_ops_active_draft');
+            } catch (err) {}
+            applyDataToForm(DEFAULT_PRESETS[0]);
 
             presetSelect.innerHTML = '<option value="">-- Select a Preset to Apply --</option>';
             fetchPresets();
