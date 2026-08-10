@@ -904,7 +904,11 @@
             <span>Database Integration</span>
             <span class="status-pill" id="db-status">Online</span>
           </div>
-          <div class="btn-row">
+          <div class="form-group">
+            <label class="form-label" for="preset-name-input">Preset Name</label>
+            <input type="text" id="preset-name-input" class="form-control" placeholder="e.g. Q3 Executive Summary" />
+          </div>
+          <div class="btn-row" style="margin-top: 10px;">
             <button id="btn-load-presets" class="btn btn-secondary btn-full">
               ⚡ Load Presets
             </button>
@@ -1721,6 +1725,10 @@
               currentChart = new Chart(ctx, config);
             }
           }
+
+          if (typeof saveActiveDraft === 'function') {
+            saveActiveDraft();
+          }
         }
 
         function escapeHtml(str) {
@@ -2194,11 +2202,41 @@
           return data;
         }
 
+        // --- DRAFT PERSISTENCE (LOCALSTORAGE) ---
+        function saveActiveDraft() {
+          try {
+            const currentTemplate = templateSelect.value;
+            const templateData = getTemplateData(currentTemplate);
+            const pNameEl = document.getElementById('preset-name-input');
+            const draft = {
+              Template_Type: currentTemplate,
+              Preset_Name: pNameEl ? pNameEl.value : '',
+              Slide_Title: slideTitleInput.value || '',
+              Subtitle: slideSubtitleInput.value || '',
+              Category_Tag: categoryTagInput.value || '',
+              Watermark_Text: watermarkTextInput.value || '',
+              Footer_Notice: footerNoticeInput.value || '',
+              Footer_Slide_ID: footerSlideIdInput.value || '',
+              Theme_Name: themeSelect ? themeSelect.value : 'dark-navy',
+              Content_Data: JSON.stringify(templateData)
+            };
+            localStorage.setItem('mktg_ops_active_draft', JSON.stringify(draft));
+          } catch(e) {
+            console.warn('Failed to save active draft to localStorage:', e);
+          }
+        }
+
         // --- APPLY DATA OBJECT TO FORM INPUTS ---
         function applyDataToForm(item) {
           if (!item) return;
           if (item.Template_Type) templateSelect.value = item.Template_Type;
-          if (item.Theme_Name !== undefined && themeSelect) themeSelect.value = item.Theme_Name;
+          if ((item.Theme_Name || item.Theme) !== undefined && themeSelect) {
+            themeSelect.value = item.Theme_Name || item.Theme;
+          }
+          if (item.Preset_Name !== undefined) {
+            const pNameEl = document.getElementById('preset-name-input');
+            if (pNameEl) pNameEl.value = item.Preset_Name;
+          }
           if (item.Slide_Title !== undefined) slideTitleInput.value = item.Slide_Title;
           if (item.Subtitle !== undefined) slideSubtitleInput.value = item.Subtitle;
           if (item.Category_Tag !== undefined) categoryTagInput.value = item.Category_Tag;
@@ -2324,14 +2362,47 @@
         }
 
         // --- POPULATE PRESET DROPDOWN ---
+        const TEMPLATE_EMOJIS = {
+          kpi: '💳',
+          timeline: '🗓️',
+          status: '🟢',
+          channel: '📊',
+          comparison: '📈',
+          chart: '📉'
+        };
+
+        function getTemplateEmoji(tType) {
+          if (!tType) return '💳';
+          const key = tType.toLowerCase();
+          return TEMPLATE_EMOJIS[key] || '📋';
+        }
+
+        function formatTimestamp(ts) {
+          let date;
+          if (ts) {
+            date = new Date(ts);
+          }
+          if (!date || isNaN(date.getTime())) {
+            date = new Date();
+          }
+          return date.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+          });
+        }
+
         function populatePresetDropdown(presets) {
           presetSelect.innerHTML = '<option value="">-- Select a Preset to Apply --</option>';
           presets.forEach((preset, index) => {
             const opt = document.createElement('option');
             opt.value = index;
-            const tType = (preset.Template_Type || 'kpi').toUpperCase();
+            const emoji = getTemplateEmoji(preset.Template_Type);
             const pName = preset.Preset_Name || preset.Slide_Title || 'Untitled Preset';
-            opt.textContent = `[${tType}] ${pName}`;
+            const formattedTs = formatTimestamp(preset.Timestamp || preset.Created_At || preset.timestamp || preset.created_at || preset.Date_Created);
+            opt.textContent = `${emoji} ${pName} (${formattedTs})`;
             presetSelect.appendChild(opt);
           });
         }
@@ -2370,16 +2441,14 @@
         }
 
         async function savePreset() {
-          const currentSlideTitle = (slideTitleInput.value || '').trim();
-          const presetNameInput = prompt("Enter a name for this preset:", currentSlideTitle);
+          const presetNameInputEl = document.getElementById('preset-name-input');
+          const presetNameVal = presetNameInputEl ? presetNameInputEl.value.trim() : '';
+          const fallbackTitle = (slideTitleInput.value || '').trim();
+          const presetName = presetNameVal || fallbackTitle || 'Untitled Preset';
 
-          if (presetNameInput === null || presetNameInput.trim() === '') {
-            return;
-          }
-
-          const presetName = presetNameInput.trim();
           const currentTemplate = templateSelect.value;
           const templateData = getTemplateData(currentTemplate);
+          const nowIso = new Date().toISOString();
 
           const payload = {
             Template_Type: currentTemplate,
@@ -2390,6 +2459,7 @@
             Watermark_Text: watermarkTextInput.value,
             Footer_Notice: footerNoticeInput.value,
             Footer_Slide_ID: footerSlideIdInput.value,
+            Timestamp: nowIso,
             Content_Data: JSON.stringify(templateData)
           };
 
@@ -2511,6 +2581,11 @@
 
         // Reset default data button
         btnResetData.addEventListener('click', () => {
+          try {
+            localStorage.removeItem('mktg_ops_active_draft');
+          } catch(e) {}
+          const presetNameInputEl = document.getElementById('preset-name-input');
+          if (presetNameInputEl) presetNameInputEl.value = '';
           applyDataToForm(DEFAULT_PRESETS[0]);
           populatePresetDropdown(DEFAULT_PRESETS);
           showToast('Reset to default sample slide data');
@@ -2580,7 +2655,34 @@
           });
         }
 
+        // Bind listener on preset-name-input
+        const presetNameInputEl = document.getElementById('preset-name-input');
+        if (presetNameInputEl) {
+          presetNameInputEl.addEventListener('input', renderCanvas);
+          presetNameInputEl.addEventListener('change', renderCanvas);
+        }
+
         populatePresetDropdown(DEFAULT_PRESETS);
+
+        // Auto-load draft from localStorage if available
+        let loadedFromDraft = false;
+        try {
+          const rawDraft = localStorage.getItem('mktg_ops_active_draft');
+          if (rawDraft) {
+            const parsedDraft = JSON.parse(rawDraft);
+            if (parsedDraft && typeof parsedDraft === 'object') {
+              applyDataToForm(parsedDraft);
+              loadedFromDraft = true;
+            }
+          }
+        } catch(e) {
+          console.warn('Failed to auto-load active draft from localStorage:', e);
+        }
+
+        if (!loadedFromDraft) {
+          applyDataToForm(DEFAULT_PRESETS[0]);
+        }
+
         renderCanvas();
         resizeCanvasToFitStage();
 
