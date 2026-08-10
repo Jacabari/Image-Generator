@@ -10,6 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     <!-- html2canvas CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
       :root {
         --bg-primary: #002844;
@@ -930,6 +932,7 @@
               <option value="status">3. Status Tracker (Initiatives)</option>
               <option value="channel">4. Channel Performance (Side-by-Side)</option>
               <option value="comparison">5. Period Comparison (MoM/QoQ/YoY)</option>
+              <option value="chart">6. Data Visualization (Bar / Line / Pie / Funnel)</option>
             </select>
           </div>
 
@@ -1093,6 +1096,31 @@
           </div>
         </div>
 
+        <!-- TEMPLATE 6: DATA VISUALIZATION INPUTS -->
+        <div id="inputs-chart" class="sidebar-section template-input-group" style="display:none;">
+          <div class="section-heading">
+            <span>Data Visualization</span>
+            <button type="button" id="btn-add-chart-data" class="btn btn-secondary" style="padding: 3px 8px; font-size: 10px;">+ Add Data Point</button>
+          </div>
+
+          <div class="form-group" style="border-bottom: 1px solid var(--sidebar-border); padding-bottom: 10px; margin-bottom: 8px;">
+            <label class="form-label" for="chart-type">Chart Type</label>
+            <select id="chart-type" class="form-control">
+              <option value="bar">Bar Chart</option>
+              <option value="line">Line Chart</option>
+              <option value="pie">Pie Chart</option>
+              <option value="funnel">Funnel (Horizontal Bar)</option>
+            </select>
+
+            <label class="form-label" for="chart-title" style="margin-top: 6px;">Chart Container Title</label>
+            <input type="text" id="chart-title" class="form-control" value="Qualified Leads by Acquisition Channel" placeholder="Chart Title" />
+          </div>
+
+          <div id="chart-data-list" style="display: flex; flex-direction: column; gap: 10px;">
+            <!-- Dynamic chart data points injected here -->
+          </div>
+        </div>
+
         <!-- Section: Actions & Export -->
         <div class="sidebar-section">
           <div class="section-heading">Export & Output</div>
@@ -1252,6 +1280,26 @@
                 { name: 'Net Revenue Retention', prior: '108%', current: '115%' }
               ]
             })
+          },
+          {
+            Template_Type: 'chart',
+            Slide_Title: 'Q3 Marketing Acquisition Channel Breakdown',
+            Subtitle: 'Data visualization of lead generation and conversion volume across acquisition channels',
+            Category_Tag: 'DATA VISUALIZATION',
+            Watermark_Text: 'MKTG OPS',
+            Footer_Notice: 'CONFIDENTIAL • INTERNAL MARKETING OPERATIONS DIRECTIVE',
+            Footer_Slide_ID: 'SLIDE 01 • MKTG-OPS-VISUALIZER',
+            Content_Data: JSON.stringify({
+              chart_type: 'bar',
+              chart_title: 'Qualified Leads by Acquisition Channel',
+              chart_data: [
+                { label: 'Paid Search', value: 45000 },
+                { label: 'Organic Search', value: 38000 },
+                { label: 'Paid Social', value: 29000 },
+                { label: 'Email Marketing', value: 22000 },
+                { label: 'Referrals', value: 14000 }
+              ]
+            })
           }
         ];
 
@@ -1318,11 +1366,19 @@
         }
 
         // --- RENDER SLIDE CANVAS TEMPLATES ---
+        let currentChart = null;
+
         function renderCanvas() {
           const template = templateSelect.value;
           const selectedTheme = themeSelect ? themeSelect.value : 'dark-navy';
           if (slideCanvas) {
             slideCanvas.setAttribute('data-theme', selectedTheme);
+          }
+
+          // Destroy existing chart instance before re-rendering
+          if (currentChart) {
+            currentChart.destroy();
+            currentChart = null;
           }
 
           // Update header & footer
@@ -1523,6 +1579,147 @@
                 ${cardsHtml || '<div style="color:var(--text-muted); font-size:12px;">No comparison metrics added. Click "+ Add Metric" in the sidebar.</div>'}
               </div>
             `;
+          } else if (template === 'chart') {
+            const chartType = document.getElementById('chart-type')?.value || 'bar';
+            const chartTitle = document.getElementById('chart-title')?.value || 'Qualified Leads by Acquisition Channel';
+            const chartData = getChartDataFromSidebar();
+
+            slideContent.innerHTML = `
+              <div class="chart-template-container" style="background: var(--bg-card); border: 1px solid var(--border-accent); border-radius: 8px; padding: 16px 20px; height: 100%; display: flex; flex-direction: column; box-sizing: border-box; overflow: hidden;">
+                <div class="chart-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-shrink: 0;">
+                  <h3 style="font-size: 14px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin: 0;">${escapeHtml(chartTitle)}</h3>
+                  <span style="font-size: 10px; font-weight: 700; color: var(--highlight-amber); background: rgba(255, 193, 7, 0.15); border: 1px solid rgba(255, 193, 7, 0.3); padding: 2px 8px; border-radius: 10px; text-transform: uppercase;">DATA VISUALIZATION</span>
+                </div>
+                <div style="flex: 1; min-height: 0; position: relative; width: 100%; display: flex; justify-content: center; align-items: center;">
+                  <canvas id="slide-chart-canvas" style="width: 100% !important; height: 100% !important; max-height: 310px;"></canvas>
+                </div>
+              </div>
+            `;
+
+            const canvasEl = document.getElementById('slide-chart-canvas');
+            if (canvasEl && typeof Chart !== 'undefined') {
+              const ctx = canvasEl.getContext('2d');
+              const dataLabels = chartData.map(d => d.label || 'Point');
+              const dataValues = chartData.map(d => parseFloat(d.value) || 0);
+
+              const isLight = (selectedTheme === 'clean-light');
+              const textColor = isLight ? '#0F172A' : '#EEEEEE';
+              const gridColor = isLight ? 'rgba(15, 23, 42, 0.12)' : 'rgba(226, 232, 240, 0.12)';
+
+              const grbPalette = ['#008CE8', '#00508C', '#FF9800', '#FFC107', '#38BDF8', '#0284C7', '#F59E0B', '#10B981'];
+
+              let config = {};
+
+              if (chartType === 'pie') {
+                config = {
+                  type: 'pie',
+                  data: {
+                    labels: dataLabels,
+                    datasets: [{
+                      data: dataValues,
+                      backgroundColor: grbPalette.slice(0, Math.max(dataValues.length, 1)),
+                      borderColor: isLight ? '#FFFFFF' : '#003C68',
+                      borderWidth: 2
+                    }]
+                  },
+                  options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                      legend: {
+                        position: 'right',
+                        labels: {
+                          color: textColor,
+                          font: { family: 'Montserrat', size: 11, weight: '600' }
+                        }
+                      }
+                    }
+                  }
+                };
+              } else if (chartType === 'line') {
+                config = {
+                  type: 'line',
+                  data: {
+                    labels: dataLabels,
+                    datasets: [{
+                      label: chartTitle,
+                      data: dataValues,
+                      borderColor: '#008CE8',
+                      backgroundColor: 'rgba(0, 140, 232, 0.25)',
+                      fill: true,
+                      tension: 0.35,
+                      pointBackgroundColor: '#FFC107',
+                      pointBorderColor: '#008CE8',
+                      pointRadius: 5,
+                      pointHoverRadius: 7
+                    }]
+                  },
+                  options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                      legend: { display: false }
+                    },
+                    scales: {
+                      x: { ticks: { color: textColor, font: { family: 'Montserrat', size: 10, weight: '600' } }, grid: { color: gridColor } },
+                      y: { ticks: { color: textColor, font: { family: 'Montserrat', size: 10, weight: '600' } }, grid: { color: gridColor } }
+                    }
+                  }
+                };
+              } else if (chartType === 'funnel') {
+                config = {
+                  type: 'bar',
+                  data: {
+                    labels: dataLabels,
+                    datasets: [{
+                      label: chartTitle,
+                      data: dataValues,
+                      backgroundColor: grbPalette.slice(0, Math.max(dataValues.length, 1)),
+                      borderRadius: 4
+                    }]
+                  },
+                  options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                      legend: { display: false }
+                    },
+                    scales: {
+                      x: { ticks: { color: textColor, font: { family: 'Montserrat', size: 10, weight: '600' } }, grid: { color: gridColor } },
+                      y: { ticks: { color: textColor, font: { family: 'Montserrat', size: 10, weight: '600' } }, grid: { color: gridColor } }
+                    }
+                  }
+                };
+              } else {
+                // bar chart
+                config = {
+                  type: 'bar',
+                  data: {
+                    labels: dataLabels,
+                    datasets: [{
+                      label: chartTitle,
+                      data: dataValues,
+                      backgroundColor: grbPalette.slice(0, Math.max(dataValues.length, 1)),
+                      borderRadius: 4
+                    }]
+                  },
+                  options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                      legend: { display: false }
+                    },
+                    scales: {
+                      x: { ticks: { color: textColor, font: { family: 'Montserrat', size: 10, weight: '600' } }, grid: { color: gridColor } },
+                      y: { ticks: { color: textColor, font: { family: 'Montserrat', size: 10, weight: '600' } }, grid: { color: gridColor } }
+                    }
+                  }
+                };
+              }
+
+              currentChart = new Chart(ctx, config);
+            }
           }
         }
 
@@ -1872,6 +2069,80 @@
           });
         }
 
+        // --- SIDEBAR CHART DATA CONTROLS FOR TEMPLATE 6 ---
+        function getChartDataFromSidebar() {
+          const container = document.getElementById('chart-data-list');
+          if (!container) return [];
+          const rows = container.querySelectorAll('.chart-data-item');
+          const list = [];
+          rows.forEach(row => {
+            const label = row.querySelector('.chart-data-label')?.value || '';
+            const value = row.querySelector('.chart-data-value')?.value || '';
+            list.push({ label, value });
+          });
+          return list;
+        }
+
+        function createChartDataRowElement(label = '', value = '', index = 1) {
+          const div = document.createElement('div');
+          div.className = 'chart-data-item';
+          div.style.cssText = 'background: var(--input-bg); padding: 8px 10px; border-radius: 6px; border: 1px solid var(--sidebar-border); display: flex; flex-direction: column; gap: 6px;';
+          div.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="form-label" style="font-size: 10px;">Data Point #${index}</span>
+              <button type="button" class="btn-remove-chart-data" style="background:none; border:none; color:var(--status-red); cursor:pointer; font-weight:bold; font-size:12px;" title="Remove Data Point">✕</button>
+            </div>
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 6px;">
+              <input type="text" class="form-control chart-data-label" value="${escapeHtml(label)}" placeholder="Label" />
+              <input type="number" step="any" class="form-control chart-data-value" value="${escapeHtml(value)}" placeholder="Value" />
+            </div>
+          `;
+
+          div.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', renderCanvas);
+            input.addEventListener('change', renderCanvas);
+          });
+
+          div.querySelector('.btn-remove-chart-data').addEventListener('click', () => {
+            div.remove();
+            renumberChartDataRows();
+            renderCanvas();
+          });
+
+          return div;
+        }
+
+        function renumberChartDataRows() {
+          const container = document.getElementById('chart-data-list');
+          if (!container) return;
+          const rows = container.querySelectorAll('.chart-data-item');
+          rows.forEach((row, i) => {
+            const lbl = row.querySelector('.form-label');
+            if (lbl) lbl.textContent = `Data Point #${i + 1}`;
+          });
+        }
+
+        function setChartDataInSidebar(dataList) {
+          const container = document.getElementById('chart-data-list');
+          if (!container) return;
+          container.innerHTML = '';
+          if (!Array.isArray(dataList) || dataList.length === 0) {
+            dataList = [
+              { label: 'Paid Search', value: 45000 },
+              { label: 'Organic Search', value: 38000 },
+              { label: 'Paid Social', value: 29000 },
+              { label: 'Email Marketing', value: 22000 },
+              { label: 'Referrals', value: 14000 }
+            ];
+          }
+          dataList.forEach((d, idx) => {
+            const labelVal = d.label !== undefined ? d.label : (d.lbl || d.name || '');
+            const valueVal = d.value !== undefined ? d.value : (d.val || '');
+            const rowEl = createChartDataRowElement(labelVal, valueVal, idx + 1);
+            container.appendChild(rowEl);
+          });
+        }
+
         // --- COLLECT ACTIVE TEMPLATE DATA OBJECT ---
         function getTemplateData(template) {
           let data = {};
@@ -1908,6 +2179,12 @@
               Prior_Period_Label: document.getElementById('comp-prior-lbl')?.value || 'PRIOR',
               Current_Period_Label: document.getElementById('comp-current-lbl')?.value || 'CURRENT',
               metrics: getComparisonMetricsFromSidebar()
+            };
+          } else if (template === 'chart') {
+            data = {
+              chart_type: document.getElementById('chart-type')?.value || 'bar',
+              chart_title: document.getElementById('chart-title')?.value || '',
+              chart_data: getChartDataFromSidebar()
             };
           }
           data.Watermark_Text = watermarkTextInput ? watermarkTextInput.value : 'MKTG OPS';
@@ -2021,6 +2298,16 @@
                 { lbl: content.chanB_m3_lbl || '', val: content.chanB_m3_val || '' }
               ].filter(m => m.lbl || m.val);
               setChanMetricsInSidebar('B', legacyBMetrics);
+            }
+
+            if (content.chart_type !== undefined && document.getElementById('chart-type')) {
+              document.getElementById('chart-type').value = content.chart_type;
+            }
+            if (content.chart_title !== undefined && document.getElementById('chart-title')) {
+              document.getElementById('chart-title').value = content.chart_title;
+            }
+            if (Array.isArray(content.chart_data)) {
+              setChartDataInSidebar(content.chart_data);
             }
 
             if (!Array.isArray(content)) {
@@ -2276,6 +2563,18 @@
             const container = document.getElementById('chanB-metrics-list');
             const count = container.querySelectorAll('.chanB-metric-item').length + 1;
             const newRow = createChanMetricRowElement('B', '', '', count);
+            container.appendChild(newRow);
+            renderCanvas();
+          });
+        }
+
+        setChartDataInSidebar();
+        const btnAddChartData = document.getElementById('btn-add-chart-data');
+        if (btnAddChartData) {
+          btnAddChartData.addEventListener('click', () => {
+            const container = document.getElementById('chart-data-list');
+            const count = container.querySelectorAll('.chart-data-item').length + 1;
+            const newRow = createChartDataRowElement('', '', count);
             container.appendChild(newRow);
             renderCanvas();
           });
