@@ -12,6 +12,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
     <style>
       :root {
         --bg-primary: #002844;
@@ -1109,6 +1110,11 @@
 
             <label class="form-label" for="chart-title" style="margin-top: 6px;">Chart Container Title</label>
             <input type="text" id="chart-title" class="form-control" value="Qualified Leads by Acquisition Channel" placeholder="Chart Title" />
+
+            <div style="display: flex; align-items: center; gap: 8px; margin-top: 10px;">
+              <input type="checkbox" id="chart-show-labels" checked style="cursor: pointer; width: 14px; height: 14px; accent-color: var(--border-accent);" />
+              <label class="form-label" for="chart-show-labels" style="cursor: pointer; margin: 0; text-transform: none; font-size: 11px;">Display Data Values on Chart</label>
+            </div>
           </div>
 
           <div id="chart-data-list" style="display: flex; flex-direction: column; gap: 10px;">
@@ -1287,6 +1293,7 @@
             Content_Data: JSON.stringify({
               chart_type: 'bar',
               chart_title: 'Qualified Leads by Acquisition Channel',
+              chart_show_labels: true,
               chart_data: [
                 { label: 'Paid Search', value: 45000 },
                 { label: 'Organic Search', value: 38000 },
@@ -1556,20 +1563,24 @@
 
               const isLight = (selectedTheme === 'clean-light');
               const textColor = isLight ? '#0F172A' : '#EEEEEE';
+              const labelColor = isLight ? '#0F172A' : '#FFFFFF';
               const gridColor = isLight ? 'rgba(15, 23, 42, 0.12)' : 'rgba(226, 232, 240, 0.12)';
 
-              const grbPalette = ['#008CE8', '#00508C', '#FF9800', '#FFC107', '#38BDF8', '#0284C7', '#F59E0B', '#10B981'];
+              const showLabels = document.getElementById('chart-show-labels')?.checked ?? true;
+              const grbPalette = ['#00C8FF', '#FF9800', '#FFC107', '#10B981', '#A855F7', '#EC4899'];
+              const pluginsList = (typeof ChartDataLabels !== 'undefined') ? [ChartDataLabels] : [];
 
               let config = {};
 
               if (chartType === 'pie') {
                 config = {
                   type: 'pie',
+                  plugins: pluginsList,
                   data: {
                     labels: dataLabels,
                     datasets: [{
                       data: dataValues,
-                      backgroundColor: grbPalette.slice(0, Math.max(dataValues.length, 1)),
+                      backgroundColor: dataValues.map((_, i) => grbPalette[i % grbPalette.length]),
                       borderColor: isLight ? '#FFFFFF' : '#003C68',
                       borderWidth: 2
                     }]
@@ -1584,6 +1595,16 @@
                           color: textColor,
                           font: { family: 'Montserrat', size: 11, weight: '600' }
                         }
+                      },
+                      datalabels: {
+                        display: showLabels,
+                        color: '#FFFFFF',
+                        font: { family: 'Montserrat', size: 11, weight: 800 },
+                        anchor: 'center',
+                        align: 'center',
+                        textStrokeColor: '#00192e',
+                        textStrokeWidth: 3,
+                        formatter: (val) => (typeof val === 'number' ? val.toLocaleString() : val)
                       }
                     }
                   }
@@ -1591,17 +1612,18 @@
               } else if (chartType === 'line') {
                 config = {
                   type: 'line',
+                  plugins: pluginsList,
                   data: {
                     labels: dataLabels,
                     datasets: [{
                       label: chartTitle,
                       data: dataValues,
-                      borderColor: '#008CE8',
-                      backgroundColor: 'rgba(0, 140, 232, 0.25)',
+                      borderColor: grbPalette[0],
+                      backgroundColor: 'rgba(0, 200, 255, 0.25)',
                       fill: true,
                       tension: 0.35,
-                      pointBackgroundColor: '#FFC107',
-                      pointBorderColor: '#008CE8',
+                      pointBackgroundColor: grbPalette[2],
+                      pointBorderColor: grbPalette[0],
                       pointRadius: 5,
                       pointHoverRadius: 7
                     }]
@@ -1610,23 +1632,38 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                      legend: { display: false }
+                      legend: { display: false },
+                      datalabels: {
+                        display: showLabels,
+                        color: '#FFFFFF',
+                        font: { family: 'Montserrat', size: 11, weight: 800 },
+                        anchor: 'end',
+                        align: 'top',
+                        offset: 6,
+                        backgroundColor: 'rgba(0, 25, 46, 0.8)',
+                        borderRadius: 4,
+                        padding: { top: 3, bottom: 3, left: 6, right: 6 },
+                        textStrokeColor: '#00192e',
+                        textStrokeWidth: 3,
+                        formatter: (val) => (typeof val === 'number' ? val.toLocaleString() : val)
+                      }
                     },
                     scales: {
                       x: { ticks: { color: textColor, font: { family: 'Montserrat', size: 10, weight: '600' } }, grid: { color: gridColor } },
-                      y: { ticks: { color: textColor, font: { family: 'Montserrat', size: 10, weight: '600' } }, grid: { color: gridColor } }
+                      y: { grace: '15%', ticks: { color: textColor, font: { family: 'Montserrat', size: 10, weight: '600' } }, grid: { color: gridColor } }
                     }
                   }
                 };
               } else if (chartType === 'funnel') {
                 config = {
                   type: 'bar',
+                  plugins: pluginsList,
                   data: {
                     labels: dataLabels,
                     datasets: [{
                       label: chartTitle,
                       data: dataValues,
-                      backgroundColor: grbPalette.slice(0, Math.max(dataValues.length, 1)),
+                      backgroundColor: dataValues.map((_, i) => grbPalette[i % grbPalette.length]),
                       borderRadius: 4
                     }]
                   },
@@ -1635,10 +1672,20 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                      legend: { display: false }
+                      legend: { display: false },
+                      datalabels: {
+                        display: showLabels,
+                        color: '#FFFFFF',
+                        font: { family: 'Montserrat', size: 11, weight: 800 },
+                        anchor: 'center',
+                        align: 'center',
+                        textStrokeColor: '#00192e',
+                        textStrokeWidth: 3,
+                        formatter: (val) => (typeof val === 'number' ? val.toLocaleString() : val)
+                      }
                     },
                     scales: {
-                      x: { ticks: { color: textColor, font: { family: 'Montserrat', size: 10, weight: '600' } }, grid: { color: gridColor } },
+                      x: { grace: '15%', ticks: { color: textColor, font: { family: 'Montserrat', size: 10, weight: '600' } }, grid: { color: gridColor } },
                       y: { ticks: { color: textColor, font: { family: 'Montserrat', size: 10, weight: '600' } }, grid: { color: gridColor } }
                     }
                   }
@@ -1647,12 +1694,13 @@
                 // bar chart
                 config = {
                   type: 'bar',
+                  plugins: pluginsList,
                   data: {
                     labels: dataLabels,
                     datasets: [{
                       label: chartTitle,
                       data: dataValues,
-                      backgroundColor: grbPalette.slice(0, Math.max(dataValues.length, 1)),
+                      backgroundColor: dataValues.map((_, i) => grbPalette[i % grbPalette.length]),
                       borderRadius: 4
                     }]
                   },
@@ -1660,11 +1708,21 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                      legend: { display: false }
+                      legend: { display: false },
+                      datalabels: {
+                        display: showLabels,
+                        color: '#FFFFFF',
+                        font: { family: 'Montserrat', size: 11, weight: 800 },
+                        anchor: 'center',
+                        align: 'center',
+                        textStrokeColor: '#00192e',
+                        textStrokeWidth: 3,
+                        formatter: (val) => (typeof val === 'number' ? val.toLocaleString() : val)
+                      }
                     },
                     scales: {
                       x: { ticks: { color: textColor, font: { family: 'Montserrat', size: 10, weight: '600' } }, grid: { color: gridColor } },
-                      y: { ticks: { color: textColor, font: { family: 'Montserrat', size: 10, weight: '600' } }, grid: { color: gridColor } }
+                      y: { grace: '15%', ticks: { color: textColor, font: { family: 'Montserrat', size: 10, weight: '600' } }, grid: { color: gridColor } }
                     }
                   }
                 };
@@ -2220,6 +2278,7 @@
             data = {
               chart_type: document.getElementById('chart-type')?.value || 'bar',
               chart_title: document.getElementById('chart-title')?.value || '',
+              chart_show_labels: document.getElementById('chart-show-labels')?.checked ?? true,
               chart_data: getChartDataFromSidebar()
             };
           }
@@ -2388,6 +2447,9 @@
             }
             if (content.chart_title !== undefined && document.getElementById('chart-title')) {
               document.getElementById('chart-title').value = content.chart_title;
+            }
+            if (content.chart_show_labels !== undefined && document.getElementById('chart-show-labels')) {
+              document.getElementById('chart-show-labels').checked = !!content.chart_show_labels;
             }
             if (Array.isArray(content.chart_data)) {
               setChartDataInSidebar(content.chart_data);
