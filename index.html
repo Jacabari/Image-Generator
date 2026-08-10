@@ -995,38 +995,15 @@
 
         <!-- TEMPLATE 2: TIMELINE INPUTS -->
         <div id="inputs-timeline" class="sidebar-section template-input-group" style="display:none;">
-          <div class="section-heading">Timeline Nodes</div>
-          
-          <!-- Node 1 -->
-          <div class="form-group">
-            <label class="form-label">Node 1 (Date, Title, Desc)</label>
-            <input type="text" id="time1-date" class="form-control" value="JUL 15" />
-            <input type="text" id="time1-title" class="form-control" value="Audience Segmentation" />
-            <textarea id="time1-desc" class="form-control">Refined ICP criteria across LinkedIn & Meta paid channels.</textarea>
+          <div class="section-heading">
+            <span>Timeline Nodes</span>
+            <button type="button" id="btn-add-timeline" class="btn btn-secondary" style="padding: 3px 8px; font-size: 10px;">+ Add Timeline Node</button>
           </div>
-
-          <!-- Node 2 -->
-          <div class="form-group">
-            <label class="form-label">Node 2 (Date, Title, Desc)</label>
-            <input type="text" id="time2-date" class="form-control" value="AUG 01" />
-            <input type="text" id="time2-title" class="form-control" value="Creative Production" />
-            <textarea id="time2-desc" class="form-control">Finalized 12 video variations and responsive HTML landing pages.</textarea>
+          <div id="timeline-list" style="display: flex; flex-direction: column; gap: 10px;">
+            <!-- Dynamic timeline items injected here -->
           </div>
-
-          <!-- Node 3 -->
-          <div class="form-group">
-            <label class="form-label">Node 3 (Date, Title, Desc)</label>
-            <input type="text" id="time3-date" class="form-control" value="AUG 15" />
-            <input type="text" id="time3-title" class="form-control" value="Omnichannel Launch" />
-            <textarea id="time3-desc" class="form-control">Initiated synchronized ad pushes across Google Search and YouTube.</textarea>
-          </div>
-
-          <!-- Node 4 -->
-          <div class="form-group">
-            <label class="form-label">Node 4 (Date, Title, Desc)</label>
-            <input type="text" id="time4-date" class="form-control" value="SEP 01" />
-            <input type="text" id="time4-title" class="form-control" value="Mid-Flight Optimization" />
-            <textarea id="time4-desc" class="form-control">Reallocated budget toward top 2 performing video creatives.</textarea>
+          <div id="timeline-max-note" style="display:none; font-size: 11px; color: var(--highlight-amber); font-weight: 600; margin-top: 2px;">
+            Maximum 6 timeline nodes reached
           </div>
         </div>
 
@@ -1212,18 +1189,12 @@
             Footer_Notice: 'CONFIDENTIAL • INTERNAL MARKETING OPERATIONS DIRECTIVE',
             Footer_Slide_ID: 'SLIDE 01 • MKTG-OPS-VISUALIZER',
             Content_Data: JSON.stringify({
-              time1_date: 'JUL 15',
-              time1_title: 'Audience Segmentation',
-              time1_desc: 'Refined ICP criteria across LinkedIn & Meta paid channels.',
-              time2_date: 'AUG 01',
-              time2_title: 'Creative Production',
-              time2_desc: 'Finalized 12 video variations and responsive landing pages.',
-              time3_date: 'AUG 15',
-              time3_title: 'Omnichannel Launch',
-              time3_desc: 'Initiated synchronized ad pushes across Google Search and YouTube.',
-              time4_date: 'SEP 01',
-              time4_title: 'Mid-Flight Optimization',
-              time4_desc: 'Reallocated budget toward top 2 performing video creatives.'
+              nodes: [
+                { date: 'JUL 15', title: 'Audience Segmentation', desc: 'Refined ICP criteria across LinkedIn & Meta paid channels.' },
+                { date: 'AUG 01', title: 'Creative Production', desc: 'Finalized 12 video variations and responsive HTML landing pages.' },
+                { date: 'AUG 15', title: 'Omnichannel Launch', desc: 'Initiated synchronized ad pushes across Google Search and YouTube.' },
+                { date: 'SEP 01', title: 'Mid-Flight Optimization', desc: 'Reallocated budget toward top 2 performing video creatives.' }
+              ]
             })
           },
           {
@@ -1415,69 +1386,26 @@
               </div>
             `;
           } else if (template === 'timeline') {
-            const t1Date = document.getElementById('time1-date').value;
-            const t1Title = document.getElementById('time1-title').value;
-            const t1Desc = document.getElementById('time1-desc').value;
-
-            const t2Date = document.getElementById('time2-date').value;
-            const t2Title = document.getElementById('time2-title').value;
-            const t2Desc = document.getElementById('time2-desc').value;
-
-            const t3Date = document.getElementById('time3-date').value;
-            const t3Title = document.getElementById('time3-title').value;
-            const t3Desc = document.getElementById('time3-desc').value;
-
-            const t4Date = document.getElementById('time4-date').value;
-            const t4Title = document.getElementById('time4-title').value;
-            const t4Desc = document.getElementById('time4-desc').value;
+            const nodes = getTimelineNodesFromSidebar();
+            const gridCols = Math.max(nodes.length, 1);
+            const nodesHtml = nodes.map((node, idx) => `
+              <div class="timeline-node">
+                <div class="node-header">
+                  <div class="node-circle">${idx + 1}</div>
+                  <div class="node-date">${escapeHtml(node.date)}</div>
+                </div>
+                <div class="node-card">
+                  <div class="node-title">${escapeHtml(node.title)}</div>
+                  <div class="node-desc">${escapeHtml(node.desc)}</div>
+                </div>
+              </div>
+            `).join('');
 
             slideContent.innerHTML = `
               <div class="timeline-container">
                 <div class="timeline-track"></div>
-                <div class="timeline-grid">
-                  <div class="timeline-node">
-                    <div class="node-header">
-                      <div class="node-circle">1</div>
-                      <div class="node-date">${escapeHtml(t1Date)}</div>
-                    </div>
-                    <div class="node-card">
-                      <div class="node-title">${escapeHtml(t1Title)}</div>
-                      <div class="node-desc">${escapeHtml(t1Desc)}</div>
-                    </div>
-                  </div>
-
-                  <div class="timeline-node">
-                    <div class="node-header">
-                      <div class="node-circle">2</div>
-                      <div class="node-date">${escapeHtml(t2Date)}</div>
-                    </div>
-                    <div class="node-card">
-                      <div class="node-title">${escapeHtml(t2Title)}</div>
-                      <div class="node-desc">${escapeHtml(t2Desc)}</div>
-                    </div>
-                  </div>
-
-                  <div class="timeline-node">
-                    <div class="node-header">
-                      <div class="node-circle">3</div>
-                      <div class="node-date">${escapeHtml(t3Date)}</div>
-                    </div>
-                    <div class="node-card">
-                      <div class="node-title">${escapeHtml(t3Title)}</div>
-                      <div class="node-desc">${escapeHtml(t3Desc)}</div>
-                    </div>
-                  </div>
-
-                  <div class="timeline-node">
-                    <div class="node-header">
-                      <div class="node-circle">4</div>
-                      <div class="node-date">${escapeHtml(t4Date)}</div>
-                    </div>
-                    <div class="node-card">
-                      <div class="node-title">${escapeHtml(t4Title)}</div>
-                      <div class="node-desc">${escapeHtml(t4Desc)}</div>
-                    </div>
-                  </div>
+                <div class="timeline-grid" style="grid-template-columns: repeat(${gridCols}, 1fr);">
+                  ${nodesHtml || '<div style="color:var(--text-muted); font-size:12px; text-align:center; grid-column: 1 / -1;">No timeline nodes added. Click "+ Add Timeline Node" in the sidebar.</div>'}
                 </div>
               </div>
             `;
@@ -2151,6 +2079,97 @@
           });
         }
 
+        // --- SIDEBAR TIMELINE CONTROLS FOR TEMPLATE 2 ---
+        function getTimelineNodesFromSidebar() {
+          const container = document.getElementById('timeline-list');
+          if (!container) return [];
+          const rows = container.querySelectorAll('.timeline-node-item');
+          const list = [];
+          rows.forEach(row => {
+            const date = row.querySelector('.node-date-input')?.value || '';
+            const title = row.querySelector('.node-title-input')?.value || '';
+            const desc = row.querySelector('.node-desc-input')?.value || '';
+            list.push({ date, title, desc });
+          });
+          return list;
+        }
+
+        function createTimelineNodeRowElement(date = '', title = '', desc = '', index = 1) {
+          const div = document.createElement('div');
+          div.className = 'timeline-node-item';
+          div.style.cssText = 'background: var(--input-bg); padding: 8px 10px; border-radius: 6px; border: 1px solid var(--sidebar-border); display: flex; flex-direction: column; gap: 6px;';
+          div.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="form-label" style="font-size: 10px;">Node #${index}</span>
+              <button type="button" class="btn-remove-timeline" style="background:none; border:none; color:var(--status-red); cursor:pointer; font-weight:bold; font-size:12px;" title="Remove Node">✕</button>
+            </div>
+            <input type="text" class="form-control node-date-input" value="${escapeHtml(date)}" placeholder="Date (e.g. JUL 15)" />
+            <input type="text" class="form-control node-title-input" value="${escapeHtml(title)}" placeholder="Title (e.g. Audience Segmentation)" />
+            <textarea class="form-control node-desc-input" placeholder="Description">${escapeHtml(desc)}</textarea>
+          `;
+
+          div.querySelectorAll('input, textarea').forEach(input => {
+            input.addEventListener('input', renderCanvas);
+            input.addEventListener('change', renderCanvas);
+          });
+
+          div.querySelector('.btn-remove-timeline').addEventListener('click', () => {
+            div.remove();
+            renumberTimelineRows();
+            renderCanvas();
+          });
+
+          return div;
+        }
+
+        function renumberTimelineRows() {
+          const container = document.getElementById('timeline-list');
+          if (!container) return;
+          const rows = container.querySelectorAll('.timeline-node-item');
+          rows.forEach((row, i) => {
+            const lbl = row.querySelector('.form-label');
+            if (lbl) lbl.textContent = `Node #${i + 1}`;
+          });
+
+          const btnAdd = document.getElementById('btn-add-timeline');
+          const maxNote = document.getElementById('timeline-max-note');
+          if (rows.length >= 6) {
+            if (btnAdd) {
+              btnAdd.disabled = true;
+              btnAdd.style.opacity = '0.5';
+              btnAdd.style.cursor = 'not-allowed';
+            }
+            if (maxNote) maxNote.style.display = 'block';
+          } else {
+            if (btnAdd) {
+              btnAdd.disabled = false;
+              btnAdd.style.opacity = '1';
+              btnAdd.style.cursor = 'pointer';
+            }
+            if (maxNote) maxNote.style.display = 'none';
+          }
+        }
+
+        function setTimelineNodesInSidebar(nodesList) {
+          const container = document.getElementById('timeline-list');
+          if (!container) return;
+          container.innerHTML = '';
+          if (!Array.isArray(nodesList) || nodesList.length === 0) {
+            nodesList = [
+              { date: 'JUL 15', title: 'Audience Segmentation', desc: 'Refined ICP criteria across LinkedIn & Meta paid channels.' },
+              { date: 'AUG 01', title: 'Creative Production', desc: 'Finalized 12 video variations and responsive HTML landing pages.' },
+              { date: 'AUG 15', title: 'Omnichannel Launch', desc: 'Initiated synchronized ad pushes across Google Search and YouTube.' },
+              { date: 'SEP 01', title: 'Mid-Flight Optimization', desc: 'Reallocated budget toward top 2 performing video creatives.' }
+            ];
+          }
+          const cappedList = nodesList.slice(0, 6);
+          cappedList.forEach((n, idx) => {
+            const rowEl = createTimelineNodeRowElement(n.date, n.title, n.desc, idx + 1);
+            container.appendChild(rowEl);
+          });
+          renumberTimelineRows();
+        }
+
         // --- COLLECT ACTIVE TEMPLATE DATA OBJECT ---
         function getTemplateData(template) {
           let data = {};
@@ -2158,18 +2177,7 @@
             data = { kpis: getKpiItemsFromSidebar() };
           } else if (template === 'timeline') {
             data = {
-              time1_date: document.getElementById('time1-date').value,
-              time1_title: document.getElementById('time1-title').value,
-              time1_desc: document.getElementById('time1-desc').value,
-              time2_date: document.getElementById('time2-date').value,
-              time2_title: document.getElementById('time2-title').value,
-              time2_desc: document.getElementById('time2-desc').value,
-              time3_date: document.getElementById('time3-date').value,
-              time3_title: document.getElementById('time3-title').value,
-              time3_desc: document.getElementById('time3-desc').value,
-              time4_date: document.getElementById('time4-date').value,
-              time4_title: document.getElementById('time4-title').value,
-              time4_desc: document.getElementById('time4-desc').value
+              nodes: getTimelineNodesFromSidebar()
             };
           } else if (template === 'status') {
             data = { status: getStatusItemsFromSidebar() };
@@ -2273,9 +2281,26 @@
             if (Array.isArray(content.kpis)) {
               setKpiItemsInSidebar(content.kpis);
             }
+            if (Array.isArray(content.nodes)) {
+              setTimelineNodesInSidebar(content.nodes);
+            } else if (content.time1_date !== undefined || content.time1_title !== undefined || content.time2_date !== undefined) {
+              const legacyTimelineList = [];
+              for (let i = 1; i <= 6; i++) {
+                if (content[`time${i}_date`] !== undefined || content[`time${i}_title`] !== undefined) {
+                  legacyTimelineList.push({
+                    date: content[`time${i}_date`] || '',
+                    title: content[`time${i}_title`] || '',
+                    desc: content[`time${i}_desc`] || ''
+                  });
+                }
+              }
+              if (legacyTimelineList.length > 0) setTimelineNodesInSidebar(legacyTimelineList);
+            }
             if (Array.isArray(content)) {
               if (item.Template_Type === 'kpi' || (content[0] && content[0].label !== undefined)) {
                 setKpiItemsInSidebar(content);
+              } else if (item.Template_Type === 'timeline' || (content[0] && content[0].date !== undefined)) {
+                setTimelineNodesInSidebar(content);
               } else {
                 setStatusItemsInSidebar(content);
               }
@@ -2600,6 +2625,21 @@
           container.appendChild(newRow);
           renderCanvas();
         });
+
+        setTimelineNodesInSidebar();
+        const btnAddTimeline = document.getElementById('btn-add-timeline');
+        if (btnAddTimeline) {
+          btnAddTimeline.addEventListener('click', () => {
+            const container = document.getElementById('timeline-list');
+            const currentCount = container.querySelectorAll('.timeline-node-item').length;
+            if (currentCount < 6) {
+              const newRow = createTimelineNodeRowElement('', '', '', currentCount + 1);
+              container.appendChild(newRow);
+              renumberTimelineRows();
+              renderCanvas();
+            }
+          });
+        }
 
         setStatusItemsInSidebar();
         document.getElementById('btn-add-status').addEventListener('click', () => {
