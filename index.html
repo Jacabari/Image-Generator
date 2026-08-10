@@ -905,6 +905,20 @@
             <span class="status-pill" id="db-status">Online</span>
           </div>
           <div class="form-group">
+            <label class="form-label" for="user-select">User Profile</label>
+            <select id="user-select" class="form-control">
+              <option value="Jared" selected>Jared</option>
+              <option value="Arlene">Arlene</option>
+              <option value="Mai">Mai</option>
+              <option value="Frances">Frances</option>
+              <option value="Gaile">Gaile</option>
+              <option value="Mike">Mike</option>
+              <option value="Bam">Bam</option>
+              <option value="Sheena">Sheena</option>
+              <option value="Grace">Grace</option>
+            </select>
+          </div>
+          <div class="form-group">
             <label class="form-label" for="preset-name-input">Preset Name</label>
             <input type="text" id="preset-name-input" class="form-control" placeholder="e.g. Q3 Executive Summary" />
           </div>
@@ -2444,8 +2458,12 @@
           dbStatus.style.color = 'var(--highlight-amber)';
           btnLoadPresets.textContent = '⏳ Loading...';
 
+          const userSelectEl = document.getElementById('user-select');
+          const selectedUser = userSelectEl ? userSelectEl.value : 'Jared';
+          const fetchUrl = `${APPS_SCRIPT_URL}?user=${encodeURIComponent(selectedUser)}`;
+
           try {
-            const res = await fetch(APPS_SCRIPT_URL, { method: 'GET' });
+            const res = await fetch(fetchUrl, { method: 'GET' });
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json();
 
@@ -2472,6 +2490,10 @@
         }
 
         async function savePreset() {
+          const userSelectEl = document.getElementById('user-select');
+          const selectedUser = userSelectEl ? userSelectEl.value : 'Jared';
+          const saveUrl = `${APPS_SCRIPT_URL}?user=${encodeURIComponent(selectedUser)}`;
+
           const presetNameInputEl = document.getElementById('preset-name-input');
           const presetNameVal = presetNameInputEl ? presetNameInputEl.value.trim() : '';
           const fallbackTitle = (slideTitleInput.value || '').trim();
@@ -2482,6 +2504,7 @@
           const nowIso = new Date().toISOString();
 
           const payload = {
+            User: selectedUser,
             Template_Type: currentTemplate,
             Preset_Name: presetName,
             Slide_Title: slideTitleInput.value,
@@ -2499,7 +2522,7 @@
 
           try {
             // Apps Script POST can require no-cors or standard text/plain
-            const res = await fetch(APPS_SCRIPT_URL, {
+            const res = await fetch(saveUrl, {
               method: 'POST',
               headers: { 'Content-Type': 'text/plain;charset=utf-8' },
               body: JSON.stringify(payload)
@@ -2578,10 +2601,24 @@
         // --- EVENT LISTENERS ---
         // Live data binding on all input controls
         document.querySelectorAll('.sidebar input, .sidebar textarea, .sidebar select').forEach(input => {
-          if (input.id === 'template-select' || input.id === 'preset-select' || input.id === 'apps-script-url') return;
+          if (input.id === 'template-select' || input.id === 'preset-select' || input.id === 'user-select' || input.id === 'apps-script-url') return;
           input.addEventListener('input', renderCanvas);
           input.addEventListener('change', renderCanvas);
         });
+
+        // User profile selector
+        const userSelectEl = document.getElementById('user-select');
+        if (userSelectEl) {
+          userSelectEl.addEventListener('change', (e) => {
+            const newUser = e.target.value;
+            try {
+              localStorage.setItem('mktg_ops_user', newUser);
+            } catch (err) {}
+
+            presetSelect.innerHTML = '<option value="">-- Select a Preset to Apply --</option>';
+            fetchPresets();
+          });
+        }
 
         // Template switcher
         templateSelect.addEventListener('change', () => {
@@ -2714,6 +2751,19 @@
         if (presetNameInputEl) {
           presetNameInputEl.addEventListener('input', renderCanvas);
           presetNameInputEl.addEventListener('change', renderCanvas);
+        }
+
+        // Restore saved user profile selection from localStorage if available
+        const initUserSelectEl = document.getElementById('user-select');
+        if (initUserSelectEl) {
+          try {
+            const savedUser = localStorage.getItem('mktg_ops_user');
+            if (savedUser) {
+              initUserSelectEl.value = savedUser;
+            }
+          } catch (e) {
+            console.warn('Failed to restore user profile from localStorage:', e);
+          }
         }
 
         populatePresetDropdown(DEFAULT_PRESETS);
