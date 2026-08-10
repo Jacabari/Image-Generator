@@ -1168,6 +1168,7 @@
         const DEFAULT_PRESETS = [
           {
             Template_Type: 'kpi',
+            Preset_Name: 'Executive Summary',
             Slide_Title: 'Executive Marketing Operations Summary',
             Subtitle: 'Core growth metrics, milestone progress, and active channel performance',
             Category_Tag: 'Q3 PERFORMANCE REPORT',
@@ -1182,6 +1183,7 @@
           },
           {
             Template_Type: 'timeline',
+            Preset_Name: 'Campaign Execution Roadmap',
             Slide_Title: 'Q3 Campaign Execution Roadmap',
             Subtitle: 'Strategic milestones across audience segmentation, creative, and launch phases',
             Category_Tag: 'CAMPAIGN ROADMAP',
@@ -1199,6 +1201,7 @@
           },
           {
             Template_Type: 'status',
+            Preset_Name: 'Strategic Initiatives Tracker',
             Slide_Title: 'Key Strategic Initiatives Tracker',
             Subtitle: 'Current progress, risk profiles, and immediate next steps for active projects',
             Category_Tag: 'OPERATIONS DASHBOARD',
@@ -1214,6 +1217,7 @@
           },
           {
             Template_Type: 'channel',
+            Preset_Name: 'Paid Acquisition Breakdown',
             Slide_Title: 'Paid Acquisition Channel Breakdown',
             Subtitle: 'Efficiency comparison between Google Paid Search and Paid Social channels',
             Category_Tag: 'CHANNEL METRICS',
@@ -1239,6 +1243,7 @@
           },
           {
             Template_Type: 'comparison',
+            Preset_Name: 'Period Performance Metrics',
             Slide_Title: 'Period-over-Period Performance Metrics',
             Subtitle: 'Quarterly growth comparison and variance analysis across key marketing indicators',
             Category_Tag: 'PERIOD COMPARISON',
@@ -1258,6 +1263,7 @@
           },
           {
             Template_Type: 'chart',
+            Preset_Name: 'Acquisition Channel Breakdown',
             Slide_Title: 'Q3 Marketing Acquisition Channel Breakdown',
             Subtitle: 'Data visualization of lead generation and conversion volume across acquisition channels',
             Category_Tag: 'DATA VISUALIZATION',
@@ -2241,9 +2247,9 @@
           if ((item.Theme_Name || item.Theme) !== undefined && themeSelect) {
             themeSelect.value = item.Theme_Name || item.Theme;
           }
-          if (item.Preset_Name !== undefined) {
-            const pNameEl = document.getElementById('preset-name-input');
-            if (pNameEl) pNameEl.value = item.Preset_Name;
+          const pNameEl = document.getElementById('preset-name-input');
+          if (pNameEl) {
+            pNameEl.value = item.Preset_Name || item['Preset Name'] || item.preset_name || item.Slide_Title || '';
           }
           if (item.Slide_Title !== undefined) slideTitleInput.value = item.Slide_Title;
           if (item.Subtitle !== undefined) slideSubtitleInput.value = item.Subtitle;
@@ -2425,7 +2431,7 @@
             const opt = document.createElement('option');
             opt.value = index;
             const emoji = getTemplateEmoji(preset.Template_Type);
-            const pName = preset.Preset_Name || preset.Slide_Title || 'Untitled Preset';
+            const pName = preset.Preset_Name || preset['Preset Name'] || preset.preset_name || preset.Slide_Title || 'Untitled Preset';
             const formattedTs = formatTimestamp(preset.Timestamp || preset.Created_At || preset.timestamp || preset.created_at || preset.Date_Created);
             opt.textContent = `${emoji} ${pName} (${formattedTs})`;
             presetSelect.appendChild(opt);
@@ -2732,3 +2738,5 @@
     </script>
   </body>
 </html>
+
+
