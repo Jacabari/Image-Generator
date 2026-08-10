@@ -315,6 +315,65 @@
         color: var(--text-light);
       }
 
+      /* Theme Definitions for Slide Canvas */
+      .slide-canvas[data-theme="dark-navy"] {
+        --bg-primary: #002844;
+        --bg-card: #003C68;
+        --text-light: #EEEEEE;
+        --text-muted: #E2E8F0;
+        --border-accent: #008CE8;
+        --highlight-amber: #FFC107;
+        --highlight-orange: #FF9800;
+        border-color: rgba(0, 140, 232, 0.4);
+      }
+
+      .slide-canvas[data-theme="clean-light"] {
+        --bg-primary: #FFFFFF;
+        --bg-card: #F8FAFC;
+        --text-light: #0F172A;
+        --text-muted: #475569;
+        --border-accent: #008CE8;
+        --highlight-amber: #D97706;
+        --highlight-orange: #EA580C;
+        border-color: #E2E8F0;
+      }
+
+      .slide-canvas[data-theme="clean-light"] .kpi-card,
+      .slide-canvas[data-theme="clean-light"] .node-card,
+      .slide-canvas[data-theme="clean-light"] .status-row,
+      .slide-canvas[data-theme="clean-light"] .channel-card,
+      .slide-canvas[data-theme="clean-light"] .comparison-card,
+      .slide-canvas[data-theme="clean-light"] .brand-watermark {
+        border-color: #E2E8F0;
+      }
+
+      .slide-canvas[data-theme="clean-light"] .channel-header,
+      .slide-canvas[data-theme="clean-light"] .slide-footer {
+        border-color: #E2E8F0;
+      }
+
+      .slide-canvas[data-theme="midnight-slate"] {
+        --bg-primary: #0F172A;
+        --bg-card: #1E293B;
+        --text-light: #F8FAFC;
+        --text-muted: #CBD5E1;
+        --border-accent: #38BDF8;
+        --highlight-amber: #F59E0B;
+        --highlight-orange: #F97316;
+        border-color: rgba(56, 189, 248, 0.4);
+      }
+
+      .slide-canvas[data-theme="obsidian-charcoal"] {
+        --bg-primary: #121212;
+        --bg-card: #1E1E1E;
+        --text-light: #F3F4F6;
+        --text-muted: #D1D5DB;
+        --border-accent: #3B82F6;
+        --highlight-amber: #F59E0B;
+        --highlight-orange: #F97316;
+        border-color: rgba(59, 130, 246, 0.4);
+      }
+
       /* Canvas Header Elements */
       .slide-header {
         display: flex;
@@ -362,7 +421,7 @@
         display: flex;
         align-items: center;
         gap: 8px;
-        background: rgba(0, 60, 104, 0.5);
+        background: var(--bg-card);
         border: 1px solid var(--border-accent);
         padding: 6px 12px;
         border-radius: 6px;
@@ -446,7 +505,7 @@
         font-size: 12px;
         font-weight: 600;
         color: var(--text-light);
-        background: rgba(0, 40, 68, 0.7);
+        background: var(--bg-primary);
         padding: 6px 10px;
         border-radius: 6px;
         border-left: 3px solid var(--highlight-orange);
@@ -682,7 +741,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background: rgba(0, 40, 68, 0.5);
+        background: var(--bg-primary);
         padding: 10px 14px;
         border-radius: 8px;
       }
@@ -882,6 +941,16 @@
               <option value="status">3. Status Tracker (Initiatives)</option>
               <option value="channel">4. Channel Performance (Side-by-Side)</option>
               <option value="comparison">5. Period Comparison (MoM/QoQ/YoY)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="theme-select">Canvas Color Theme</label>
+            <select id="theme-select" class="form-control">
+              <option value="dark-navy">Dark Navy (Default)</option>
+              <option value="clean-light">Clean Light</option>
+              <option value="midnight-slate">Midnight Slate</option>
+              <option value="obsidian-charcoal">Obsidian Charcoal</option>
             </select>
           </div>
 
@@ -1208,6 +1277,7 @@
         const dbStatus = document.getElementById('db-status');
 
         const templateSelect = document.getElementById('template-select');
+        const themeSelect = document.getElementById('theme-select');
         const categoryTagInput = document.getElementById('category-tag-input');
         const slideTitleInput = document.getElementById('slide-title-input');
         const slideSubtitleInput = document.getElementById('slide-subtitle-input');
@@ -1262,6 +1332,10 @@
         // --- RENDER SLIDE CANVAS TEMPLATES ---
         function renderCanvas() {
           const template = templateSelect.value;
+          const selectedTheme = themeSelect ? themeSelect.value : 'dark-navy';
+          if (slideCanvas) {
+            slideCanvas.setAttribute('data-theme', selectedTheme);
+          }
 
           // Update header & footer
           canvasCategory.textContent = categoryTagInput.value || 'MARKETING OPS';
@@ -1851,6 +1925,7 @@
           data.Watermark_Text = watermarkTextInput ? watermarkTextInput.value : 'MKTG OPS';
           data.Footer_Notice = footerNoticeInput ? footerNoticeInput.value : '';
           data.Footer_Slide_ID = footerSlideIdInput ? footerSlideIdInput.value : '';
+          data.Theme_Name = themeSelect ? themeSelect.value : 'dark-navy';
           return data;
         }
 
@@ -1858,6 +1933,7 @@
         function applyDataToForm(item) {
           if (!item) return;
           if (item.Template_Type) templateSelect.value = item.Template_Type;
+          if (item.Theme_Name !== undefined && themeSelect) themeSelect.value = item.Theme_Name;
           if (item.Slide_Title !== undefined) slideTitleInput.value = item.Slide_Title;
           if (item.Subtitle !== undefined) slideSubtitleInput.value = item.Subtitle;
           if (item.Category_Tag !== undefined) categoryTagInput.value = item.Category_Tag;
@@ -1877,6 +1953,7 @@
 
           if (content && (typeof content === 'object' || Array.isArray(content))) {
             if (typeof content === 'object' && !Array.isArray(content)) {
+              if (content.Theme_Name !== undefined && themeSelect) themeSelect.value = content.Theme_Name;
               if (content.Watermark_Text !== undefined) watermarkTextInput.value = content.Watermark_Text;
               if (content.Footer_Notice !== undefined) footerNoticeInput.value = content.Footer_Notice;
               if (content.Footer_Slide_ID !== undefined) footerSlideIdInput.value = content.Footer_Slide_ID;
@@ -2087,10 +2164,11 @@
           canvasScaler.style.transform = 'scale(1)';
 
           document.fonts.ready.then(() => {
+            const currentThemeBg = (slideCanvas ? window.getComputedStyle(slideCanvas).backgroundColor : '#002844');
             html2canvas(slideCanvas, {
               scale: 2, // 2x high resolution output (1920x1080)
               useCORS: true,
-              backgroundColor: '#002844',
+              backgroundColor: currentThemeBg,
               logging: false
             }).then(canvas => {
               // Restore scale
@@ -2133,6 +2211,12 @@
         templateSelect.addEventListener('change', () => {
           renderCanvas();
         });
+
+        if (themeSelect) {
+          themeSelect.addEventListener('change', () => {
+            renderCanvas();
+          });
+        }
 
         // Preset dropdown selection
         presetSelect.addEventListener('change', (e) => {
@@ -2219,5 +2303,3 @@
     </script>
   </body>
 </html>
-
-
