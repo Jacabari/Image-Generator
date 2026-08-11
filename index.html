@@ -893,7 +893,7 @@
         display: flex;
         flex-direction: row;
         align-items: center;
-        gap: 16px;
+        gap: 20px;
         padding: 16px 20px;
         box-sizing: border-box;
         height: fit-content;
@@ -910,18 +910,21 @@
 
       .leaderboard-card.size-md {
         border-radius: 12px;
-        padding: 16px 20px;
+        padding: 14px 18px;
         gap: 16px;
       }
 
       .leaderboard-card.size-sm {
         border-radius: 10px;
-        padding: 12px 14px;
+        padding: 10px 12px;
         gap: 12px;
       }
 
       /* Left Column: Enlarged Photo Frame */
       .leaderboard-avatar-frame {
+        width: 170px;
+        height: 170px;
+        min-width: 170px;
         border-radius: 50%;
         border: 3px solid var(--border-accent);
         overflow: hidden;
@@ -933,23 +936,23 @@
       }
 
       .leaderboard-card.size-lg .leaderboard-avatar-frame {
-        width: 90px;
-        height: 90px;
-        min-width: 90px;
+        width: 170px;
+        height: 170px;
+        min-width: 170px;
         border-width: 3px;
       }
 
       .leaderboard-card.size-md .leaderboard-avatar-frame {
-        width: 72px;
-        height: 72px;
-        min-width: 72px;
+        width: 120px;
+        height: 120px;
+        min-width: 120px;
         border-width: 3px;
       }
 
       .leaderboard-card.size-sm .leaderboard-avatar-frame {
-        width: 58px;
-        height: 58px;
-        min-width: 58px;
+        width: 90px;
+        height: 90px;
+        min-width: 90px;
         border-width: 2px;
       }
 
@@ -957,6 +960,7 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
+        border-radius: 50%;
       }
 
       /* Right Column: Stacked Details */
