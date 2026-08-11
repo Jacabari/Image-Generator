@@ -448,21 +448,38 @@
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 16px;
-        align-items: stretch;
-        height: 270px;
+        align-items: start;
       }
 
       .kpi-card {
         background-color: var(--bg-card);
         border: 1px solid var(--border-accent);
         border-radius: 12px;
-        padding: 24px;
+        padding: 18px 20px;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
         position: relative;
         overflow: hidden;
         box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+        box-sizing: border-box;
+      }
+
+      .kpi-card-metric {
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .kpi-card-metric .kpi-subtext {
+        margin-top: 0;
+      }
+
+      .kpi-card-list {
+        justify-content: flex-start;
+        gap: 6px;
+      }
+
+      .kpi-card-list .kpi-subtext {
+        margin-top: auto;
       }
 
       .kpi-card::before {
@@ -484,22 +501,72 @@
       }
 
       .kpi-value {
-        font-size: 38px;
+        font-size: 34px;
         font-weight: 800;
         color: var(--highlight-amber);
         letter-spacing: -1px;
+        margin: 4px 0;
+        line-height: 1.1;
+      }
+
+      .kpi-detail-list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin: 4px 0 6px 0;
+        flex: 1;
+        overflow-y: auto;
+      }
+
+      .kpi-detail-item {
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--text-light);
+        line-height: 1.35;
+        word-break: break-word;
+      }
+
+      .kpi-bullet-list {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
         margin: 8px 0;
-        line-height: 1;
+        flex: 1;
+        overflow-y: auto;
+      }
+
+      .kpi-bullet-item {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--text-light);
+        line-height: 1.4;
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        word-break: break-word;
+      }
+
+      .kpi-bullet-dot {
+        color: var(--highlight-amber);
+        font-weight: 800;
+        font-size: 14px;
+        line-height: 1.2;
+        flex-shrink: 0;
+      }
+
+      .kpi-bullet-text {
+        flex: 1;
       }
 
       .kpi-subtext {
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 600;
         color: var(--text-light);
         background: var(--bg-primary);
-        padding: 6px 10px;
+        padding: 5px 8px;
         border-radius: 6px;
         border-left: 3px solid var(--highlight-orange);
+        margin-top: auto;
       }
 
       /* Template 2: Timelines Layout */
@@ -963,6 +1030,107 @@
         border-radius: 50%;
       }
 
+      /* Rank Badge Styling when photo is omitted */
+      .leaderboard-rank-frame {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        box-shadow: inset 0 0 15px rgba(0,0,0,0.3);
+      }
+
+      .leaderboard-rank-frame.rank-1 {
+        border-color: #FFC107;
+        background: radial-gradient(circle, rgba(255, 193, 7, 0.25) 0%, var(--bg-primary) 85%);
+      }
+
+      .leaderboard-rank-frame.rank-2 {
+        border-color: #CBD5E1;
+        background: radial-gradient(circle, rgba(203, 213, 225, 0.25) 0%, var(--bg-primary) 85%);
+      }
+
+      .leaderboard-rank-frame.rank-3 {
+        border-color: #D97706;
+        background: radial-gradient(circle, rgba(217, 119, 6, 0.25) 0%, var(--bg-primary) 85%);
+      }
+
+      .leaderboard-rank-frame.rank-other {
+        border-color: var(--border-accent);
+        background: radial-gradient(circle, rgba(0, 200, 255, 0.15) 0%, var(--bg-primary) 85%);
+      }
+
+      .leaderboard-rank-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+        gap: 2px;
+      }
+
+      .leaderboard-rank-medal {
+        line-height: 1;
+      }
+
+      .leaderboard-card.size-lg .leaderboard-rank-medal {
+        font-size: 42px;
+      }
+
+      .leaderboard-card.size-md .leaderboard-rank-medal {
+        font-size: 28px;
+      }
+
+      .leaderboard-card.size-sm .leaderboard-rank-medal {
+        font-size: 20px;
+      }
+
+      .leaderboard-rank-text {
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        line-height: 1;
+      }
+
+      .leaderboard-rank-frame.rank-1 .leaderboard-rank-text {
+        color: #FFC107;
+      }
+
+      .leaderboard-rank-frame.rank-2 .leaderboard-rank-text {
+        color: #E2E8F0;
+      }
+
+      .leaderboard-rank-frame.rank-3 .leaderboard-rank-text {
+        color: #F59E0B;
+      }
+
+      .leaderboard-rank-frame.rank-other .leaderboard-rank-text {
+        color: var(--highlight-amber);
+      }
+
+      .leaderboard-card.size-lg .leaderboard-rank-text {
+        font-size: 22px;
+      }
+
+      .leaderboard-card.size-md .leaderboard-rank-text {
+        font-size: 16px;
+      }
+
+      .leaderboard-card.size-sm .leaderboard-rank-text {
+        font-size: 13px;
+      }
+
+      .leaderboard-card.size-lg .leaderboard-rank-text.rank-long {
+        font-size: 14px;
+      }
+
+      .leaderboard-card.size-md .leaderboard-rank-text.rank-long {
+        font-size: 11px;
+      }
+
+      .leaderboard-card.size-sm .leaderboard-rank-text.rank-long {
+        font-size: 9px;
+      }
+
       /* Right Column: Stacked Details */
       .leaderboard-card-details {
         display: flex;
@@ -1164,6 +1332,69 @@
       .toast.show {
         transform: translateY(0);
         opacity: 1;
+      }
+
+      /* Template 6: Table Mode Styling */
+      .table-scroll-container {
+        flex: 1;
+        min-height: 0;
+        width: 100%;
+        overflow-y: auto;
+        overflow-x: auto;
+        border: 1px solid var(--sidebar-border);
+        border-radius: 6px;
+        background: rgba(0, 0, 0, 0.12);
+      }
+
+      [data-theme="clean-light"] .table-scroll-container {
+        background: rgba(15, 23, 42, 0.03);
+      }
+
+      .template-data-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 11px;
+      }
+
+      .template-data-table th {
+        position: sticky;
+        top: 0;
+        background: var(--input-bg);
+        color: var(--highlight-amber);
+        font-weight: 700;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 8px 12px;
+        text-align: left;
+        border-bottom: 2px solid var(--border-accent);
+        z-index: 2;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+      }
+
+      .template-data-table td {
+        padding: 8px 12px;
+        color: var(--text-light);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        white-space: nowrap;
+      }
+
+      [data-theme="clean-light"] .template-data-table td {
+        border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+      }
+
+      .template-data-table tr:nth-child(even) td {
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      [data-theme="clean-light"] .template-data-table tr:nth-child(even) td {
+        background: rgba(15, 23, 42, 0.02);
+      }
+
+      .template-data-table tr:hover td {
+        background: rgba(0, 200, 255, 0.06);
       }
     </style>
   </head>
@@ -1381,25 +1612,45 @@
           </div>
 
           <div class="form-group" style="border-bottom: 1px solid var(--sidebar-border); padding-bottom: 10px; margin-bottom: 8px;">
-            <label class="form-label" for="chart-type">Chart Type</label>
-            <select id="chart-type" class="form-control">
-              <option value="bar">Bar Chart</option>
-              <option value="line">Line Chart</option>
-              <option value="pie">Pie Chart</option>
-              <option value="funnel">Funnel (Horizontal Bar)</option>
+            <label class="form-label" for="chart-display-mode">Display Mode</label>
+            <select id="chart-display-mode" class="form-control">
+              <option value="chart">Chart Mode 📊</option>
+              <option value="table">Table Mode 📑</option>
             </select>
 
-            <label class="form-label" for="chart-title" style="margin-top: 6px;">Chart Container Title</label>
-            <input type="text" id="chart-title" class="form-control" value="Qualified Leads by Acquisition Channel" placeholder="Chart Title" />
+            <label class="form-label" for="chart-title" style="margin-top: 6px;">Container Title</label>
+            <input type="text" id="chart-title" class="form-control" value="Qualified Leads by Acquisition Channel" placeholder="Chart / Table Title" />
 
-            <div style="display: flex; align-items: center; gap: 8px; margin-top: 10px;">
-              <input type="checkbox" id="chart-show-labels" checked style="cursor: pointer; width: 14px; height: 14px; accent-color: var(--border-accent);" />
-              <label class="form-label" for="chart-show-labels" style="cursor: pointer; margin: 0; text-transform: none; font-size: 11px;">Display Data Values on Chart</label>
+            <!-- CHART MODE CONTROLS -->
+            <div id="chart-mode-controls" style="display: flex; flex-direction: column; gap: 6px; margin-top: 6px;">
+              <label class="form-label" for="chart-type">Chart Type</label>
+              <select id="chart-type" class="form-control">
+                <option value="bar">Bar Chart</option>
+                <option value="line">Line Chart</option>
+                <option value="pie">Pie Chart</option>
+                <option value="funnel">Funnel (Horizontal Bar)</option>
+              </select>
+
+              <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                <input type="checkbox" id="chart-show-labels" checked style="cursor: pointer; width: 14px; height: 14px; accent-color: var(--border-accent);" />
+                <label class="form-label" for="chart-show-labels" style="cursor: pointer; margin: 0; text-transform: none; font-size: 11px;">Display Data Values on Chart</label>
+              </div>
+            </div>
+
+            <!-- TABLE MODE CONTROLS -->
+            <div id="table-mode-controls" style="display: none; flex-direction: column; gap: 6px; margin-top: 6px;">
+              <label class="form-label" for="chart-table-data">Table Data (TSV Format / Excel Paste)</label>
+              <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 2px; line-height: 1.2;">
+                Paste rows directly from Excel / Sheets. First row is header (Tab separated).
+              </div>
+              <textarea id="chart-table-data" class="form-control" rows="8" style="font-family: monospace; font-size: 11px; resize: vertical; white-space: pre;" placeholder="Channel&#09;Q1 Leads&#09;Q2 Leads&#09;Growth&#10;Paid Search&#09;45,000&#09;52,000&#09;+15.5%&#10;Organic Search&#09;38,000&#09;41,500&#09;+9.2%&#10;Paid Social&#09;29,000&#09;34,000&#09;+17.2%&#10;Email Marketing&#09;22,000&#09;24,800&#09;+12.7%&#10;Referrals&#09;14,000&#09;16,200&#09;+15.7%"></textarea>
             </div>
           </div>
 
-          <div id="chart-data-list" style="display: flex; flex-direction: column; gap: 10px;">
-            <!-- Dynamic chart data points injected here -->
+          <div id="chart-data-list-container">
+            <div id="chart-data-list" style="display: flex; flex-direction: column; gap: 10px;">
+              <!-- Dynamic chart data points injected here -->
+            </div>
           </div>
         </div>
 
@@ -1588,9 +1839,11 @@
             Footer_Notice: 'CONFIDENTIAL • INTERNAL MARKETING OPERATIONS DIRECTIVE',
             Footer_Slide_ID: 'SLIDE 01 • MKTG-OPS-VISUALIZER',
             Content_Data: JSON.stringify({
+              chart_display_mode: 'chart',
               chart_type: 'bar',
               chart_title: 'Qualified Leads by Acquisition Channel',
               chart_show_labels: true,
+              chart_table_data: "Channel\tQ1 Leads\tQ2 Leads\tGrowth\nPaid Search\t45,000\t52,000\t+15.5%\nOrganic Search\t38,000\t41,500\t+9.2%\nPaid Social\t29,000\t34,000\t+17.2%\nEmail Marketing\t22,000\t24,800\t+12.7%\nReferrals\t14,000\t16,200\t+15.7%",
               chart_data: [
                 { label: 'Paid Search', value: 45000 },
                 { label: 'Organic Search', value: 38000 },
@@ -1740,19 +1993,73 @@
           // Render canvas body
           if (template === 'kpi') {
             const kpiItems = getKpiItemsFromSidebar();
-            const cardsHtml = kpiItems.map(item => `
-              <div class="kpi-card">
-                <div class="kpi-label">${escapeHtml(item.label)}</div>
-                <div class="kpi-value">${escapeHtml(item.value)}</div>
-                <div class="kpi-subtext">${escapeHtml(item.subtext)}</div>
-              </div>
-            `).join('');
+            const cardsHtml = kpiItems.map(item => {
+              const hasValue = Boolean(item.value && item.value.trim().length > 0);
+              const detailLines = item.detail ? item.detail.split('\n').map(l => l.trim()).filter(l => l.length > 0) : [];
+              const hasSubtext = Boolean(item.subtext && item.subtext.trim().length > 0);
+              const subtextHtml = hasSubtext ? `<div class="kpi-subtext">${escapeHtml(item.subtext)}</div>` : '';
+
+              if (hasValue) {
+                // Numeric / Metric Mode
+                const valueHtml = `<div class="kpi-value">${escapeHtml(item.value)}</div>`;
+                const detailHtml = detailLines.length > 0 ? `
+                  <div class="kpi-detail-list">
+                    ${detailLines.map(line => `<div class="kpi-detail-item">${escapeHtml(line)}</div>`).join('')}
+                  </div>
+                ` : '';
+
+                return `
+                  <div class="kpi-card kpi-card-metric">
+                    <div class="kpi-label">${escapeHtml(item.label)}</div>
+                    ${valueHtml}
+                    ${detailHtml}
+                    ${subtextHtml}
+                  </div>
+                `;
+              } else {
+                // List / Text Mode
+                const listItemsHtml = detailLines.length > 0 ? `
+                  <div class="kpi-bullet-list">
+                    ${detailLines.map(line => `
+                      <div class="kpi-bullet-item">
+                        <span class="kpi-bullet-dot">•</span>
+                        <span class="kpi-bullet-text">${escapeHtml(line)}</span>
+                      </div>
+                    `).join('')}
+                  </div>
+                ` : `
+                  <div class="kpi-bullet-list kpi-bullet-empty">
+                    <div class="kpi-detail-item" style="color:var(--text-muted); font-style:italic;">No details added</div>
+                  </div>
+                `;
+
+                return `
+                  <div class="kpi-card kpi-card-list">
+                    <div class="kpi-label">${escapeHtml(item.label)}</div>
+                    ${listItemsHtml}
+                    ${subtextHtml}
+                  </div>
+                `;
+              }
+            }).join('');
 
             slideContent.innerHTML = `
               <div class="kpi-grid">
                 ${cardsHtml || '<div style="color:var(--text-muted); font-size:12px; text-align:center; grid-column: 1 / -1;">No KPI cards added. Click "+ Add KPI Card" in the sidebar.</div>'}
               </div>
             `;
+
+            // Dynamic Master Height: Card 1 dictates strict uniform height for all cards in Template 1
+            const kpiCards = slideContent.querySelectorAll('.kpi-card');
+            if (kpiCards.length > 0) {
+              const masterHeight = kpiCards[0].offsetHeight;
+              if (masterHeight > 0) {
+                kpiCards.forEach(card => {
+                  card.style.height = `${masterHeight}px`;
+                  card.style.maxHeight = `${masterHeight}px`;
+                });
+              }
+            }
           } else if (template === 'timeline') {
             const nodes = getTimelineNodesFromSidebar();
             const gridCols = Math.max(nodes.length, 1);
@@ -1880,196 +2187,234 @@
               </div>
             `;
           } else if (template === 'chart') {
-            const chartType = document.getElementById('chart-type')?.value || 'bar';
+            const displayMode = document.getElementById('chart-display-mode')?.value || 'chart';
             const chartTitle = document.getElementById('chart-title')?.value || 'Qualified Leads by Acquisition Channel';
-            const chartData = getChartDataFromSidebar();
 
-            slideContent.innerHTML = `
-              <div class="chart-template-container" style="background: var(--bg-card); border: 1px solid var(--border-accent); border-radius: 8px; padding: 16px 20px; height: 100%; display: flex; flex-direction: column; box-sizing: border-box; overflow: hidden;">
-                <div class="chart-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-shrink: 0;">
-                  <h3 style="font-size: 14px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin: 0;">${escapeHtml(chartTitle)}</h3>
-                  <span style="font-size: 10px; font-weight: 700; color: var(--highlight-amber); background: rgba(255, 193, 7, 0.15); border: 1px solid rgba(255, 193, 7, 0.3); padding: 2px 8px; border-radius: 10px; text-transform: uppercase;">DATA VISUALIZATION</span>
-                </div>
-                <div style="flex: 1; min-height: 0; position: relative; width: 100%; display: flex; justify-content: center; align-items: center;">
-                  <canvas id="slide-chart-canvas" style="width: 100% !important; height: 100% !important; max-height: 310px;"></canvas>
-                </div>
-              </div>
-            `;
+            if (displayMode === 'table') {
+              const tableText = document.getElementById('chart-table-data')?.value || '';
+              const defaultTableText = "Channel\tQ1 Leads\tQ2 Leads\tGrowth\nPaid Search\t45,000\t52,000\t+15.5%\nOrganic Search\t38,000\t41,500\t+9.2%\nPaid Social\t29,000\t34,000\t+17.2%\nEmail Marketing\t22,000\t24,800\t+12.7%\nReferrals\t14,000\t16,200\t+15.7%";
+              const rawText = tableText.trim().length > 0 ? tableText : defaultTableText;
 
-            const canvasEl = document.getElementById('slide-chart-canvas');
-            if (canvasEl && typeof Chart !== 'undefined') {
-              const ctx = canvasEl.getContext('2d');
-              const dataLabels = chartData.map(d => d.label || 'Point');
-              const dataValues = chartData.map(d => parseFloat(d.value) || 0);
+              const rows = rawText.split('\n').map(r => r.trim()).filter(r => r.length > 0);
+              let tableInnerHtml = '';
 
-              const isLight = (selectedTheme === 'clean-light');
-              const textColor = isLight ? '#0F172A' : '#EEEEEE';
-              const labelColor = isLight ? '#0F172A' : '#FFFFFF';
-              const gridColor = isLight ? 'rgba(15, 23, 42, 0.12)' : 'rgba(226, 232, 240, 0.12)';
+              if (rows.length > 0) {
+                const headerCols = rows[0].split('\t').map(c => c.trim());
+                const theadHtml = `<thead><tr>${headerCols.map(c => `<th>${escapeHtml(c)}</th>`).join('')}</tr></thead>`;
 
-              const showLabels = document.getElementById('chart-show-labels')?.checked ?? true;
-              const grbPalette = ['#00C8FF', '#FF9800', '#FFC107', '#10B981', '#A855F7', '#EC4899'];
-              const pluginsList = (typeof ChartDataLabels !== 'undefined') ? [ChartDataLabels] : [];
+                const bodyRows = rows.slice(1);
+                const tbodyHtml = `<tbody>${bodyRows.map(r => {
+                  const cols = r.split('\t').map(c => c.trim());
+                  return `<tr>${cols.map(c => `<td>${escapeHtml(c)}</td>`).join('')}</tr>`;
+                }).join('')}</tbody>`;
 
-              let config = {};
-
-              if (chartType === 'pie') {
-                config = {
-                  type: 'pie',
-                  plugins: pluginsList,
-                  data: {
-                    labels: dataLabels,
-                    datasets: [{
-                      data: dataValues,
-                      backgroundColor: dataValues.map((_, i) => grbPalette[i % grbPalette.length]),
-                      borderColor: isLight ? '#FFFFFF' : '#003C68',
-                      borderWidth: 2
-                    }]
-                  },
-                  options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                      legend: {
-                        position: 'right',
-                        labels: {
-                          color: textColor,
-                          font: { family: 'Montserrat', size: 11, weight: '600' }
-                        }
-                      },
-                      datalabels: {
-                        display: showLabels,
-                        color: '#FFFFFF',
-                        font: { family: 'Montserrat', size: 11, weight: 800 },
-                        anchor: 'center',
-                        align: 'center',
-                        textStrokeColor: '#00192e',
-                        textStrokeWidth: 3,
-                        formatter: (val) => (typeof val === 'number' ? val.toLocaleString() : val)
-                      }
-                    }
-                  }
-                };
-              } else if (chartType === 'line') {
-                config = {
-                  type: 'line',
-                  plugins: pluginsList,
-                  data: {
-                    labels: dataLabels,
-                    datasets: [{
-                      label: chartTitle,
-                      data: dataValues,
-                      borderColor: grbPalette[0],
-                      backgroundColor: 'rgba(0, 200, 255, 0.25)',
-                      fill: true,
-                      tension: 0.35,
-                      pointBackgroundColor: grbPalette[2],
-                      pointBorderColor: grbPalette[0],
-                      pointRadius: 5,
-                      pointHoverRadius: 7
-                    }]
-                  },
-                  options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                      legend: { display: false },
-                      datalabels: {
-                        display: showLabels,
-                        color: '#FFFFFF',
-                        font: { family: 'Montserrat', size: 11, weight: 800 },
-                        anchor: 'end',
-                        align: 'top',
-                        offset: 6,
-                        backgroundColor: 'rgba(0, 25, 46, 0.8)',
-                        borderRadius: 4,
-                        padding: { top: 3, bottom: 3, left: 6, right: 6 },
-                        textStrokeColor: '#00192e',
-                        textStrokeWidth: 3,
-                        formatter: (val) => (typeof val === 'number' ? val.toLocaleString() : val)
-                      }
-                    },
-                    scales: {
-                      x: { ticks: { color: textColor, font: { family: 'Montserrat', size: 10, weight: '600' } }, grid: { color: gridColor } },
-                      y: { grace: '15%', ticks: { color: textColor, font: { family: 'Montserrat', size: 10, weight: '600' } }, grid: { color: gridColor } }
-                    }
-                  }
-                };
-              } else if (chartType === 'funnel') {
-                config = {
-                  type: 'bar',
-                  plugins: pluginsList,
-                  data: {
-                    labels: dataLabels,
-                    datasets: [{
-                      label: chartTitle,
-                      data: dataValues,
-                      backgroundColor: dataValues.map((_, i) => grbPalette[i % grbPalette.length]),
-                      borderRadius: 4
-                    }]
-                  },
-                  options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                      legend: { display: false },
-                      datalabels: {
-                        display: showLabels,
-                        color: '#FFFFFF',
-                        font: { family: 'Montserrat', size: 11, weight: 800 },
-                        anchor: 'center',
-                        align: 'center',
-                        textStrokeColor: '#00192e',
-                        textStrokeWidth: 3,
-                        formatter: (val) => (typeof val === 'number' ? val.toLocaleString() : val)
-                      }
-                    },
-                    scales: {
-                      x: { grace: '15%', ticks: { color: textColor, font: { family: 'Montserrat', size: 10, weight: '600' } }, grid: { color: gridColor } },
-                      y: { ticks: { color: textColor, font: { family: 'Montserrat', size: 10, weight: '600' } }, grid: { color: gridColor } }
-                    }
-                  }
-                };
+                tableInnerHtml = `<table class="template-data-table">${theadHtml}${tbodyHtml}</table>`;
               } else {
-                // bar chart
-                config = {
-                  type: 'bar',
-                  plugins: pluginsList,
-                  data: {
-                    labels: dataLabels,
-                    datasets: [{
-                      label: chartTitle,
-                      data: dataValues,
-                      backgroundColor: dataValues.map((_, i) => grbPalette[i % grbPalette.length]),
-                      borderRadius: 4
-                    }]
-                  },
-                  options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                      legend: { display: false },
-                      datalabels: {
-                        display: showLabels,
-                        color: '#FFFFFF',
-                        font: { family: 'Montserrat', size: 11, weight: 800 },
-                        anchor: 'center',
-                        align: 'center',
-                        textStrokeColor: '#00192e',
-                        textStrokeWidth: 3,
-                        formatter: (val) => (typeof val === 'number' ? val.toLocaleString() : val)
-                      }
-                    },
-                    scales: {
-                      x: { ticks: { color: textColor, font: { family: 'Montserrat', size: 10, weight: '600' } }, grid: { color: gridColor } },
-                      y: { grace: '15%', ticks: { color: textColor, font: { family: 'Montserrat', size: 10, weight: '600' } }, grid: { color: gridColor } }
-                    }
-                  }
-                };
+                tableInnerHtml = `<div style="color:var(--text-muted); font-size:12px; text-align:center; padding: 20px;">No table data provided. Paste TSV content in the sidebar textarea.</div>`;
               }
 
-              currentChart = new Chart(ctx, config);
+              slideContent.innerHTML = `
+                <div class="chart-template-container" style="background: var(--bg-card); border: 1px solid var(--border-accent); border-radius: 8px; padding: 16px 20px; height: 100%; display: flex; flex-direction: column; box-sizing: border-box; overflow: hidden;">
+                  <div class="chart-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-shrink: 0;">
+                    <h3 style="font-size: 14px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin: 0;">${escapeHtml(chartTitle)}</h3>
+                    <span style="font-size: 10px; font-weight: 700; color: var(--highlight-amber); background: rgba(255, 193, 7, 0.15); border: 1px solid rgba(255, 193, 7, 0.3); padding: 2px 8px; border-radius: 10px; text-transform: uppercase;">DATA TABLE</span>
+                  </div>
+                  <div class="table-scroll-container">
+                    ${tableInnerHtml}
+                  </div>
+                </div>
+              `;
+            } else {
+              const chartType = document.getElementById('chart-type')?.value || 'bar';
+              const chartData = getChartDataFromSidebar();
+
+              slideContent.innerHTML = `
+                <div class="chart-template-container" style="background: var(--bg-card); border: 1px solid var(--border-accent); border-radius: 8px; padding: 16px 20px; height: 100%; display: flex; flex-direction: column; box-sizing: border-box; overflow: hidden;">
+                  <div class="chart-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-shrink: 0;">
+                    <h3 style="font-size: 14px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin: 0;">${escapeHtml(chartTitle)}</h3>
+                    <span style="font-size: 10px; font-weight: 700; color: var(--highlight-amber); background: rgba(255, 193, 7, 0.15); border: 1px solid rgba(255, 193, 7, 0.3); padding: 2px 8px; border-radius: 10px; text-transform: uppercase;">DATA VISUALIZATION</span>
+                  </div>
+                  <div style="flex: 1; min-height: 0; position: relative; width: 100%; display: flex; justify-content: center; align-items: center;">
+                    <canvas id="slide-chart-canvas" style="width: 100% !important; height: 100% !important; max-height: 310px;"></canvas>
+                  </div>
+                </div>
+              `;
+
+              const canvasEl = document.getElementById('slide-chart-canvas');
+              if (canvasEl && typeof Chart !== 'undefined') {
+                const ctx = canvasEl.getContext('2d');
+                const dataLabels = chartData.map(d => d.label || 'Point');
+                const dataValues = chartData.map(d => parseFloat(d.value) || 0);
+
+                const isLight = (selectedTheme === 'clean-light');
+                const textColor = isLight ? '#0F172A' : '#EEEEEE';
+                const labelColor = isLight ? '#0F172A' : '#FFFFFF';
+                const gridColor = isLight ? 'rgba(15, 23, 42, 0.12)' : 'rgba(226, 232, 240, 0.12)';
+
+                const showLabels = document.getElementById('chart-show-labels')?.checked ?? true;
+                const grbPalette = ['#00C8FF', '#FF9800', '#FFC107', '#10B981', '#A855F7', '#EC4899'];
+                const pluginsList = (typeof ChartDataLabels !== 'undefined') ? [ChartDataLabels] : [];
+
+                let config = {};
+
+                if (chartType === 'pie') {
+                  config = {
+                    type: 'pie',
+                    plugins: pluginsList,
+                    data: {
+                      labels: dataLabels,
+                      datasets: [{
+                        data: dataValues,
+                        backgroundColor: dataValues.map((_, i) => grbPalette[i % grbPalette.length]),
+                        borderColor: isLight ? '#FFFFFF' : '#003C68',
+                        borderWidth: 2
+                      }]
+                    },
+                    options: {
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: {
+                          position: 'right',
+                          labels: {
+                            color: textColor,
+                            font: { family: 'Montserrat', size: 11, weight: '600' }
+                          }
+                        },
+                        datalabels: {
+                          display: showLabels,
+                          color: '#FFFFFF',
+                          font: { family: 'Montserrat', size: 11, weight: 800 },
+                          anchor: 'center',
+                          align: 'center',
+                          textStrokeColor: '#00192e',
+                          textStrokeWidth: 3,
+                          formatter: (val) => (typeof val === 'number' ? val.toLocaleString() : val)
+                        }
+                      }
+                    }
+                  };
+                } else if (chartType === 'line') {
+                  config = {
+                    type: 'line',
+                    plugins: pluginsList,
+                    data: {
+                      labels: dataLabels,
+                      datasets: [{
+                        label: chartTitle,
+                        data: dataValues,
+                        borderColor: grbPalette[0],
+                        backgroundColor: 'rgba(0, 200, 255, 0.25)',
+                        fill: true,
+                        tension: 0.35,
+                        pointBackgroundColor: grbPalette[2],
+                        pointBorderColor: grbPalette[0],
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                      }]
+                    },
+                    options: {
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: { display: false },
+                        datalabels: {
+                          display: showLabels,
+                          color: '#FFFFFF',
+                          font: { family: 'Montserrat', size: 11, weight: 800 },
+                          anchor: 'end',
+                          align: 'top',
+                          offset: 6,
+                          backgroundColor: 'rgba(0, 25, 46, 0.8)',
+                          borderRadius: 4,
+                          padding: { top: 3, bottom: 3, left: 6, right: 6 },
+                          textStrokeColor: '#00192e',
+                          textStrokeWidth: 3,
+                          formatter: (val) => (typeof val === 'number' ? val.toLocaleString() : val)
+                        }
+                      },
+                      scales: {
+                        x: { ticks: { color: textColor, font: { family: 'Montserrat', size: 10, weight: '600' } }, grid: { color: gridColor } },
+                        y: { grace: '15%', ticks: { color: textColor, font: { family: 'Montserrat', size: 10, weight: '600' } }, grid: { color: gridColor } }
+                      }
+                    }
+                  };
+                } else if (chartType === 'funnel') {
+                  config = {
+                    type: 'bar',
+                    plugins: pluginsList,
+                    data: {
+                      labels: dataLabels,
+                      datasets: [{
+                        label: chartTitle,
+                        data: dataValues,
+                        backgroundColor: dataValues.map((_, i) => grbPalette[i % grbPalette.length]),
+                        borderRadius: 4
+                      }]
+                    },
+                    options: {
+                      indexAxis: 'y',
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: { display: false },
+                        datalabels: {
+                          display: showLabels,
+                          color: '#FFFFFF',
+                          font: { family: 'Montserrat', size: 11, weight: 800 },
+                          anchor: 'center',
+                          align: 'center',
+                          textStrokeColor: '#00192e',
+                          textStrokeWidth: 3,
+                          formatter: (val) => (typeof val === 'number' ? val.toLocaleString() : val)
+                        }
+                      },
+                      scales: {
+                        x: { grace: '15%', ticks: { color: textColor, font: { family: 'Montserrat', size: 10, weight: '600' } }, grid: { color: gridColor } },
+                        y: { ticks: { color: textColor, font: { family: 'Montserrat', size: 10, weight: '600' } }, grid: { color: gridColor } }
+                      }
+                    }
+                  };
+                } else {
+                  // bar chart
+                  config = {
+                    type: 'bar',
+                    plugins: pluginsList,
+                    data: {
+                      labels: dataLabels,
+                      datasets: [{
+                        label: chartTitle,
+                        data: dataValues,
+                        backgroundColor: dataValues.map((_, i) => grbPalette[i % grbPalette.length]),
+                        borderRadius: 4
+                      }]
+                    },
+                    options: {
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: { display: false },
+                        datalabels: {
+                          display: showLabels,
+                          color: '#FFFFFF',
+                          font: { family: 'Montserrat', size: 11, weight: 800 },
+                          anchor: 'center',
+                          align: 'center',
+                          textStrokeColor: '#00192e',
+                          textStrokeWidth: 3,
+                          formatter: (val) => (typeof val === 'number' ? val.toLocaleString() : val)
+                        }
+                      },
+                      scales: {
+                        x: { ticks: { color: textColor, font: { family: 'Montserrat', size: 10, weight: '600' } }, grid: { color: gridColor } },
+                        y: { grace: '15%', ticks: { color: textColor, font: { family: 'Montserrat', size: 10, weight: '600' } }, grid: { color: gridColor } }
+                      }
+                    }
+                  };
+                }
+
+                currentChart = new Chart(ctx, config);
+              }
             }
           } else if (template === 'leaderboard') {
             const allReps = getLeaderboardRepsFromSidebar();
@@ -2091,24 +2436,52 @@
               cardSizeClass = 'size-sm';
             }
 
-            const cardsHtml = filteredReps.map(rep => {
+            const cardsHtml = filteredReps.map((rep, index) => {
               const qVal = parseFloat(rep.quota) || 0;
               const isOverAchiever = qVal > 100;
               const progressPct = Math.min(Math.max((qVal / 150) * 100, 10), 100);
 
-              const avatarHtml = rep.photo ? 
-                `<img src="${rep.photo}" class="leaderboard-avatar-img" alt="${escapeHtml(rep.name)}" />` :
-                `<svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width: 55%; height: 55%;">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="12" cy="7" r="4"></circle>
-                </svg>`;
+              const rankNum = index + 1;
+              let medalEmoji = '🏅';
+              let defaultRankText = `${rankNum}th`;
+              let rankClass = 'rank-other';
+
+              if (rankNum === 1) {
+                medalEmoji = '🥇';
+                defaultRankText = '1st';
+                rankClass = 'rank-1';
+              } else if (rankNum === 2) {
+                medalEmoji = '🥈';
+                defaultRankText = '2nd';
+                rankClass = 'rank-2';
+              } else if (rankNum === 3) {
+                medalEmoji = '🥉';
+                defaultRankText = '3rd';
+                rankClass = 'rank-3';
+              }
+
+              const customRank = (rep.rank && typeof rep.rank === 'string') ? rep.rank.trim() : '';
+              const rankText = customRank || defaultRankText;
+              const isLongRank = rankText.length > 5;
+              const rankLongClass = isLongRank ? ' rank-long' : '';
+
+              const hasPhoto = Boolean(rep.photo && rep.photo.trim().length > 0);
+
+              const avatarHtml = hasPhoto ? 
+                `<div class="leaderboard-avatar-frame">
+                  <img src="${rep.photo}" class="leaderboard-avatar-img" alt="${escapeHtml(rep.name)}" />
+                </div>` :
+                `<div class="leaderboard-avatar-frame leaderboard-rank-frame ${rankClass}">
+                  <div class="leaderboard-rank-content">
+                    <span class="leaderboard-rank-medal">${medalEmoji}</span>
+                    <span class="leaderboard-rank-text${rankLongClass}">${escapeHtml(rankText)}</span>
+                  </div>
+                </div>`;
 
               return `
                 <div class="leaderboard-card ${cardSizeClass}">
-                  <!-- Left Column: Enlarged Photo -->
-                  <div class="leaderboard-avatar-frame">
-                    ${avatarHtml}
-                  </div>
+                  <!-- Left Column: Photo or Rank Badge -->
+                  ${avatarHtml}
 
                   <!-- Right Column: Stacked Details -->
                   <div class="leaderboard-card-details">
@@ -2346,13 +2719,21 @@
           rows.forEach(row => {
             const label = row.querySelector('.kpi-label-input')?.value || '';
             const value = row.querySelector('.kpi-value-input')?.value || '';
+            const detail = row.querySelector('.kpi-detail-input')?.value || '';
             const subtext = row.querySelector('.kpi-subtext-input')?.value || '';
-            list.push({ label, value, subtext });
+            list.push({ label, value, detail, subtext });
           });
           return list;
         }
 
-        function createKpiRowElement(label = '', value = '', subtext = '', index = 1) {
+        function createKpiRowElement(label = '', value = '', detail = '', subtext = '', index = 1) {
+          // Handle legacy signature calls: createKpiRowElement(label, value, subtext, index)
+          if (typeof subtext === 'number') {
+            index = subtext;
+            subtext = typeof detail === 'string' ? detail : '';
+            detail = '';
+          }
+
           const div = document.createElement('div');
           div.className = 'kpi-item';
           div.style.cssText = 'background: var(--input-bg); padding: 8px 10px; border-radius: 6px; border: 1px solid var(--sidebar-border); display: flex; flex-direction: column; gap: 6px;';
@@ -2361,12 +2742,25 @@
               <span class="form-label" style="font-size: 10px;">Card #${index}</span>
               <button type="button" class="btn-remove-kpi" style="background:none; border:none; color:var(--status-red); cursor:pointer; font-weight:bold; font-size:12px;" title="Remove KPI Card">✕</button>
             </div>
-            <input type="text" class="form-control kpi-label-input" value="${escapeHtml(label)}" placeholder="Card Label" />
-            <input type="text" class="form-control kpi-value-input" value="${escapeHtml(value)}" placeholder="Main Value" />
-            <input type="text" class="form-control kpi-subtext-input" value="${escapeHtml(subtext)}" placeholder="Subtext / Target" />
+            <div>
+              <label class="form-label" style="font-size: 10px; margin-bottom: 2px;">Label / Title</label>
+              <input type="text" class="form-control kpi-label-input" value="${escapeHtml(label)}" placeholder="Card Title or Header" />
+            </div>
+            <div>
+              <label class="form-label" style="font-size: 10px; margin-bottom: 2px;">Metric Value (Optional)</label>
+              <input type="text" class="form-control kpi-value-input" value="${escapeHtml(value)}" placeholder="Value (e.g. $142.50 or leave blank)" />
+            </div>
+            <div>
+              <label class="form-label" style="font-size: 10px; margin-bottom: 2px;">List / Detail Content (One per line)</label>
+              <textarea class="form-control kpi-detail-input" rows="2" style="font-size: 11px; resize: vertical;" placeholder="Enter list items or description (one per line)...">${escapeHtml(detail)}</textarea>
+            </div>
+            <div>
+              <label class="form-label" style="font-size: 10px; margin-bottom: 2px;">Subtext / Badge</label>
+              <input type="text" class="form-control kpi-subtext-input" value="${escapeHtml(subtext)}" placeholder="Subtext / Tag / Target" />
+            </div>
           `;
 
-          div.querySelectorAll('input').forEach(input => {
+          div.querySelectorAll('input, textarea').forEach(input => {
             input.addEventListener('input', renderCanvas);
             input.addEventListener('change', renderCanvas);
           });
@@ -2396,13 +2790,17 @@
           container.innerHTML = '';
           if (!Array.isArray(kpiList) || kpiList.length === 0) {
             kpiList = [
-              { label: 'Customer Acquisition Cost', value: '$142.50', subtext: '🟢 -12% MoM (Target: $150)' },
-              { label: 'Return on Ad Spend', value: '4.85x', subtext: '🟢 +0.6x vs Q2 Benchmark' },
-              { label: 'Marketing Qualified Leads', value: '14,280', subtext: '🟢 104% of Monthly Target' }
+              { label: 'Customer Acquisition Cost', value: '$142.50', detail: '', subtext: '🟢 -12% MoM (Target: $150)' },
+              { label: 'Return on Ad Spend', value: '4.85x', detail: '', subtext: '🟢 +0.6x vs Q2 Benchmark' },
+              { label: 'Marketing Qualified Leads', value: '14,280', detail: '', subtext: '🟢 104% of Monthly Target' }
             ];
           }
           kpiList.forEach((k, idx) => {
-            const rowEl = createKpiRowElement(k.label, k.value, k.subtext, idx + 1);
+            const lbl = k.label !== undefined ? k.label : '';
+            const val = k.value !== undefined ? k.value : '';
+            const dtl = k.detail !== undefined ? k.detail : (k.content || k.list || k.desc || '');
+            const sub = k.subtext !== undefined ? k.subtext : (k.badge || '');
+            const rowEl = createKpiRowElement(lbl, val, dtl, sub, idx + 1);
             container.appendChild(rowEl);
           });
         }
@@ -2571,8 +2969,9 @@
             const name = row.querySelector('.rep-name-input')?.value || '';
             const title = row.querySelector('.rep-title-input')?.value || '';
             const quota = parseFloat(row.querySelector('.rep-quota-input')?.value) || 0;
+            const rank = row.querySelector('.rep-rank-input')?.value || '';
             const photo = row.dataset.photoBase64 || '';
-            list.push({ name, title, quota, photo });
+            list.push({ name, title, quota, rank, photo });
           });
           return list;
         }
@@ -2585,6 +2984,7 @@
 
           const repName = rep.name || `Sales Rep #${index}`;
           const repQuota = rep.quota !== undefined ? rep.quota : 100;
+          const repRank = rep.rank || '';
           const photoSrc = rep.photo || '';
 
           div.innerHTML = `
@@ -2619,6 +3019,10 @@
                   <label class="form-label" style="font-size: 10px; margin-bottom: 2px;">Quota %</label>
                   <input type="number" step="1" class="form-control rep-quota-input" value="${escapeHtml(repQuota)}" placeholder="125" />
                 </div>
+              </div>
+              <div>
+                <label class="form-label" style="font-size: 10px; margin-bottom: 2px;">Rank / Position Label (Optional)</label>
+                <input type="text" class="form-control rep-rank-input" value="${escapeHtml(repRank)}" placeholder="e.g. 1st, Tied #1, Top Performer (blank = default)" />
               </div>
               <div>
                 <label class="form-label" style="font-size: 10px; margin-bottom: 2px;">Profile Photo Upload</label>
@@ -2873,9 +3277,11 @@
             };
           } else if (template === 'chart') {
             data = {
+              chart_display_mode: document.getElementById('chart-display-mode')?.value || 'chart',
               chart_type: document.getElementById('chart-type')?.value || 'bar',
               chart_title: document.getElementById('chart-title')?.value || '',
               chart_show_labels: document.getElementById('chart-show-labels')?.checked ?? true,
+              chart_table_data: document.getElementById('chart-table-data')?.value || '',
               chart_data: getChartDataFromSidebar()
             };
           } else if (template === 'leaderboard') {
@@ -3043,6 +3449,12 @@
               setChanMetricsInSidebar('B', legacyBMetrics);
             }
 
+            if ((content.chart_display_mode || content.display_mode) !== undefined && document.getElementById('chart-display-mode')) {
+              document.getElementById('chart-display-mode').value = content.chart_display_mode || content.display_mode;
+            }
+            if ((content.chart_table_data || content.table_data) !== undefined && document.getElementById('chart-table-data')) {
+              document.getElementById('chart-table-data').value = content.chart_table_data || content.table_data;
+            }
             if (content.chart_type !== undefined && document.getElementById('chart-type')) {
               document.getElementById('chart-type').value = content.chart_type;
             }
@@ -3054,6 +3466,9 @@
             }
             if (Array.isArray(content.chart_data)) {
               setChartDataInSidebar(content.chart_data);
+            }
+            if (typeof updateChartSidebarDisplayMode === 'function') {
+              updateChartSidebarDisplayMode();
             }
             if (Array.isArray(content.reps)) {
               setLeaderboardRepsInSidebar(content.reps);
@@ -3345,7 +3760,7 @@
         document.getElementById('btn-add-kpi').addEventListener('click', () => {
           const container = document.getElementById('kpi-list');
           const count = container.querySelectorAll('.kpi-item').length + 1;
-          const newRow = createKpiRowElement('', '', '', count);
+          const newRow = createKpiRowElement('', '', '', '', count);
           container.appendChild(newRow);
           renderCanvas();
         });
@@ -3407,6 +3822,47 @@
           });
         }
 
+        function updateChartSidebarDisplayMode() {
+          const mode = document.getElementById('chart-display-mode')?.value || 'chart';
+          const chartControls = document.getElementById('chart-mode-controls');
+          const tableControls = document.getElementById('table-mode-controls');
+          const btnAddChartData = document.getElementById('btn-add-chart-data');
+          const chartDataListContainer = document.getElementById('chart-data-list-container');
+
+          if (mode === 'table') {
+            if (chartControls) chartControls.style.display = 'none';
+            if (tableControls) tableControls.style.display = 'flex';
+            if (btnAddChartData) btnAddChartData.style.display = 'none';
+            if (chartDataListContainer) chartDataListContainer.style.display = 'none';
+          } else {
+            if (chartControls) chartControls.style.display = 'flex';
+            if (tableControls) tableControls.style.display = 'none';
+            if (btnAddChartData) btnAddChartData.style.display = 'inline-block';
+            if (chartDataListContainer) chartDataListContainer.style.display = 'block';
+          }
+        }
+
+        const chartDisplayModeEl = document.getElementById('chart-display-mode');
+        if (chartDisplayModeEl) {
+          chartDisplayModeEl.addEventListener('change', () => {
+            updateChartSidebarDisplayMode();
+            renderCanvas();
+            saveActiveDraft();
+          });
+        }
+
+        const chartTableDataEl = document.getElementById('chart-table-data');
+        if (chartTableDataEl) {
+          chartTableDataEl.addEventListener('input', () => {
+            renderCanvas();
+            saveActiveDraft();
+          });
+          chartTableDataEl.addEventListener('change', () => {
+            renderCanvas();
+            saveActiveDraft();
+          });
+        }
+
         setChartDataInSidebar();
         const btnAddChartData = document.getElementById('btn-add-chart-data');
         if (btnAddChartData) {
@@ -3426,7 +3882,7 @@
             const container = document.getElementById('leaderboard-reps-list');
             const currentCount = container.querySelectorAll('.leaderboard-rep-item').length;
             if (currentCount < 6) {
-              const newRow = createLeaderboardRepRowElement({ name: '', title: '', quota: 100, photo: '' }, currentCount + 1);
+              const newRow = createLeaderboardRepRowElement({ name: '', title: '', quota: 100, rank: '', photo: '' }, currentCount + 1);
               container.appendChild(newRow);
               renumberLeaderboardRepRows();
               renderCanvas();
