@@ -851,38 +851,79 @@
       /* Template 7: Quarterly Sales Leaderboard Layout */
       .leaderboard-grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        grid-template-rows: repeat(4, 1fr);
-        gap: 8px;
-        height: 310px;
+        height: auto;
         max-height: 310px;
         box-sizing: border-box;
+        align-items: start;
+      }
+
+      /* 1–2 Cards Layout */
+      .leaderboard-grid.grid-1-2 {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: 1fr;
+        gap: 16px;
+        align-items: start;
+      }
+      .leaderboard-grid.grid-1-2.single-card {
+        grid-template-columns: 1fr;
+        max-width: 520px;
+        margin: 0 auto;
+        width: 100%;
+      }
+
+      /* 3–4 Cards Layout */
+      .leaderboard-grid.grid-3-4 {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        gap: 12px;
+        align-items: start;
+      }
+
+      /* 5–6 Cards Layout */
+      .leaderboard-grid.grid-5-6 {
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        gap: 10px;
+        align-items: start;
       }
 
       .leaderboard-card {
         background-color: var(--bg-card);
         border: 1px solid var(--border-accent);
-        border-radius: 8px;
-        padding: 6px 10px;
         display: flex;
+        flex-direction: row;
         align-items: center;
-        gap: 10px;
+        gap: 16px;
+        padding: 16px 20px;
+        box-sizing: border-box;
+        height: fit-content;
         position: relative;
         overflow: hidden;
-        box-sizing: border-box;
+        border-radius: 12px;
       }
 
-      .leaderboard-card.overachiever {
-        border-color: var(--highlight-amber);
-        box-shadow: 0 0 10px rgba(255, 193, 7, 0.25);
+      .leaderboard-card.size-lg {
+        border-radius: 14px;
+        padding: 20px 24px;
+        gap: 20px;
       }
 
+      .leaderboard-card.size-md {
+        border-radius: 12px;
+        padding: 16px 20px;
+        gap: 16px;
+      }
+
+      .leaderboard-card.size-sm {
+        border-radius: 10px;
+        padding: 12px 14px;
+        gap: 12px;
+      }
+
+      /* Left Column: Enlarged Photo Frame */
       .leaderboard-avatar-frame {
-        width: 42px;
-        height: 42px;
-        min-width: 42px;
         border-radius: 50%;
-        border: 2px solid var(--border-accent);
+        border: 3px solid var(--border-accent);
         overflow: hidden;
         display: flex;
         align-items: center;
@@ -891,9 +932,25 @@
         flex-shrink: 0;
       }
 
-      .leaderboard-card.overachiever .leaderboard-avatar-frame {
-        border-color: var(--highlight-amber);
-        box-shadow: 0 0 8px rgba(255, 193, 7, 0.4);
+      .leaderboard-card.size-lg .leaderboard-avatar-frame {
+        width: 90px;
+        height: 90px;
+        min-width: 90px;
+        border-width: 3px;
+      }
+
+      .leaderboard-card.size-md .leaderboard-avatar-frame {
+        width: 72px;
+        height: 72px;
+        min-width: 72px;
+        border-width: 3px;
+      }
+
+      .leaderboard-card.size-sm .leaderboard-avatar-frame {
+        width: 58px;
+        height: 58px;
+        min-width: 58px;
+        border-width: 2px;
       }
 
       .leaderboard-avatar-img {
@@ -902,81 +959,170 @@
         object-fit: cover;
       }
 
-      .leaderboard-card-info {
-        flex: 1;
-        min-width: 0;
+      /* Right Column: Stacked Details */
+      .leaderboard-card-details {
         display: flex;
         flex-direction: column;
         justify-content: center;
-        gap: 2px;
+        flex-grow: 1;
+        min-width: 0;
+        gap: 6px;
       }
 
-      .leaderboard-rep-name-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+      .leaderboard-card.size-lg .leaderboard-card-details {
+        gap: 8px;
+      }
+
+      .leaderboard-card.size-md .leaderboard-card-details {
+        gap: 6px;
+      }
+
+      .leaderboard-card.size-sm .leaderboard-card-details {
         gap: 4px;
       }
 
+      /* Row 1: Rep Name */
       .leaderboard-rep-name {
-        font-size: 11px;
         font-weight: 800;
         color: var(--text-light);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        white-space: normal;
+        word-break: break-word;
+        line-height: 1.2;
       }
 
+      .leaderboard-card.size-lg .leaderboard-rep-name {
+        font-size: 20px;
+      }
+
+      .leaderboard-card.size-md .leaderboard-rep-name {
+        font-size: 16px;
+      }
+
+      .leaderboard-card.size-sm .leaderboard-rep-name {
+        font-size: 13px;
+      }
+
+      /* Row 2: Title / Region */
       .leaderboard-rep-title {
-        font-size: 9px;
         font-weight: 500;
         color: var(--text-muted);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        white-space: normal;
+        word-break: break-word;
+        line-height: 1.2;
       }
 
-      .leaderboard-quota-badge {
+      .leaderboard-card.size-lg .leaderboard-rep-title {
+        font-size: 14px;
+      }
+
+      .leaderboard-card.size-md .leaderboard-rep-title {
+        font-size: 12px;
+      }
+
+      .leaderboard-card.size-sm .leaderboard-rep-title {
         font-size: 10px;
+      }
+
+      /* Row 3: Thick Progress Bar */
+      .leaderboard-progress-container {
+        width: 100%;
+        background-color: var(--bg-primary);
+        border-radius: 6px;
+        overflow: hidden;
+        height: 32px;
+        position: relative;
+        margin-top: 2px;
+      }
+
+      .leaderboard-card.size-lg .leaderboard-progress-container {
+        height: 36px;
+        border-radius: 8px;
+      }
+
+      .leaderboard-card.size-md .leaderboard-progress-container {
+        height: 32px;
+        border-radius: 6px;
+      }
+
+      .leaderboard-card.size-sm .leaderboard-progress-container {
+        height: 26px;
+        border-radius: 5px;
+      }
+
+      .leaderboard-progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, var(--highlight-amber), var(--highlight-orange));
+        border-radius: inherit;
+        transition: width 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: 12px;
+        box-sizing: border-box;
+        overflow: hidden;
+      }
+
+      .leaderboard-progress-text {
         font-weight: 800;
-        color: var(--highlight-amber);
-        background: rgba(255, 193, 7, 0.15);
-        border: 1px solid rgba(255, 193, 7, 0.3);
-        padding: 1px 5px;
-        border-radius: 4px;
+        color: #FFFFFF;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
         white-space: nowrap;
+      }
+
+      .leaderboard-card.size-lg .leaderboard-progress-text {
+        font-size: 15px;
+        padding-right: 14px;
+      }
+
+      .leaderboard-card.size-md .leaderboard-progress-text {
+        font-size: 13px;
+        padding-right: 10px;
+      }
+
+      .leaderboard-card.size-sm .leaderboard-progress-text {
+        font-size: 11px;
+        padding-right: 8px;
+      }
+
+      .leaderboard-card.size-md .leaderboard-performance-row {
+        padding-top: 8px;
+      }
+
+      .leaderboard-card.size-sm .leaderboard-performance-row {
+        padding-top: 4px;
       }
 
       .leaderboard-progress-bg {
         width: 100%;
-        height: 4px;
         background-color: var(--bg-primary);
-        border-radius: 2px;
+        border-radius: 4px;
         overflow: hidden;
-        margin-top: 2px;
+      }
+
+      .leaderboard-card.size-lg .leaderboard-progress-bg {
+        height: 12px;
+        border-radius: 6px;
+      }
+
+      .leaderboard-card.size-md .leaderboard-progress-bg {
+        height: 8px;
+        border-radius: 4px;
+      }
+
+      .leaderboard-card.size-sm .leaderboard-progress-bg {
+        height: 5px;
+        border-radius: 3px;
       }
 
       .leaderboard-progress-bar {
         height: 100%;
         background: linear-gradient(90deg, var(--border-accent), var(--highlight-amber));
-        border-radius: 2px;
+        border-radius: inherit;
         transition: width 0.3s ease;
       }
 
       .leaderboard-card.overachiever .leaderboard-progress-bar {
         background: linear-gradient(90deg, var(--highlight-amber), var(--highlight-orange));
-      }
-
-      .leaderboard-overachiever-tag {
-        font-size: 8px;
-        font-weight: 800;
-        color: #10B981;
-        background: rgba(16, 185, 129, 0.15);
-        border: 1px solid rgba(16, 185, 129, 0.4);
-        padding: 1px 4px;
-        border-radius: 3px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
       }
 
       /* Canvas Footer */
@@ -1266,7 +1412,7 @@
             <!-- Representative items injected here -->
           </div>
           <div id="leaderboard-max-note" style="display: none; font-size: 10px; color: var(--highlight-amber); margin-top: 6px;">
-            Maximum 12 representative entries reached.
+            Maximum 6 representative entries reached.
           </div>
         </div>
 
@@ -1466,13 +1612,7 @@
                 { name: 'Elena Rostova', title: 'Mid-Market - APAC', quota: 128, photo: '' },
                 { name: 'David Chen', title: 'Enterprise - LATAM', quota: 120, photo: '' },
                 { name: 'Aisha Patel', title: 'SaaS Solutions - Global', quota: 115, photo: '' },
-                { name: 'Carlos Mendez', title: 'Commercial - US West', quota: 112, photo: '' },
-                { name: 'Hannah Abbott', title: 'Enterprise - UK & Ireland', quota: 108, photo: '' },
-                { name: 'Liam O\'Connor', title: 'Mid-Market - DACH', quota: 105, photo: '' },
-                { name: 'Rachel Kim', title: 'Strategic Accounts - US East', quota: 102, photo: '' },
-                { name: 'Jordan Taylor', title: 'Mid-Market - NORAM', quota: 100, photo: '' },
-                { name: 'Victor Hugo', title: 'Inside Sales - EMEA', quota: 92, photo: '' },
-                { name: 'Maya Lin', title: 'SMB - APAC', quota: 88, photo: '' }
+                { name: 'Carlos Mendez', title: 'Commercial - US West', quota: 112, photo: '' }
               ]
             })
           }
@@ -1931,6 +2071,21 @@
             const allReps = getLeaderboardRepsFromSidebar();
             // Filter: Only render cards for representatives whose Quota Achieved is 100% or higher
             const filteredReps = allReps.filter(r => (parseFloat(r.quota) || 0) >= 100);
+            const cardCount = filteredReps.length;
+
+            let gridClass = 'grid-5-6';
+            let cardSizeClass = 'size-sm';
+
+            if (cardCount <= 2) {
+              gridClass = 'grid-1-2' + (cardCount === 1 ? ' single-card' : '');
+              cardSizeClass = 'size-lg';
+            } else if (cardCount <= 4) {
+              gridClass = 'grid-3-4';
+              cardSizeClass = 'size-md';
+            } else {
+              gridClass = 'grid-5-6';
+              cardSizeClass = 'size-sm';
+            }
 
             const cardsHtml = filteredReps.map(rep => {
               const qVal = parseFloat(rep.quota) || 0;
@@ -1939,33 +2094,39 @@
 
               const avatarHtml = rep.photo ? 
                 `<img src="${rep.photo}" class="leaderboard-avatar-img" alt="${escapeHtml(rep.name)}" />` :
-                `<svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width: 22px; height: 22px;">
+                `<svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width: 55%; height: 55%;">
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                   <circle cx="12" cy="7" r="4"></circle>
                 </svg>`;
 
               return `
-                <div class="leaderboard-card ${isOverAchiever ? 'overachiever' : ''}">
+                <div class="leaderboard-card ${cardSizeClass}">
+                  <!-- Left Column: Enlarged Photo -->
                   <div class="leaderboard-avatar-frame">
                     ${avatarHtml}
                   </div>
-                  <div class="leaderboard-card-info">
-                    <div class="leaderboard-rep-name-row">
-                      <span class="leaderboard-rep-name" title="${escapeHtml(rep.name)}">${escapeHtml(rep.name || 'Sales Rep')}</span>
-                      <span class="leaderboard-quota-badge">${qVal}%</span>
+
+                  <!-- Right Column: Stacked Details -->
+                  <div class="leaderboard-card-details">
+                    <!-- Row 1: Rep Name -->
+                    <span class="leaderboard-rep-name">${escapeHtml(rep.name || 'Sales Rep')}</span>
+
+                    <!-- Row 2: Title / Region -->
+                    <span class="leaderboard-rep-title">${escapeHtml(rep.title || '')}</span>
+
+                    <!-- Row 3: Thick Progress Bar with Percentage text inside filled bar -->
+                    <div class="leaderboard-progress-container">
+                      <div class="leaderboard-progress-bar" style="width: ${progressPct}%;">
+                        <span class="leaderboard-progress-text">${qVal}%</span>
+                      </div>
                     </div>
-                    <div class="leaderboard-rep-title" title="${escapeHtml(rep.title)}">${escapeHtml(rep.title || '')}</div>
-                    <div class="leaderboard-progress-bg">
-                      <div class="leaderboard-progress-bar" style="width: ${progressPct}%;"></div>
-                    </div>
-                    ${isOverAchiever ? `<div style="display:flex; justify-content:flex-end; margin-top:2px;"><span class="leaderboard-overachiever-tag">🎯 Over-Achiever</span></div>` : ''}
                   </div>
                 </div>
               `;
             }).join('');
 
             slideContent.innerHTML = `
-              <div class="leaderboard-grid">
+              <div class="leaderboard-grid ${gridClass}">
                 ${cardsHtml || '<div style="color:var(--text-muted); font-size:12px; text-align:center; grid-column: 1 / -1; padding: 40px;">No representatives with 100%+ quota achievement. Update rep quotas in the sidebar.</div>'}
               </div>
             `;
@@ -2550,7 +2711,7 @@
 
           const btnAdd = document.getElementById('btn-add-leaderboard-rep');
           const maxNote = document.getElementById('leaderboard-max-note');
-          if (rows.length >= 12) {
+          if (rows.length >= 6) {
             if (btnAdd) {
               btnAdd.disabled = true;
               btnAdd.style.opacity = '0.5';
@@ -2578,16 +2739,10 @@
               { name: 'Elena Rostova', title: 'Mid-Market - APAC', quota: 128, photo: '' },
               { name: 'David Chen', title: 'Enterprise - LATAM', quota: 120, photo: '' },
               { name: 'Aisha Patel', title: 'SaaS Solutions - Global', quota: 115, photo: '' },
-              { name: 'Carlos Mendez', title: 'Commercial - US West', quota: 112, photo: '' },
-              { name: 'Hannah Abbott', title: 'Enterprise - UK & Ireland', quota: 108, photo: '' },
-              { name: 'Liam O\'Connor', title: 'Mid-Market - DACH', quota: 105, photo: '' },
-              { name: 'Rachel Kim', title: 'Strategic Accounts - US East', quota: 102, photo: '' },
-              { name: 'Jordan Taylor', title: 'Mid-Market - NORAM', quota: 100, photo: '' },
-              { name: 'Victor Hugo', title: 'Inside Sales - EMEA', quota: 92, photo: '' },
-              { name: 'Maya Lin', title: 'SMB - APAC', quota: 88, photo: '' }
+              { name: 'Carlos Mendez', title: 'Commercial - US West', quota: 112, photo: '' }
             ];
           }
-          const cappedList = repsList.slice(0, 12);
+          const cappedList = repsList.slice(0, 6);
           cappedList.forEach((rep, idx) => {
             const rowEl = createLeaderboardRepRowElement(rep, idx + 1);
             container.appendChild(rowEl);
@@ -3266,7 +3421,7 @@
           btnAddLeaderboardRep.addEventListener('click', () => {
             const container = document.getElementById('leaderboard-reps-list');
             const currentCount = container.querySelectorAll('.leaderboard-rep-item').length;
-            if (currentCount < 12) {
+            if (currentCount < 6) {
               const newRow = createLeaderboardRepRowElement({ name: '', title: '', quota: 100, photo: '' }, currentCount + 1);
               container.appendChild(newRow);
               renumberLeaderboardRepRows();
