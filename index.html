@@ -747,61 +747,244 @@
       }
 
       /* Template 4: Channel Performance Layout */
-      .channel-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 24px;
-        height: 270px;
-      }
-
-      .channel-card {
+      /* Template 4: Channel Performance / Side-by-Side Comparison Layout */
+      .channel-comparison-container {
         background-color: var(--bg-card);
         border: 1px solid var(--border-accent);
         border-radius: 12px;
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
+        padding: 12px 16px;
+        height: 100%;
+        max-height: 310px;
+        box-sizing: border-box;
       }
 
-      .channel-header {
+      /* Single Column Mode (1 to 3 items) */
+      .channel-comparison-container.mode-single {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        overflow-y: auto;
+      }
+
+      .channel-comparison-container.mode-single .channel-row-card {
+        flex: 1;
+        min-height: 0;
+        padding: 10px 14px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 6px;
+      }
+
+      .channel-comparison-container.mode-single .channel-row-title {
+        font-size: 14px;
+      }
+
+      .channel-comparison-container.mode-single .channel-row-badge {
+        font-size: 11px;
+        padding: 2px 8px;
+      }
+
+      .channel-comparison-container.mode-single .channel-bar-lbl {
+        font-size: 11px;
+      }
+
+      .channel-comparison-container.mode-single .channel-bar-track {
+        height: 16px;
+      }
+
+      .channel-comparison-container.mode-single .channel-bar-val {
+        font-size: 12px;
+      }
+
+      /* 2-Column Grid Mode (4 or more items) */
+      .channel-comparison-container.mode-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-auto-flow: column;
+        gap: 8px 12px;
+        overflow-y: auto;
+      }
+
+      .channel-comparison-container.mode-grid .channel-row-card {
+        min-height: 0;
+        padding: 7px 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 4px;
+      }
+
+      .channel-comparison-container.mode-grid .channel-row-title {
+        font-size: 12px;
+      }
+
+      .channel-comparison-container.mode-grid .channel-row-badge {
+        font-size: 10px;
+        padding: 1px 6px;
+      }
+
+      .channel-comparison-container.mode-grid .channel-bar-lbl {
+        font-size: 10px;
+      }
+
+      .channel-comparison-container.mode-grid .channel-bar-track {
+        height: 13px;
+      }
+
+      .channel-comparison-container.mode-grid .channel-bar-val {
+        font-size: 11px;
+      }
+
+      /* Compact sizing for 6+ items in grid mode */
+      .channel-comparison-container.mode-grid.compact-grid .channel-row-card {
+        padding: 5px 8px;
+        gap: 2px;
+      }
+
+      .channel-comparison-container.mode-grid.compact-grid .channel-row-title {
+        font-size: 11px;
+      }
+
+      .channel-comparison-container.mode-grid.compact-grid .channel-row-badge {
+        font-size: 9px;
+        padding: 1px 5px;
+      }
+
+      .channel-comparison-container.mode-grid.compact-grid .channel-bar-lbl {
+        font-size: 9px;
+      }
+
+      .channel-comparison-container.mode-grid.compact-grid .channel-bar-track {
+        height: 11px;
+      }
+
+      .channel-comparison-container.mode-grid.compact-grid .channel-bar-val {
+        font-size: 10px;
+      }
+
+      .channel-row-card {
+        background-color: var(--bg-primary);
+        border: 1px solid var(--sidebar-border);
+        border-radius: 8px;
+        padding: 8px 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        flex-shrink: 0;
+      }
+
+      [data-theme="clean-light"] .channel-row-card {
+        background-color: #FFFFFF;
+        border-color: rgba(15, 23, 42, 0.1);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      }
+
+      .channel-row-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding-bottom: 12px;
-        border-bottom: 1px solid rgba(0, 140, 232, 0.3);
+        gap: 8px;
+        width: 100%;
       }
 
-      .channel-name {
-        font-size: 18px;
+      .channel-row-title {
+        font-size: 13px;
         font-weight: 800;
+        color: var(--text-light);
+        letter-spacing: 0.2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex: 1;
+        min-width: 0;
+      }
+
+      .channel-row-badge {
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        padding: 2px 8px;
+        border-radius: 10px;
+        background: rgba(0, 200, 255, 0.15);
+        color: var(--border-accent);
+        border: 1px solid rgba(0, 200, 255, 0.3);
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      [data-theme="clean-light"] .channel-row-badge {
+        background: rgba(14, 165, 233, 0.12);
+        color: #0284c7;
+        border-color: rgba(14, 165, 233, 0.25);
+      }
+
+      .channel-bar-group {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .channel-bar-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+      }
+
+      .channel-bar-lbl {
+        font-size: 10px;
+        font-weight: 700;
+        color: var(--text-muted);
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      .channel-bar-track {
+        flex: 1;
+        min-width: 0;
+        height: 14px;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 4px;
+        overflow: hidden;
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      [data-theme="clean-light"] .channel-bar-track {
+        background: rgba(15, 23, 42, 0.08);
+      }
+
+      .channel-bar-fill-a {
+        height: 100%;
+        background: linear-gradient(90deg, #00C8FF, #0099FF);
+        border-radius: 4px;
+        transition: width 0.3s ease;
+      }
+
+      .channel-bar-fill-b {
+        height: 100%;
+        background: linear-gradient(90deg, #FFC107, #FF9800);
+        border-radius: 4px;
+        transition: width 0.3s ease;
+      }
+
+      .channel-bar-val {
+        font-size: 11px;
+        font-weight: 800;
+        white-space: nowrap;
+        flex-shrink: 0;
+        text-align: right;
+      }
+
+      .channel-bar-val.val-a {
         color: var(--text-light);
       }
 
-      .channel-pill {
-        font-size: 10px;
-        font-weight: 700;
-        padding: 3px 8px;
-        border-radius: 4px;
-        background: var(--bg-primary);
+      .channel-bar-val.val-b {
         color: var(--highlight-amber);
-        border: 1px solid var(--border-accent);
-      }
-
-      .channel-metrics-list {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        margin-top: 12px;
-      }
-
-      .channel-metric-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: var(--bg-primary);
-        padding: 10px 14px;
-        border-radius: 8px;
       }
 
       .metric-name {
@@ -1547,40 +1730,33 @@
 
         <!-- TEMPLATE 4: CHANNEL PERFORMANCE INPUTS -->
         <div id="inputs-channel" class="sidebar-section template-input-group" style="display:none;">
-          <div class="section-heading">Channel Comparison</div>
+          <div class="section-heading">
+            <span>Channel & Comparison Rows</span>
+            <button type="button" id="btn-add-channel-row" class="btn btn-secondary" style="padding: 3px 8px; font-size: 10px;">+ Add Comparison Row</button>
+          </div>
 
-          <!-- Channel A -->
-          <div class="form-group" style="border-bottom: 1px solid var(--sidebar-border); padding-bottom: 12px; margin-bottom: 8px;">
-            <label class="form-label">Channel A Setup</label>
-            <input type="text" id="chanA-name" class="form-control" value="Paid Search (Google Ads)" placeholder="Channel A Name" />
-            
-            <label class="form-label" style="margin-top: 6px;">Channel A Badge Label</label>
-            <input type="text" id="chanA-pill" class="form-control" value="CHANNEL A" placeholder="Badge Label" />
-
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; margin-bottom: 4px;">
-              <span class="form-label" style="font-size: 10px;">Channel A Metrics</span>
-              <button type="button" id="btn-add-chanA-metric" class="btn btn-secondary" style="padding: 3px 8px; font-size: 10px;">+ Add Metric</button>
+          <div class="form-group" style="border-bottom: 1px solid var(--sidebar-border); padding-bottom: 10px; margin-bottom: 8px;">
+            <label class="form-label" for="channel-bulk-data">Bulk Data Input (Excel / TSV Paste)</label>
+            <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 4px; line-height: 1.3;">
+              Paste rows directly from Excel or Sheets (TSV format).<br/>
+              Format per line: <code>Row Title [TAB] Metric A [TAB] Metric B [TAB] Optional Badge</code>
             </div>
-            <div id="chanA-metrics-list" style="display: flex; flex-direction: column; gap: 8px;">
-              <!-- Dynamic metric items for Channel A -->
+            <textarea id="channel-bulk-data" class="form-control" rows="5" style="font-family: monospace; font-size: 11px; resize: vertical; white-space: pre;" placeholder="Paid Search (Google Ads)&#09;$48,500&#09;$56,200&#09;+15.8% YoY&#10;Paid Social (LinkedIn & Meta)&#09;$36,200&#09;$42,800&#09;+18.2% YoY&#10;Email & Lifecycle Marketing&#09;$18,400&#09;$22,100&#09;+20.1% YoY&#10;Organic & Content SEO&#09;$24,000&#09;$28,500&#09;+18.8% YoY"></textarea>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px;">
+              <div>
+                <label class="form-label" for="chan-default-a-lbl" style="font-size: 10px; margin-bottom: 2px;">Default Metric A Label</label>
+                <input type="text" id="chan-default-a-lbl" class="form-control" value="2025 Spend" placeholder="e.g. 2025 Spend" />
+              </div>
+              <div>
+                <label class="form-label" for="chan-default-b-lbl" style="font-size: 10px; margin-bottom: 2px;">Default Metric B Label</label>
+                <input type="text" id="chan-default-b-lbl" class="form-control" value="2026 Spend" placeholder="e.g. 2026 Spend" />
+              </div>
             </div>
           </div>
 
-          <!-- Channel B -->
-          <div class="form-group">
-            <label class="form-label">Channel B Setup</label>
-            <input type="text" id="chanB-name" class="form-control" value="Paid Social (LinkedIn & Meta)" placeholder="Channel B Name" />
-
-            <label class="form-label" style="margin-top: 6px;">Channel B Badge Label</label>
-            <input type="text" id="chanB-pill" class="form-control" value="CHANNEL B" placeholder="Badge Label" />
-
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; margin-bottom: 4px;">
-              <span class="form-label" style="font-size: 10px;">Channel B Metrics</span>
-              <button type="button" id="btn-add-chanB-metric" class="btn btn-secondary" style="padding: 3px 8px; font-size: 10px;">+ Add Metric</button>
-            </div>
-            <div id="chanB-metrics-list" style="display: flex; flex-direction: column; gap: 8px;">
-              <!-- Dynamic metric items for Channel B -->
-            </div>
+          <div id="channel-rows-list" style="display: flex; flex-direction: column; gap: 8px;">
+            <!-- Dynamic channel comparison row items injected here -->
           </div>
         </div>
 
@@ -1787,25 +1963,45 @@
             Template_Type: 'channel',
             Preset_Name: 'Paid Acquisition Breakdown',
             Slide_Title: 'Paid Acquisition Channel Breakdown',
-            Subtitle: 'Efficiency comparison between Google Paid Search and Paid Social channels',
+            Subtitle: 'Side-by-side performance and growth metrics comparison across key channels',
             Category_Tag: 'CHANNEL METRICS',
             Watermark_Text: 'MKTG OPS',
             Footer_Notice: 'CONFIDENTIAL • INTERNAL MARKETING OPERATIONS DIRECTIVE',
             Footer_Slide_ID: 'SLIDE 01 • MKTG-OPS-VISUALIZER',
             Content_Data: JSON.stringify({
-              chanA_name: 'Paid Search (Google Ads)',
-              chanA_pill: 'CHANNEL A',
-              chanA_metrics: [
-                { lbl: 'Monthly Spend', val: '$48,500' },
-                { lbl: 'Conversion Rate', val: '5.2%' },
-                { lbl: 'Cost Per Lead', val: '$64.20' }
-              ],
-              chanB_name: 'Paid Social (LinkedIn & Meta)',
-              chanB_pill: 'CHANNEL B',
-              chanB_metrics: [
-                { lbl: 'Monthly Spend', val: '$36,200' },
-                { lbl: 'Conversion Rate', val: '3.8%' },
-                { lbl: 'Cost Per Lead', val: '$88.50' }
+              rows: [
+                {
+                  title: 'Paid Search (Google Ads)',
+                  metricA_lbl: '2025 Spend',
+                  metricA_val: '$48,500',
+                  metricB_lbl: '2026 Spend',
+                  metricB_val: '$56,200',
+                  badge: '+15.8% YoY'
+                },
+                {
+                  title: 'Paid Social (LinkedIn & Meta)',
+                  metricA_lbl: '2025 Spend',
+                  metricA_val: '$36,200',
+                  metricB_lbl: '2026 Spend',
+                  metricB_val: '$42,800',
+                  badge: '+18.2% YoY'
+                },
+                {
+                  title: 'Email & Lifecycle Marketing',
+                  metricA_lbl: '2025 Spend',
+                  metricA_val: '$18,400',
+                  metricB_lbl: '2026 Spend',
+                  metricB_val: '$22,100',
+                  badge: '+20.1% YoY'
+                },
+                {
+                  title: 'Organic & Content SEO',
+                  metricA_lbl: '2025 Spend',
+                  metricA_val: '$24,000',
+                  metricB_lbl: '2026 Spend',
+                  metricB_val: '$28,500',
+                  badge: '+18.8% YoY'
+                }
               ]
             })
           },
@@ -1955,6 +2151,14 @@
           setTimeout(() => {
             toastEl.classList.remove('show');
           }, 3500);
+        }
+
+        function parseNumericVal(valStr) {
+          if (typeof valStr === 'number') return valStr;
+          if (!valStr) return 0;
+          const cleanStr = String(valStr).replace(/[^0-9.-]/g, '');
+          const num = parseFloat(cleanStr);
+          return isNaN(num) ? 0 : num;
         }
 
         // --- RENDER SLIDE CANVAS TEMPLATES ---
@@ -2110,47 +2314,62 @@
               </div>
             `;
           } else if (template === 'channel') {
-            const cAName = document.getElementById('chanA-name')?.value || 'Channel A';
-            const cAPill = document.getElementById('chanA-pill')?.value || 'CHANNEL A';
-            const cAMetrics = getChanMetricsFromSidebar('A');
+            const rows = getChannelRowsFromSidebar();
+            const totalItems = rows.length;
 
-            const cBName = document.getElementById('chanB-name')?.value || 'Channel B';
-            const cBPill = document.getElementById('chanB-pill')?.value || 'CHANNEL B';
-            const cBMetrics = getChanMetricsFromSidebar('B');
+            const isSingleMode = totalItems >= 1 && totalItems <= 3;
+            const containerClass = isSingleMode ? 'channel-comparison-container mode-single' : 'channel-comparison-container mode-grid' + (totalItems >= 6 ? ' compact-grid' : '');
 
-            const renderMetricsRows = (metrics) => {
-              if (!metrics || metrics.length === 0) {
-                return '<div style="color:var(--text-muted); font-size:11px; text-align:center; padding: 12px;">No metrics added. Click "+ Add Metric" in the sidebar.</div>';
+            let containerStyle = '';
+            if (!isSingleMode && totalItems >= 4) {
+              const numRows = Math.ceil(totalItems / 2);
+              containerStyle = `style="grid-template-rows: repeat(${numRows}, 1fr);"`;
+            }
+
+            const rowsHtml = rows.map(row => {
+              const numA = parseNumericVal(row.metricA_val);
+              const numB = parseNumericVal(row.metricB_val);
+
+              const rowMax = Math.max(numA, numB, 0.0001);
+              let pctA = (numA > 0) ? Math.min(100, Math.max(6, (numA / rowMax) * 100)) : 6;
+              let pctB = (numB > 0) ? Math.min(100, Math.max(6, (numB / rowMax) * 100)) : 6;
+
+              if (numA === 0 && numB === 0) {
+                pctA = 50;
+                pctB = 50;
               }
-              return metrics.map(m => `
-                <div class="channel-metric-row">
-                  <span class="metric-name">${escapeHtml(m.lbl)}</span>
-                  <span class="metric-val">${escapeHtml(m.val)}</span>
+
+              const badgeHtml = row.badge ? `<span class="channel-row-badge">${escapeHtml(row.badge)}</span>` : '';
+
+              return `
+                <div class="channel-row-card">
+                  <div class="channel-row-header">
+                    <div class="channel-row-title" title="${escapeHtml(row.title || 'Category / Row')}">${escapeHtml(row.title || 'Category / Row')}</div>
+                    ${badgeHtml}
+                  </div>
+                  <div class="channel-bar-group">
+                    <div class="channel-bar-row">
+                      <span class="channel-bar-lbl" title="${escapeHtml(row.metricA_lbl || 'Metric A')}">${escapeHtml(row.metricA_lbl || 'Metric A')}</span>
+                      <div class="channel-bar-track">
+                        <div class="channel-bar-fill-a" style="width: ${pctA.toFixed(1)}%;"></div>
+                      </div>
+                      <span class="channel-bar-val val-a">${escapeHtml(row.metricA_val || '-')}</span>
+                    </div>
+                    <div class="channel-bar-row">
+                      <span class="channel-bar-lbl" title="${escapeHtml(row.metricB_lbl || 'Metric B')}">${escapeHtml(row.metricB_lbl || 'Metric B')}</span>
+                      <div class="channel-bar-track">
+                        <div class="channel-bar-fill-b" style="width: ${pctB.toFixed(1)}%;"></div>
+                      </div>
+                      <span class="channel-bar-val val-b">${escapeHtml(row.metricB_val || '-')}</span>
+                    </div>
+                  </div>
                 </div>
-              `).join('');
-            };
+              `;
+            }).join('');
 
             slideContent.innerHTML = `
-              <div class="channel-grid">
-                <div class="channel-card">
-                  <div class="channel-header">
-                    <div class="channel-name">${escapeHtml(cAName)}</div>
-                    <span class="channel-pill">${escapeHtml(cAPill)}</span>
-                  </div>
-                  <div class="channel-metrics-list">
-                    ${renderMetricsRows(cAMetrics)}
-                  </div>
-                </div>
-
-                <div class="channel-card">
-                  <div class="channel-header">
-                    <div class="channel-name">${escapeHtml(cBName)}</div>
-                    <span class="channel-pill">${escapeHtml(cBPill)}</span>
-                  </div>
-                  <div class="channel-metrics-list">
-                    ${renderMetricsRows(cBMetrics)}
-                  </div>
-                </div>
+              <div class="${containerClass}" ${containerStyle}>
+                ${rowsHtml || '<div style="color:var(--text-muted); font-size:12px; text-align:center; padding: 20px;">No comparison rows added. Click "+ Add Comparison Row" in the sidebar.</div>'}
               </div>
             `;
           } else if (template === 'comparison') {
@@ -2806,83 +3025,233 @@
         }
 
         // --- SIDEBAR CHANNEL CONTROLS FOR TEMPLATE 4 ---
-        function getChanMetricsFromSidebar(type) {
-          const container = document.getElementById(`chan${type}-metrics-list`);
+        function syncChannelBulkTextareaFromRows(rowsList) {
+          const textarea = document.getElementById('channel-bulk-data');
+          if (!textarea) return;
+          const lines = (rowsList || []).map(r => {
+            const parts = [
+              r.title || '',
+              r.metricA_val || '',
+              r.metricB_val || '',
+              r.badge || ''
+            ];
+            return parts.join('\t');
+          });
+          textarea.value = lines.join('\n');
+        }
+
+        function parseChannelBulkTextarea(skipUpdateTextarea = false) {
+          const textarea = document.getElementById('channel-bulk-data');
+          if (!textarea) return;
+          const rawText = textarea.value;
+          const lines = rawText.split('\n');
+          const defaultALbl = document.getElementById('chan-default-a-lbl')?.value || '2025 Spend';
+          const defaultBLbl = document.getElementById('chan-default-b-lbl')?.value || '2026 Spend';
+
+          const rows = [];
+          lines.forEach(line => {
+            if (!line.trim()) return;
+            let parts = line.split('\t');
+            if (parts.length === 1 && line.includes('|')) {
+              parts = line.split('|');
+            }
+            const title = (parts[0] || '').trim();
+            const valA = (parts[1] || '').trim();
+            const valB = (parts[2] || '').trim();
+            const badge = (parts[3] || '').trim();
+
+            rows.push({
+              title: title || 'Comparison Row',
+              metricA_lbl: defaultALbl,
+              metricA_val: valA,
+              metricB_lbl: defaultBLbl,
+              metricB_val: valB,
+              badge
+            });
+          });
+
+          setChannelRowsInSidebar(rows, true);
+          renderCanvas();
+          saveActiveDraft();
+        }
+
+        function getChannelRowsFromSidebar() {
+          const container = document.getElementById('channel-rows-list');
           if (!container) return [];
-          const rows = container.querySelectorAll(`.chan${type}-metric-item`);
+          const items = container.querySelectorAll('.channel-row-item');
+          const defaultALbl = document.getElementById('chan-default-a-lbl')?.value || '2025 Spend';
+          const defaultBLbl = document.getElementById('chan-default-b-lbl')?.value || '2026 Spend';
           const list = [];
-          rows.forEach(row => {
-            const lbl = row.querySelector('.metric-lbl')?.value || '';
-            const val = row.querySelector('.metric-val')?.value || '';
-            list.push({ lbl, val });
+          items.forEach(item => {
+            const title = item.querySelector('.channel-row-title-input')?.value || '';
+            const metricA_lbl = item.querySelector('.channel-row-a-lbl')?.value || defaultALbl;
+            const metricA_val = item.querySelector('.channel-row-a-val')?.value || '';
+            const metricB_lbl = item.querySelector('.channel-row-b-lbl')?.value || defaultBLbl;
+            const metricB_val = item.querySelector('.channel-row-b-val')?.value || '';
+            const badge = item.querySelector('.channel-row-badge-input')?.value || '';
+            list.push({ title, metricA_lbl, metricA_val, metricB_lbl, metricB_val, badge });
           });
           return list;
         }
 
-        function createChanMetricRowElement(type = 'A', lbl = '', val = '', index = 1) {
+        function createChannelRowElement(rowObj = {}, index = 1) {
           const div = document.createElement('div');
-          div.className = `chan${type}-metric-item`;
-          div.style.cssText = 'background: var(--input-bg); padding: 8px 10px; border-radius: 6px; border: 1px solid var(--sidebar-border); display: flex; flex-direction: column; gap: 6px;';
+          div.className = 'channel-row-item';
+          div.style.cssText = 'background: var(--input-bg); border-radius: 6px; border: 1px solid var(--sidebar-border); overflow: hidden; margin-bottom: 8px;';
+
+          const defaultALbl = document.getElementById('chan-default-a-lbl')?.value || '2025 Spend';
+          const defaultBLbl = document.getElementById('chan-default-b-lbl')?.value || '2026 Spend';
+
+          const titleVal = rowObj.title !== undefined ? rowObj.title : (rowObj.name || `Row Entry #${index}`);
+          const aLblVal = rowObj.metricA_lbl !== undefined ? rowObj.metricA_lbl : defaultALbl;
+          const aValVal = rowObj.metricA_val !== undefined ? rowObj.metricA_val : '1200';
+          const bLblVal = rowObj.metricB_lbl !== undefined ? rowObj.metricB_lbl : defaultBLbl;
+          const bValVal = rowObj.metricB_val !== undefined ? rowObj.metricB_val : '1450';
+          const badgeVal = rowObj.badge !== undefined ? rowObj.badge : '';
+
           div.innerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span class="form-label" style="font-size: 10px;">Metric #${index}</span>
-              <button type="button" class="btn-remove-chan-metric" style="background:none; border:none; color:var(--status-red); cursor:pointer; font-weight:bold; font-size:12px;" title="Remove Metric">✕</button>
+            <div class="channel-row-accordion-header" style="padding: 8px 10px; background: rgba(255, 255, 255, 0.03); display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none;">
+              <span class="channel-row-header-title form-label" style="font-size: 11px; text-transform: none; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                ${index}. ${escapeHtml(titleVal || 'Row Entry')}
+              </span>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span class="channel-row-toggle-icon" style="font-size: 10px; color: var(--text-muted);">▼</span>
+                <button type="button" class="btn-remove-channel-row" style="background:none; border:none; color:var(--status-red); cursor:pointer; font-weight:bold; font-size:12px;" title="Remove Row">✕</button>
+              </div>
             </div>
-            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 6px;">
-              <input type="text" class="form-control metric-lbl" value="${escapeHtml(lbl)}" placeholder="Metric Name" />
-              <input type="text" class="form-control metric-val" value="${escapeHtml(val)}" placeholder="Value" />
+            <div class="channel-row-accordion-body" style="padding: 10px; display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--sidebar-border);">
+              <div>
+                <label class="form-label" style="font-size: 10px; margin-bottom: 2px;">Row Title / Category</label>
+                <input type="text" class="form-control channel-row-title-input" value="${escapeHtml(titleVal)}" placeholder="Category / Title (e.g. FSD Division)" />
+              </div>
+              <div>
+                <label class="form-label" style="font-size: 10px; margin-bottom: 2px;">Primary Metric (Metric A)</label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                  <input type="text" class="form-control channel-row-a-lbl" value="${escapeHtml(aLblVal)}" placeholder="Label (e.g. 2025)" />
+                  <input type="text" class="form-control channel-row-a-val" value="${escapeHtml(aValVal)}" placeholder="Value (e.g. 1200)" />
+                </div>
+              </div>
+              <div>
+                <label class="form-label" style="font-size: 10px; margin-bottom: 2px;">Secondary Metric (Metric B)</label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                  <input type="text" class="form-control channel-row-b-lbl" value="${escapeHtml(bLblVal)}" placeholder="Label (e.g. 2026)" />
+                  <input type="text" class="form-control channel-row-b-val" value="${escapeHtml(bValVal)}" placeholder="Value (e.g. 1450)" />
+                </div>
+              </div>
+              <div>
+                <label class="form-label" style="font-size: 10px; margin-bottom: 2px;">Growth / Variance Badge (Optional)</label>
+                <input type="text" class="form-control channel-row-badge-input" value="${escapeHtml(badgeVal)}" placeholder="Status (e.g. +20.8% YoY or On Target)" />
+              </div>
             </div>
           `;
 
-          div.querySelectorAll('input').forEach(input => {
-            input.addEventListener('input', renderCanvas);
-            input.addEventListener('change', renderCanvas);
+          const header = div.querySelector('.channel-row-accordion-header');
+          const body = div.querySelector('.channel-row-accordion-body');
+          const toggleIcon = div.querySelector('.channel-row-toggle-icon');
+
+          header.addEventListener('click', (e) => {
+            if (e.target.classList.contains('btn-remove-channel-row') || e.target.closest('.btn-remove-channel-row')) return;
+            const isHidden = body.style.display === 'none';
+            body.style.display = isHidden ? 'flex' : 'none';
+            toggleIcon.textContent = isHidden ? '▼' : '►';
           });
 
-          div.querySelector('.btn-remove-chan-metric').addEventListener('click', () => {
+          const titleInput = div.querySelector('.channel-row-title-input');
+          const headerTitle = div.querySelector('.channel-row-header-title');
+
+          div.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', () => {
+              if (headerTitle) headerTitle.textContent = `${index}. ${titleInput.value || 'Row Entry'}`;
+              syncChannelBulkTextareaFromRows(getChannelRowsFromSidebar());
+              renderCanvas();
+            });
+            input.addEventListener('change', () => {
+              syncChannelBulkTextareaFromRows(getChannelRowsFromSidebar());
+              renderCanvas();
+              saveActiveDraft();
+            });
+          });
+
+          div.querySelector('.btn-remove-channel-row').addEventListener('click', (e) => {
+            e.stopPropagation();
             div.remove();
-            renumberChanMetricRows(type);
+            renumberChannelRows();
+            syncChannelBulkTextareaFromRows(getChannelRowsFromSidebar());
             renderCanvas();
+            saveActiveDraft();
           });
 
           return div;
         }
 
-        function renumberChanMetricRows(type) {
-          const container = document.getElementById(`chan${type}-metrics-list`);
+        function renumberChannelRows() {
+          const container = document.getElementById('channel-rows-list');
           if (!container) return;
-          const rows = container.querySelectorAll(`.chan${type}-metric-item`);
+          const rows = container.querySelectorAll('.channel-row-item');
           rows.forEach((row, i) => {
-            const lbl = row.querySelector('.form-label');
-            if (lbl) lbl.textContent = `Metric #${i + 1}`;
+            const headerTitle = row.querySelector('.channel-row-header-title');
+            const titleInput = row.querySelector('.channel-row-title-input');
+            if (headerTitle) headerTitle.textContent = `${i + 1}. ${titleInput?.value || 'Row Entry'}`;
           });
         }
 
-        function setChanMetricsInSidebar(type, metricsList) {
-          const container = document.getElementById(`chan${type}-metrics-list`);
+        function setChannelRowsInSidebar(rowsList, skipUpdateTextarea = false) {
+          const container = document.getElementById('channel-rows-list');
           if (!container) return;
           container.innerHTML = '';
-          if (!Array.isArray(metricsList) || metricsList.length === 0) {
-            if (type === 'A') {
-              metricsList = [
-                { lbl: 'Monthly Spend', val: '$48,500' },
-                { lbl: 'Conversion Rate', val: '5.2%' },
-                { lbl: 'Cost Per Lead', val: '$64.20' }
-              ];
-            } else {
-              metricsList = [
-                { lbl: 'Monthly Spend', val: '$36,200' },
-                { lbl: 'Conversion Rate', val: '3.8%' },
-                { lbl: 'Cost Per Lead', val: '$88.50' }
-              ];
-            }
+
+          let listToUse = [];
+
+          if (Array.isArray(rowsList) && rowsList.length > 0) {
+            listToUse = rowsList;
+          } else if (rowsList !== null && rowsList !== undefined && rowsList.length === 0) {
+            listToUse = [];
+          } else {
+            listToUse = [
+              {
+                title: 'Paid Search (Google Ads)',
+                metricA_lbl: '2025 Spend',
+                metricA_val: '$48,500',
+                metricB_lbl: '2026 Spend',
+                metricB_val: '$56,200',
+                badge: '+15.8% YoY'
+              },
+              {
+                title: 'Paid Social (LinkedIn & Meta)',
+                metricA_lbl: '2025 Spend',
+                metricA_val: '$36,200',
+                metricB_lbl: '2026 Spend',
+                metricB_val: '$42,800',
+                badge: '+18.2% YoY'
+              },
+              {
+                title: 'Email & Lifecycle Marketing',
+                metricA_lbl: '2025 Spend',
+                metricA_val: '$18,400',
+                metricB_lbl: '2026 Spend',
+                metricB_val: '$22,100',
+                badge: '+20.1% YoY'
+              },
+              {
+                title: 'Organic & Content SEO',
+                metricA_lbl: '2025 Spend',
+                metricA_val: '$24,000',
+                metricB_lbl: '2026 Spend',
+                metricB_val: '$28,500',
+                badge: '+18.8% YoY'
+              }
+            ];
           }
-          metricsList.forEach((m, idx) => {
-            const labelVal = m.lbl !== undefined ? m.lbl : (m.label || m.name || '');
-            const valueVal = m.val !== undefined ? m.val : (m.value || '');
-            const rowEl = createChanMetricRowElement(type, labelVal, valueVal, idx + 1);
+
+          listToUse.forEach((rowObj, idx) => {
+            const rowEl = createChannelRowElement(rowObj, idx + 1);
             container.appendChild(rowEl);
           });
+          renumberChannelRows();
+
+          if (!skipUpdateTextarea) {
+            syncChannelBulkTextareaFromRows(listToUse);
+          }
         }
 
         // --- SIDEBAR CHART DATA CONTROLS FOR TEMPLATE 6 ---
@@ -3262,12 +3631,10 @@
             data = { status: getStatusItemsFromSidebar() };
           } else if (template === 'channel') {
             data = {
-              chanA_name: document.getElementById('chanA-name')?.value || '',
-              chanA_pill: document.getElementById('chanA-pill')?.value || 'CHANNEL A',
-              chanA_metrics: getChanMetricsFromSidebar('A'),
-              chanB_name: document.getElementById('chanB-name')?.value || '',
-              chanB_pill: document.getElementById('chanB-pill')?.value || 'CHANNEL B',
-              chanB_metrics: getChanMetricsFromSidebar('B')
+              defaultA_lbl: document.getElementById('chan-default-a-lbl')?.value || '2025 Spend',
+              defaultB_lbl: document.getElementById('chan-default-b-lbl')?.value || '2026 Spend',
+              bulk_text: document.getElementById('channel-bulk-data')?.value || '',
+              rows: getChannelRowsFromSidebar()
             };
           } else if (template === 'comparison') {
             data = {
@@ -3420,33 +3787,37 @@
               if (legacyKpiList.length > 0) setKpiItemsInSidebar(legacyKpiList);
             }
 
-            if (content.chanA_pill !== undefined && document.getElementById('chanA-pill')) {
-              document.getElementById('chanA-pill').value = content.chanA_pill;
+            if (content.defaultA_lbl && document.getElementById('chan-default-a-lbl')) {
+              document.getElementById('chan-default-a-lbl').value = content.defaultA_lbl;
             }
-            if (content.chanB_pill !== undefined && document.getElementById('chanB-pill')) {
-              document.getElementById('chanB-pill').value = content.chanB_pill;
-            }
-
-            if (Array.isArray(content.chanA_metrics)) {
-              setChanMetricsInSidebar('A', content.chanA_metrics);
-            } else if (content.chanA_m1_lbl !== undefined || content.chanA_m1_val !== undefined) {
-              const legacyAMetrics = [
-                { lbl: content.chanA_m1_lbl || '', val: content.chanA_m1_val || '' },
-                { lbl: content.chanA_m2_lbl || '', val: content.chanA_m2_val || '' },
-                { lbl: content.chanA_m3_lbl || '', val: content.chanA_m3_val || '' }
-              ].filter(m => m.lbl || m.val);
-              setChanMetricsInSidebar('A', legacyAMetrics);
+            if (content.defaultB_lbl && document.getElementById('chan-default-b-lbl')) {
+              document.getElementById('chan-default-b-lbl').value = content.defaultB_lbl;
             }
 
-            if (Array.isArray(content.chanB_metrics)) {
-              setChanMetricsInSidebar('B', content.chanB_metrics);
-            } else if (content.chanB_m1_lbl !== undefined || content.chanB_m1_val !== undefined) {
-              const legacyBMetrics = [
-                { lbl: content.chanB_m1_lbl || '', val: content.chanB_m1_val || '' },
-                { lbl: content.chanB_m2_lbl || '', val: content.chanB_m2_val || '' },
-                { lbl: content.chanB_m3_lbl || '', val: content.chanB_m3_val || '' }
-              ].filter(m => m.lbl || m.val);
-              setChanMetricsInSidebar('B', legacyBMetrics);
+            if (Array.isArray(content.rows)) {
+              setChannelRowsInSidebar(content.rows);
+            } else if (Array.isArray(content.chanA_metrics) || Array.isArray(content.chanB_metrics)) {
+              const legacyRows = [];
+              const chanA = content.chanA_metrics || [];
+              const chanB = content.chanB_metrics || [];
+              const chanAName = content.chanA_name || content.chanA_pill || 'Channel A';
+              const chanBName = content.chanB_name || content.chanB_pill || 'Channel B';
+              const maxLen = Math.max(chanA.length, chanB.length);
+              for (let i = 0; i < maxLen; i++) {
+                const itemA = chanA[i] || {};
+                const itemB = chanB[i] || {};
+                legacyRows.push({
+                  title: itemA.lbl || itemB.lbl || `Metric ${i + 1}`,
+                  metricA_lbl: chanAName,
+                  metricA_val: itemA.val || '',
+                  metricB_lbl: chanBName,
+                  metricB_val: itemB.val || '',
+                  badge: ''
+                });
+              }
+              setChannelRowsInSidebar(legacyRows);
+            } else if (item.Template_Type === 'channel') {
+              setChannelRowsInSidebar();
             }
 
             if ((content.chart_display_mode || content.display_mode) !== undefined && document.getElementById('chart-display-mode')) {
@@ -3798,27 +4169,53 @@
           renderCanvas();
         });
 
-        setChanMetricsInSidebar('A');
-        const btnAddChanA = document.getElementById('btn-add-chanA-metric');
-        if (btnAddChanA) {
-          btnAddChanA.addEventListener('click', () => {
-            const container = document.getElementById('chanA-metrics-list');
-            const count = container.querySelectorAll('.chanA-metric-item').length + 1;
-            const newRow = createChanMetricRowElement('A', '', '', count);
-            container.appendChild(newRow);
-            renderCanvas();
+        setChannelRowsInSidebar();
+        const bulkDataEl = document.getElementById('channel-bulk-data');
+        if (bulkDataEl) {
+          bulkDataEl.addEventListener('input', () => {
+            parseChannelBulkTextarea(true);
+          });
+          bulkDataEl.addEventListener('change', () => {
+            parseChannelBulkTextarea(true);
           });
         }
 
-        setChanMetricsInSidebar('B');
-        const btnAddChanB = document.getElementById('btn-add-chanB-metric');
-        if (btnAddChanB) {
-          btnAddChanB.addEventListener('click', () => {
-            const container = document.getElementById('chanB-metrics-list');
-            const count = container.querySelectorAll('.chanB-metric-item').length + 1;
-            const newRow = createChanMetricRowElement('B', '', '', count);
-            container.appendChild(newRow);
+        const defaultALblEl = document.getElementById('chan-default-a-lbl');
+        if (defaultALblEl) {
+          defaultALblEl.addEventListener('input', () => {
             renderCanvas();
+            saveActiveDraft();
+          });
+        }
+
+        const defaultBLblEl = document.getElementById('chan-default-b-lbl');
+        if (defaultBLblEl) {
+          defaultBLblEl.addEventListener('input', () => {
+            renderCanvas();
+            saveActiveDraft();
+          });
+        }
+
+        const btnAddChannelRow = document.getElementById('btn-add-channel-row');
+        if (btnAddChannelRow) {
+          btnAddChannelRow.addEventListener('click', () => {
+            const container = document.getElementById('channel-rows-list');
+            const count = container.querySelectorAll('.channel-row-item').length + 1;
+            const defaultALbl = document.getElementById('chan-default-a-lbl')?.value || '2025 Spend';
+            const defaultBLbl = document.getElementById('chan-default-b-lbl')?.value || '2026 Spend';
+            const newRow = createChannelRowElement({
+              title: `Row Entry #${count}`,
+              metricA_lbl: defaultALbl,
+              metricA_val: '1000',
+              metricB_lbl: defaultBLbl,
+              metricB_val: '1200',
+              badge: ''
+            }, count);
+            container.appendChild(newRow);
+            renumberChannelRows();
+            syncChannelBulkTextareaFromRows(getChannelRowsFromSidebar());
+            renderCanvas();
+            saveActiveDraft();
           });
         }
 
