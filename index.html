@@ -17,11 +17,11 @@
       :root {
         --bg-primary: #002844;
         --bg-card: #003C68;
-        --border-accent: #008CE8;
-        --highlight-orange: #FF9800;
-        --highlight-amber: #FFC107;
-        --text-light: #EEEEEE;
+        --text-light: #FFFFFF;
         --text-muted: #E2E8F0;
+        --border-accent: #008CE8;
+        --highlight-amber: #FFC107;
+        --highlight-orange: #FF9800;
 
         /* Dark UI chrome colors */
         --sidebar-bg: #00192e;
@@ -89,18 +89,11 @@
         border-bottom: 1px solid var(--sidebar-border);
       }
 
-      .brand-icon {
-        width: 36px;
-        height: 36px;
-        background: linear-gradient(135deg, var(--border-accent), var(--highlight-orange));
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 800;
-        color: #fff;
-        font-size: 18px;
-        box-shadow: 0 0 12px rgba(0, 140, 232, 0.4);
+      #app-header-logo {
+        max-height: 32px;
+        width: auto;
+        object-fit: contain;
+        flex-shrink: 0;
       }
 
       .brand-title {
@@ -322,7 +315,7 @@
       .slide-canvas[data-theme="dark-navy"] {
         --bg-primary: #002844;
         --bg-card: #003C68;
-        --text-light: #EEEEEE;
+        --text-light: #FFFFFF;
         --text-muted: #E2E8F0;
         --border-accent: #008CE8;
         --highlight-amber: #FFC107;
@@ -333,36 +326,28 @@
       .slide-canvas[data-theme="clean-light"] {
         --bg-primary: #FFFFFF;
         --bg-card: #EEEEEE;
-        --text-light: #002844;
-        --text-muted: #757575;
-        --border-accent: #008CE8;
-        --highlight-amber: #00508C;
+        --text-light: #00508C;
+        --text-muted: #5F6B7A;
+        --border-accent: #0078D4;
+        --highlight-amber: #0078D4;
         --highlight-orange: #FF9800;
-        border-color: #D1D5DB;
+        border-color: #A1A1AA;
       }
 
       .slide-canvas[data-theme="clean-light"] .kpi-card,
       .slide-canvas[data-theme="clean-light"] .node-card,
       .slide-canvas[data-theme="clean-light"] .status-row,
+      .slide-canvas[data-theme="clean-light"] .channel-comparison-container,
       .slide-canvas[data-theme="clean-light"] .channel-card,
-      .slide-canvas[data-theme="clean-light"] .comparison-card {
-        border-color: #D1D5DB;
+      .slide-canvas[data-theme="clean-light"] .comparison-card,
+      .slide-canvas[data-theme="clean-light"] .leaderboard-card,
+      .slide-canvas[data-theme="clean-light"] .chart-template-container {
+        border-color: #A1A1AA;
       }
 
       .slide-canvas[data-theme="clean-light"] .channel-header,
       .slide-canvas[data-theme="clean-light"] .slide-footer {
-        border-color: #D1D5DB;
-      }
-
-      .slide-canvas[data-theme="midnight-slate"] {
-        --bg-primary: #003C68;
-        --bg-card: #00508C;
-        --text-light: #EEEEEE;
-        --text-muted: #A1A1AA;
-        --border-accent: #008CE8;
-        --highlight-amber: #FFC107;
-        --highlight-orange: #FF9800;
-        border-color: rgba(0, 140, 232, 0.4);
+        border-color: #A1A1AA;
       }
 
       /* Canvas Header Elements */
@@ -877,7 +862,7 @@
 
       [data-theme="clean-light"] .channel-row-card {
         background-color: #FFFFFF;
-        border-color: rgba(15, 23, 42, 0.1);
+        border-color: #A1A1AA;
         box-shadow: 0 1px 3px rgba(0,0,0,0.05);
       }
 
@@ -915,9 +900,9 @@
       }
 
       [data-theme="clean-light"] .channel-row-badge {
-        background: rgba(14, 165, 233, 0.12);
-        color: #0284c7;
-        border-color: rgba(14, 165, 233, 0.25);
+        background: rgba(0, 120, 212, 0.12);
+        color: #0078D4;
+        border-color: rgba(0, 120, 212, 0.25);
       }
 
       .channel-bar-group {
@@ -1586,7 +1571,7 @@
       <!-- Left Sidebar Controls -->
       <aside class="sidebar">
         <div class="brand-header">
-          <div class="brand-icon">M</div>
+          <img id="app-header-logo" alt="Corporate Logo" />
           <div>
             <div class="brand-title">MKTG OPS VISUALIZER</div>
             <div class="brand-subtitle">Executive Slide Studio</div>
@@ -1655,7 +1640,6 @@
             <select id="theme-select" class="form-control">
               <option value="dark-navy">Dark Navy (Default)</option>
               <option value="clean-light">Clean Light</option>
-              <option value="midnight-slate">Midnight Slate</option>
             </select>
           </div>
 
@@ -2113,6 +2097,7 @@
         const canvasSubtitle = document.getElementById('canvas-subtitle');
         const canvasWatermark = document.getElementById('canvas-watermark');
         const canvasLogo = document.getElementById('canvas-logo');
+        const appHeaderLogo = document.getElementById('app-header-logo');
         const canvasFooterNotice = document.getElementById('canvas-footer-notice');
         const canvasFooterPage = document.getElementById('canvas-footer-page');
         const slideContent = document.getElementById('slide-content');
@@ -2182,9 +2167,13 @@
           canvasTitle.textContent = slideTitleInput.value || 'Untitled Slide';
           canvasSubtitle.textContent = slideSubtitleInput.value || '';
           if (canvasWatermark) canvasWatermark.textContent = watermarkTextInput.value || 'MKTG OPS';
+          const isLight = (selectedTheme === 'clean-light');
+          const currentLogoSrc = getLogoSrc(isLight ? LOGO_BLUE : LOGO_WHITE, isLight ? DEFAULT_LOGO_BLUE : DEFAULT_LOGO_WHITE);
           if (canvasLogo) {
-            const isLight = (selectedTheme === 'clean-light');
-            canvasLogo.src = getLogoSrc(isLight ? LOGO_BLUE : LOGO_WHITE, isLight ? DEFAULT_LOGO_BLUE : DEFAULT_LOGO_WHITE);
+            canvasLogo.src = currentLogoSrc;
+          }
+          if (appHeaderLogo) {
+            appHeaderLogo.src = getLogoSrc(LOGO_WHITE, DEFAULT_LOGO_WHITE);
           }
           if (canvasFooterNotice) canvasFooterNotice.textContent = footerNoticeInput.value || '';
           if (canvasFooterPage) canvasFooterPage.textContent = footerSlideIdInput.value || '';
@@ -2466,12 +2455,14 @@
                 const dataValues = chartData.map(d => parseFloat(d.value) || 0);
 
                 const isLight = (selectedTheme === 'clean-light');
-                const textColor = isLight ? '#0F172A' : '#EEEEEE';
-                const labelColor = isLight ? '#0F172A' : '#FFFFFF';
-                const gridColor = isLight ? 'rgba(15, 23, 42, 0.12)' : 'rgba(226, 232, 240, 0.12)';
+                const textColor = isLight ? '#00508C' : '#FFFFFF';
+                const labelColor = isLight ? '#00508C' : '#FFFFFF';
+                const gridColor = isLight ? 'rgba(161, 161, 170, 0.4)' : 'rgba(255, 255, 255, 0.2)';
 
                 const showLabels = document.getElementById('chart-show-labels')?.checked ?? true;
-                const grbPalette = ['#00C8FF', '#FF9800', '#FFC107', '#10B981', '#A855F7', '#EC4899'];
+                const grbPalette = isLight 
+                  ? ['#0078D4', '#008CE8', '#FF9800', '#10B981', '#5F6B7A', '#0078D4'] 
+                  : ['#FFC107', '#008CE8', '#FF9800', '#10B981', '#E2E8F0', '#FFC107'];
                 const pluginsList = (typeof ChartDataLabels !== 'undefined') ? [ChartDataLabels] : [];
 
                 let config = {};
